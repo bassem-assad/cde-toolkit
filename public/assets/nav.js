@@ -13,8 +13,8 @@
     ['geofed', '/modules/geofed.html', 'GeoFed'],
     ['federate', '/modules/federate.html', 'Federated views']
   ];
-  let signed = false;
-  try { signed = !!sessionStorage.getItem('cdetk.tok'); } catch (e) { }
+  let signed = false, demo = false;
+  try { signed = !!sessionStorage.getItem('cdetk.tok'); demo = sessionStorage.getItem('cdetk.demo') === '1' || new URLSearchParams(location.search).has('demo'); } catch (e) { }
 
   const host = document.createElement('div');
   host.id = 'cdetk-nav';
@@ -32,12 +32,12 @@
     a.l[aria-current=page]{color:#0c2725;background:#3fc2ae;font-weight:600}
     a:focus-visible{outline:2px solid #3fc2ae;outline-offset:2px}
     .st{font-size:12px;color:#b9cbc6;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
-    .dot{width:8px;height:8px;border-radius:50%;background:${signed ? '#5fd39b' : '#e38b7a'}}
+    .dot{width:8px;height:8px;border-radius:50%;background:${demo ? '#f0c25a' : signed ? '#5fd39b' : '#e38b7a'}}
   </style>
   <nav aria-label="CDE Toolkit">
     <a class="brand" href="/">CDE Toolkit</a>
     <div class="links">${LINKS.slice(1).map(([id, href, label]) =>
       `<a class="l" href="${href}"${id === page ? ' aria-current="page"' : ''}>${label}</a>`).join('')}</div>
-    <a class="st" href="/" title="Autodesk connection"><span class="dot"></span>${signed ? 'Autodesk connected' : 'Not signed in'}</a>
+    <a class="st" href="/" title="${demo ? 'Demo mode: sample data. Exit on the home page.' : 'Autodesk connection'}"><span class="dot"></span>${demo ? 'Demo mode' : signed ? 'Autodesk connected' : 'Not signed in'}</a>
   </nav>`;
 })();

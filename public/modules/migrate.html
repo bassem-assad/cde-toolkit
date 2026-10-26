@@ -996,7 +996,7 @@ const ACT={
  startRun,
  newTransfer(){S.run=null;S.step=0;S.maxStep=0;S.decisions={};S.excl=new Set();S.src.loadedFor='';S.name.init=false;render()},
  toggleDemo(){
-  S.demo=!S.demo;Svc=S.demo?DEMO:REAL;C.hubs=[];C.projects={};
+  S.demo=!S.demo;CDETK.setDemo(S.demo);Svc=S.demo?DEMO:REAL;C.hubs=[];C.projects={};
   Object.assign(S.src,{hub:'',project:'',folder:null,files:[],defs:[],loadedFor:''});Object.assign(S.dst,{hub:'',project:'',folder:null,defs:[],std:null,loadedFor:''});
   S.src.pw.connected=false;S.src.pw.repo='';S.step=0;S.maxStep=0;S.run=null;S.decisions={};closeModal();
   Object.assign(S.src.sp,{site:'',siteName:'',drives:[],drive:''});Object.assign(S.src.ie,{projects:[],project:'',connected:false});
@@ -1114,6 +1114,7 @@ document.addEventListener('drop',e=>{
   await handleRedirect();
   if(TOK)await guard(ensureHubs,'Loading hubs…');
   render();
+  if(CDETK.isDemo()&&!S.demo)ACT.toggleDemo(); // demo mode switched on from the toolkit home page
 })();
 </script>
 </body>

@@ -28,6 +28,15 @@ local server only serves the pages.
 
 No `npm install` is needed: the server has no dependencies.
 
+## Try it without Autodesk (demo mode)
+
+On the home page click **Try demo mode**. Every module then runs on built-in sample data (a
+sample ACC hub, projects, Revit models, a model set, a file list and review data), nothing is
+sent to Autodesk, and nothing in ACC is changed. Use it to see how each tool works, take
+screenshots or show it to someone. Demo mode lasts for the browser tab; **Exit demo mode**
+(home page, or inside a module) switches it off. Adding `?demo=1` to any module's address
+also turns it on.
+
 ## One-off Autodesk setup
 
 1. At <https://aps.autodesk.com> > **My Apps**, create an app of type

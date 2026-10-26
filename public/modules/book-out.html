@@ -436,7 +436,7 @@ $('#demo').onclick=()=>{
   setAttrs([{id:'loc',name:'Location',arrayValues:[{value:'Clapham Junction'},{value:'Croydon'},{value:'Victoria'}]},{id:'a',name:'Asset type',arrayValues:[{value:'Bridge'},{value:'Signalling'},{value:'Retaining wall'},{value:'Station'}]},{id:'disc',name:'Discipline',arrayValues:[{value:'Structural'},{value:'Signalling'},{value:'Architecture'}]},{id:'rev',name:'Revision'},{id:'bs',name:'001-BOOKING_STATUS',arrayValues:[{value:'Booked out'},{value:'Available'}]},{id:'stat',name:'Document status',arrayValues:[{value:'Approved'},{value:'For review'}]}]);
   document.querySelector('.fv').value='Clapham';renderBasket();loadWf();
 };
-$('#out').onclick=()=>{CDETK.signOut();location=redirect};
+$('#out').onclick=()=>{CDETK.signOut();CDETK.setDemo(false);location=redirect};
 $('#hub').onchange=()=>!S.demo&&loadProjects();$('#proj').onchange=()=>!S.demo&&pickProject();
 $('#fchg').onclick=()=>{S.browse=[];$('#fpick').classList.remove('hide');renderPicker()};
 $('#fclose').onclick=()=>$('#fpick').classList.add('hide');
@@ -449,7 +449,8 @@ $('#filters').onchange=e=>{if(e.target.classList.contains('fa'))suggest(e.target
 $('#filters').onkeydown=e=>{if(e.key==='Enter')find()};
 $('#go').onclick=find;
 $('#q').onkeydown=e=>{if(e.key==='Enter')find()};
-renderBasket();init();
+renderBasket();
+if(CDETK.isDemo())$('#demo').click();else init();
 </script>
 
 </body></html>

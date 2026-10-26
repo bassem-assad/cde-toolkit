@@ -75,8 +75,16 @@
     return t.access;
   }
   const tokenSync = () => { const t = raw(); return t && Date.now() < t.exp ? t.access : null; };
+  /* Demo mode: every module runs on built-in sample data and nothing is sent to Autodesk.
+     It is switched on from the home page (or with ?demo=1) and lasts for this browser tab. */
+  const DEMO_KEY = 'cdetk.demo';
+  const isDemo = () => {
+    try { if (new URLSearchParams(location.search).has('demo')) ss.set(DEMO_KEY, '1'); } catch (e) { }
+    return ss.get(DEMO_KEY) === '1';
+  };
+  const setDemo = on => { if (on) ss.set(DEMO_KEY, '1'); else ss.del(DEMO_KEY); };
   const signedIn = () => !!raw();
   const signOut = () => ss.del(K.tok);
 
-  window.CDETK = { APS, SCOPES, redirect, raw, save, clientId, setClientId, builtIn, login, handleCallback, accessToken, tokenSync, signedIn, signOut };
+  window.CDETK = { APS, SCOPES, redirect, raw, save, clientId, setClientId, builtIn, login, handleCallback, accessToken, tokenSync, signedIn, signOut, isDemo, setDemo };
 })();

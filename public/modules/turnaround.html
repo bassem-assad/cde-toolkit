@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="/config.js"></script><script src="/assets/auth.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Review turnaround · CDE Toolkit</title>
@@ -78,6 +79,7 @@ $('#out').innerHTML='<div class="kpis"><div class="k"><b>'+rs.length+'</b><span>
 +(steps.length?block('By step',steps):'')+block('By reviewer',group(rs,'reviewer'))+(rs.some(r=>r.company)?block('By company',group(rs,'company')):'')
 +'<p class="hint" style="margin-top:18px">Turnaround is completed minus assigned. Open tasks count as late once past their due date but are left out of the averages.</p>'}
 $('#demo').onclick=()=>{$('#msg').textContent='';render(sample())};
+if(CDETK.isDemo())$('#demo').click();
 $('#f').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{$('#msg').textContent='';let t=r.result,objs;
 if(/\.json$/i.test(f.name)){let j=JSON.parse(t);if(!Array.isArray(j))j=j.results||j.data||j.reviews||[];objs=j}
 else{const p=parseCSV(t),h=p[0].map(x=>x.trim());objs=p.slice(1).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])))}

@@ -23,7 +23,9 @@
     <div class="row">
       <label id="cidRow">APS Client ID<input type="text" id="cid" autocomplete="off" placeholder="Paste your Autodesk Platform Services Client ID"></label>
       <button id="signin">Sign in with Autodesk</button>
+      <button id="demoOn" class="alt" type="button">Try demo mode</button>
       <button id="signout" class="alt" hidden>Sign out</button>
+      <button id="demoOff" hidden>Exit demo mode</button>
     </div>
     <div class="copy" id="cbRow"><span class="msg">Callback URL to register in your APS app:</span><code id="cb"></code><button class="alt" id="copycb" type="button">Copy</button></div>
     <p id="status" class="msg"></p>
@@ -86,13 +88,14 @@
 <script>
 const $ = s => document.querySelector(s);
 function paint(msg, bad) {
-  const on = CDETK.signedIn();
-  $('#signin').hidden = on; $('#signout').hidden = !on;
-  $('#status').className = 'msg ' + (bad ? 'bad' : on ? 'ok' : '');
-  $('#status').textContent = msg || (on ? 'Signed in to Autodesk. Open a module below.' : 'Not signed in. Modules that read from ACC need you to sign in first.');
+  const demo = CDETK.isDemo(), on = CDETK.signedIn() && !demo;
+  $('#signin').hidden = on || demo; $('#demoOn').hidden = demo; $('#signout').hidden = !on; $('#demoOff').hidden = !demo;
+  $('#cidRow').hidden = demo || CDETK.builtIn(); $('#cbRow').hidden = demo || CDETK.builtIn();
+  $('#status').className = 'msg ' + (bad ? 'bad' : (on || demo) ? 'ok' : '');
+  $('#status').textContent = msg || (demo ? 'Demo mode is on. Every module uses sample data and nothing is sent to Autodesk or changed in ACC. Open any module below.'
+    : on ? 'Signed in to Autodesk. Open a module below.' : 'Not signed in. Modules that read from ACC need you to sign in first, or try demo mode.');
 }
 $('#cid').value = CDETK.clientId();
-if (CDETK.builtIn()) { $('#cidRow').hidden = true; $('#cbRow').hidden = true; }
 $('#cb').textContent = CDETK.redirect;
 $('#cid').addEventListener('change', e => CDETK.setClientId(e.target.value));
 $('#signin').onclick = async () => {
@@ -100,6 +103,8 @@ $('#signin').onclick = async () => {
   try { await CDETK.login('/'); } catch (e) { paint(e.message, true); }
 };
 $('#signout').onclick = () => { CDETK.signOut(); location.reload(); };
+$('#demoOn').onclick = () => { CDETK.setDemo(true); location.reload(); };
+$('#demoOff').onclick = () => { CDETK.setDemo(false); location.href = '/'; };
 $('#copycb').onclick = async e => {
   try { await navigator.clipboard.writeText(CDETK.redirect); e.target.textContent = 'Copied'; }
   catch (err) { getSelection().selectAllChildren($('#cb')); e.target.textContent = 'Press Ctrl+C'; }

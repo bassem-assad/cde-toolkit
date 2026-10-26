@@ -108,6 +108,7 @@ footer{text-align:center;color:var(--mute);font-size:12.5px;padding:10px}
 </header>
 
 <main>
+  <div class="alert info hidden" id="demoNote">Demo mode: sample data. Nothing is sent to Autodesk or created in ACC.</div>
   <div class="steps" id="steps"></div>
   <div id="alerts"></div>
   <div id="view"></div>
@@ -132,6 +133,7 @@ try { const saved = JSON.parse(localStorage.getItem("fvb_cfg") || "{}"); CFG_KEY
 /* ================================================================== */
 
 const API = "https://developer.api.autodesk.com";
+const DEMO = CDETK.isDemo();
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const norm = s => String(s ?? "").trim().toLowerCase();
@@ -172,10 +174,11 @@ async function ensureToken() {
   if (!auth.refresh) { signout(); throw new Error("Session expired. Please sign in again."); }
   await tokenRequest({ grant_type: "refresh_token", refresh_token: auth.refresh, scope: CONFIG.SCOPES });
 }
-function signout() { CDETK.signOut(); auth = null; location.href = "/"; }
+function signout() { CDETK.signOut(); CDETK.setDemo(false); auth = null; location.href = "/"; }
 
 /* ---------- API wrapper ---------- */
 async function api(path, { method = "GET", body, headers = {} } = {}) {
+  if (DEMO) return demoApi(path, method, body);
   await ensureToken();
   const url = path.startsWith("http") ? path : API + path;
   const h = { Authorization: "Bearer " + auth.access, Accept: "application/json", ...headers };
@@ -222,7 +225,7 @@ function renderSteps() {
 }
 function render() {
   renderSteps();
-  $("#outBtn").classList.toggle("hidden", !auth);
+  $("#outBtn").classList.toggle("hidden", !(auth || DEMO)); $("#outBtn").textContent = DEMO ? "Exit demo" : "Sign out"; $("#demoNote").classList.toggle("hidden", !DEMO);
   const v = $("#view");
   ({ signin: renderSignIn, projects: renderProjects, scan: renderScan, locations: renderLocations, models: renderModels, done: renderDone })[state.view](v);
 }
@@ -235,6 +238,7 @@ function renderSignIn(v) {
     ${clientId() ? "" : `<div class="row" style="justify-content:center;margin-bottom:16px"><input type="text" id="cid" placeholder="Paste your APS Client ID" style="min-width:340px"><button class="btn ghost" data-act="savecid">Save</button></div>
     <div class="alert info" style="max-width:640px;margin:0 auto 16px;text-align:left">Register this Callback URL on your APS app (exactly as shown):<br><code>${esc(redirectUri())}</code></div>`}
     <button class="btn big" data-act="login" ${clientId() ? "" : "disabled"}>Sign in with Autodesk</button>
+    <p style="margin-top:16px"><a href="/modules/federate.html?demo=1">Or try demo mode</a> with sample data.</p>
   </div>`;
 }
 function renderProjects(v) {
@@ -301,6 +305,7 @@ function renderDone(v) {
     <p>${r.count} model${r.count === 1 ? "" : "s"} federated in the model set <b>${esc(state.modelSet.name)}</b>. The view follows the latest published versions automatically.${r.job ? "<br>Job status: <b>" + esc(r.job) + "</b>" : ""}</p>
     <div class="row" style="justify-content:center"><a class="btn big" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="https://acc.autodesk.com/build/model-coordination/projects/${esc(state.containerId)}">Open Model Coordination</a>
     <button class="btn ghost big" data-act="backcodes">Federate another code</button></div>
+    ${DEMO ? "<p style=\"margin-top:14px;font-size:13px\"><b>Demo mode:</b> nothing was created in ACC.</p>" : ""}
     <p style="margin-top:18px;font-size:13px">Look for <code>${esc(r.name)}</code> under Views in the <b>${esc(state.modelSet.name)}</b> model set.</p></div>`;
 }
 
@@ -461,7 +466,7 @@ async function federate() {
     if (viewId && jobId) {
       for (let i = 0; i < 40; i++) {
         await sleep(1500);
-        try { const j = await mc(`/modelsets/${ms}/views/${viewId}/jobs/${jobId}`); job = j.status || job; log("Job status: " + job); if (/success|fail|error/i.test(job)) break; } catch (e) { log("Job poll failed: " + e.message); break; }
+        try { const j = await mc(`/modelsets/${ms}/views/${viewId}/jobs/${jobId}`); job = j.status || job; log("Job status: " + job); if (/succe|complet|done|fail|error|cancel/i.test(job)) break; } catch (e) { log("Job poll failed: " + e.message); break; }
       }
     }
     if (/fail|error/i.test(job)) throw new Error("Autodesk accepted the request but the job reported: " + job);
@@ -505,7 +510,7 @@ const actions = {
       if (res.jobId) {
         for (let i = 0; i < 45; i++) {
           await sleep(2000);
-          try { const j = await mc(`/modelsets/${id}/jobs/${res.jobId}`); job = j.status || job; log("Model set job: " + job); if (/success|fail|error/i.test(job)) break; } catch (e) { log("Job poll failed: " + e.message); break; }
+          try { const j = await mc(`/modelsets/${id}/jobs/${res.jobId}`); job = j.status || job; log("Model set job: " + job); if (/succe|complet|done|fail|error|cancel/i.test(job)) break; } catch (e) { log("Job poll failed: " + e.message); break; }
         }
       }
       if (/fail|error/i.test(job)) throw new Error("Autodesk accepted the request but the model set job reported: " + job);
@@ -534,11 +539,48 @@ document.addEventListener("input", e => {
   state[b] = e.target.value; const pos = e.target.selectionStart; render(); const n = document.getElementById(e.target.id); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (_) { } }
 });
 
+/* ---------- demo mode: sample project, model set and documents ---------- */
+const DEMO_VIEWS = [];
+const DEMO_FILES = [ // file name, location code, discipline, originator, status, revision
+  ["DPI-ARC-STN-A-MOD-0001.rvt", "STN-A", "Architecture", "ARC", "Published", "C02"],
+  ["DPI-STR-STN-A-MOD-0002.rvt", "STN-A", "Structures", "STR", "Published", "C03"],
+  ["DPI-MEP-STN-A-MOD-0003.rvt", "STN-A", "Mechanical", "MEP", "Published", "C01"],
+  ["DPI-CIV-STN-A-MOD-0004.ifc", "STN-A", "Civil", "CIV", "Shared", "P05"],
+  ["DPI-ELE-STN-A-MOD-0005.rvt", "STN-A", "Electrical", "ELE", "Published", "C01"],
+  ["DPI-STR-BRG-01-MOD-0101.rvt", "BRG-01", "Structures", "STR", "Published", "C04"],
+  ["DPI-CIV-BRG-01-MOD-0102.rvt", "BRG-01", "Civil", "CIV", "Published", "C02"],
+  ["DPI-GEO-BRG-01-MOD-0103.ifc", "BRG-01", "Geotechnical", "GEO", "Shared", "P02"],
+  ["DPI-ARC-BRG-01-MOD-0104.rvt", "BRG-01", "Architecture", "ARC", "Published", "C01"],
+  ["DPI-STR-TUN-02-MOD-0201.rvt", "TUN-02", "Structures", "STR", "Published", "C02"],
+  ["DPI-MEP-TUN-02-MOD-0202.rvt", "TUN-02", "Mechanical", "MEP", "Published", "C01"],
+  ["DPI-CIV-TUN-02-MOD-0203.rvt", "TUN-02", "Civil", "CIV", "Published", "C03"],
+  ["DPI-ARC-GEN-MOD-0900.rvt", "", "Architecture", "ARC", "Published", "C01"]
+];
+const demoUrn = i => `urn:adsk.wipprod:fs.file:vf.demo${i}?version=${(i % 4) + 1}`;
+async function demoApi(path, method, body) {
+  await sleep(250);
+  const p = path.split("?")[0]; let m;
+  if (p === "/project/v1/hubs") return { data: [{ id: "b.demo-hub", attributes: { name: "Demo Engineering Pty Ltd", region: "AUS", extension: { type: "hubs:autodesk.bim360:Account" } } }] };
+  if (/\/projects$/.test(p)) return { data: [["b.demo1", "Docklands Transport Interchange"], ["b.demo2", "Westgate Health Precinct"]].map(([id, name]) => ({ id, attributes: { name, extension: { type: "projects:autodesk.bim360:Project" } } })) };
+  if (/\/topFolders$/.test(p)) return { data: [{ id: "urn:demo:f:top", attributes: { displayName: "Project Files" } }] };
+  if (/\/folders\/[^/]+\/contents$/.test(p)) return { data: [{ id: "urn:demo:f:pub", attributes: { displayName: CONFIG.PUBLISHED_FOLDER_NAME } }] };
+  if (/\/modelsets$/.test(p)) return { modelSets: [{ modelSetId: "demo-ms", name: "Published models", isDisabled: false, folders: [{ folderUrn: "urn:demo:f:pub" }] }] };
+  if (/\/versions\/latest$/.test(p)) return { version: 7, status: "Completed", documentVersions: DEMO_FILES.map((f, i) => ({ documentLineage: { lineageUrn: "urn:demo:lin:" + i, parentFolderUrn: "urn:demo:f:pub" }, documentVersion: { versionUrn: demoUrn(i), viewableName: f[0] }, documentStatus: "Loaded" })) };
+  if (/versions:batch-get$/.test(p)) return { results: body.urns.map(u => { const i = DEMO_FILES.findIndex((_, k) => demoUrn(k) === u), f = DEMO_FILES[i];
+    return { id: u, name: f[0], customAttributes: [{ name: CONFIG.ATTRIBUTE_NAME, value: f[1] }, { name: "Discipline", value: f[2] }, { name: "Originator", value: f[3] }, { name: "Status", value: f[4] }, { name: "Revision", value: f[5] }] }; }) };
+  if (/\/views$/.test(p)) {
+    if (method === "POST") { DEMO_VIEWS.push({ name: body.name }); return { viewId: "demo-view-" + DEMO_VIEWS.length, jobId: "demo-job" }; }
+    return { modelSetViews: DEMO_VIEWS };
+  }
+  if (/\/jobs\/[^/]+$/.test(p)) return { status: "Succeeded" };
+  throw new Error("Demo mode does not simulate " + method + " " + p);
+}
+
 /* ---------- start ---------- */
 (async function init() {
   const t = localStorage.getItem("fvb_theme"); if (t) { document.documentElement.dataset.theme = t; $("#themeBtn").textContent = t === "dark" ? "Light mode" : "Dark mode"; }
   try { await handleCallback(); } catch (e) { fail(e); }
-  if (auth) { try { await loadHubs(); go("projects"); } catch (e) { fail(e); state.view = "signin"; render(); } } else render();
+  if (auth || DEMO) { try { await loadHubs(); go("projects"); } catch (e) { fail(e); state.view = "signin"; render(); } } else render();
 })();
 </script>
 </body>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="/config.js"></script><script src="/assets/auth.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>File validator · CDE Toolkit</title>
@@ -55,6 +56,7 @@ th{font-size:13px;color:var(--mute)}
 <h2>1. Load the ACC file list</h2>
 <p class="hint">Export the file list from ACC Docs (Excel or CSV) with the attribute columns included, then drop it here.</p>
 <div class="drop"><input type="file" id="file" accept=".xlsx,.xls,.csv"></div>
+<div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="alt sm" id="sample" type="button">Try with a sample file list</button><span class="hint" id="demoNote" style="margin:0" hidden>Demo mode: sample data, nothing is sent anywhere.</span></div>
 <div id="msg" role="alert"></div>
 <div id="cols" hidden style="margin-top:14px">
 <div class="row">
@@ -175,7 +177,16 @@ $("dl").onclick=()=>{
   const csv="\ufeff"+["Status,File,Issues"].concat(results.map(r=>[r.issues.length?"Fail":"Pass",q(r.name),q(r.issues.join("; "))].join(","))).join("\r\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="acc-validation-report.csv";a.click();
 };
+$("sample").onclick=()=>{
+  const P=["PRJ-ABC-ZZ-00-DR-A-0001.pdf","PRJ-ABC-ZZ-00-DR-A-0002.pdf","PRJ-ABC-ZZ-01-M3-S-0100.rvt","PRJ-ABC-ZZ-01-DR-A-01.pdf","PRJ-ABC-ZZ-02-M3-S-0101.rvt","PRJ ABC drawing final.pdf","PRJ-ABC-ZZ-02-DR-M-0210.pdf","PRJ-ABC-ZZ-02-DR-M-0211.pdf","PRJ-XYZ-ZZ-03-RP-E.docx","PRJ-ABC-ZZ-03-DR-E-0310.pdf"];
+  const info=[["Architecture","Published","P01"],["Architecture","Published","P02"],["Structures","Shared","C01"],["Architecture","Published","P01"],["Structures","Shared",""],["Architecture","","P03"],["Mechanical","Published","P01"],["Mechanical","Published","P02"],["Electrical","WIP","P01"],["Electrical","Published","C02"]];
+  rows=[{Name:"Published",Type:"Folder",Discipline:"",Status:"",Revision:""}].concat(P.map((n,i)=>({Name:n,Type:"File",Discipline:info[i][0],Status:info[i][1],Revision:info[i][2]})));
+  cols=Object.keys(rows[0]);setupCols();$("msg").textContent="";
+  $("attrs").querySelectorAll("input").forEach(i=>{i.checked=["Status","Revision"].includes(i.value)});
+  $("run").click();
+};
 load();
+if(CDETK.isDemo()){$("demoNote").hidden=false;$("sample").click()}
 </script>
 </body>
 </html>

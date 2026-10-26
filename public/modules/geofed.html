@@ -428,7 +428,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:14px 0}
 const APS = 'https://developer.api.autodesk.com';
 const SCOPES = CDETK.SCOPES; // shared CDE Toolkit sign-in (assets/auth.js)
 const VIEWER_VER = '7.*';
-const DEMO = new URLSearchParams(location.search).has('demo');
+const DEMO = CDETK.isDemo();
 const DEFAULT_CENTRE = { lat: -37.8136, lon: 144.9631 }; // Melbourne CBD
 const MODEL_TYPES = ['rvt', 'ifc', 'nwd', 'nwc', 'dwg', 'dgn', 'skp', 'fbx', 'obj', '3dm', 'stp', 'step', 'iam', 'ipt', 'dwfx', 'dwf'];
 const DRAW_TYPES = ['pdf', 'dwg', 'dxf', 'dwf', 'dwfx', 'rvt'];
@@ -2520,7 +2520,7 @@ $('#layoutSeg').addEventListener('click', ev => { const b = ev.target.closest('b
 $('#btnTheme').onclick = () => setTheme(S.theme === 'dark' ? 'light' : 'dark');
 $('#btnLeft').onclick = () => { $('#main').classList.toggle('noLeft'); afterResize(); };
 $('#btnRight').onclick = () => { $('#main').classList.toggle('noRight'); afterResize(); };
-$('#btnOut').onclick = () => { if (DEMO) { location.href = Auth.redirect; return; } Auth.logout(); location.href = Auth.redirect; };
+$('#btnOut').onclick = () => { if (DEMO) { CDETK.setDemo(false); location.href = '/'; return; } Auth.logout(); location.href = Auth.redirect; };
 document.addEventListener('keydown', ev => { if (ev.key === 'Escape') { if ($('#modalHost').innerHTML) $('#modalHost').innerHTML = ''; else if (MapUI.pick) MapUI.endPick(); else if (Viewer.pop) { Viewer.pop = null; renderVTools(); } } });
 window.addEventListener('resize', () => afterResize());
 

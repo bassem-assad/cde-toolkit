@@ -31,9 +31,14 @@ pre{margin:0;font-family:var(--mono);font-size:13px;white-space:pre-wrap;color:v
     <p class="lead">Add the upload date of the current version to a file's name in ACC, for example <code>Model.rvt</code> becomes <code>Model_20260915.rvt</code>. The rename is made on the current version.</p>
   </div>
 
+  <section class="panel" id="demoNote" hidden>
+    <p class="msg ok">Demo mode: sample data. Nothing is sent to Autodesk or changed in ACC.</p>
+    <div class="row"><button class="alt" id="exitDemo" type="button">Exit demo mode</button></div>
+  </section>
+
   <section class="panel" id="gate" hidden>
     <p class="msg bad">You're not signed in to Autodesk.</p>
-    <p><a href="/">Go to the home page to sign in</a>, then come back here.</p>
+    <p><a href="/">Go to the home page to sign in</a>, then come back here. Or <a href="/modules/rename.html?demo=1">try it in demo mode</a> with sample data.</p>
   </section>
 
   <section class="panel" id="pick" hidden>
@@ -73,8 +78,43 @@ pre{margin:0;font-family:var(--mono);font-size:13px;white-space:pre-wrap;color:v
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const S = { stack: [], target: null, tip: null };
+const DEMO = CDETK.isDemo();
+
+/* ---- demo mode: a small in-memory ACC with sample Revit models ---- */
+const DT = {
+  top: [{ id: 'f-pf', name: 'Project Files' }],
+  'f-pf': { folders: [{ id: 'f-str', name: 'Structures' }, { id: 'f-arc', name: 'Architecture' }],
+    items: [{ id: 'i-0', name: 'DPI-ALL-FED-MOD-0001.rvt', created: '2026-09-14T22:30:00Z', ver: 3 }] },
+  'f-str': { folders: [], items: [
+    { id: 'i-1', name: 'DPI-STR-BRG-MOD-0001.rvt', created: '2026-09-14T22:30:00Z', ver: 5 },
+    { id: 'i-2', name: 'DPI-STR-RET-MOD-0002.rvt', created: '2026-10-02T09:40:00Z', ver: 2 },
+    { id: 'i-3', name: 'DPI-STR-GA-0003.pdf', created: '2026-10-02T09:45:00Z', ver: 1 }] },
+  'f-arc': { folders: [], items: [{ id: 'i-4', name: 'DPI-ARC-STN-MOD-0001.rvt', created: '2026-10-20T05:15:00Z', ver: 4 }] }
+};
+const demoItem = id => Object.values(DT).flatMap(f => f.items || []).find(i => i.id === id);
+async function demoApi(method, path, body) {
+  await new Promise(r => setTimeout(r, 200));
+  const p = path.split('?')[0]; let m;
+  if (p === '/project/v1/hubs') return { data: [{ id: 'b.demo-hub', attributes: { name: 'Demo Engineering Pty Ltd' } }] };
+  if (/\/projects$/.test(p)) return { data: [['b.demo1', 'Docklands Transport Interchange'], ['b.demo2', 'Westgate Health Precinct']].map(([id, name]) => ({ id, type: 'projects', attributes: { name } })) };
+  if (/\/topFolders$/.test(p)) return { data: DT.top.map(f => ({ id: f.id, type: 'folders', attributes: { displayName: f.name } })) };
+  if ((m = p.match(/\/folders\/([^/]+)\/contents$/))) {
+    const f = DT[decodeURIComponent(m[1])] || { folders: [], items: [] };
+    return { data: f.folders.map(x => ({ id: x.id, type: 'folders', attributes: { displayName: x.name } }))
+      .concat(f.items.map(x => ({ id: x.id, type: 'items', attributes: { displayName: x.name } }))) };
+  }
+  if ((m = p.match(/\/items\/([^/]+)\/tip$/))) {
+    const it = demoItem(decodeURIComponent(m[1]));
+    return { data: { id: 'urn:demo:v:' + it.id, type: 'versions', attributes: { createTime: it.created, versionNumber: it.ver, displayName: it.name } } };
+  }
+  if (method === 'PATCH' && (m = p.match(/\/versions\/([^/]+)$/))) {
+    demoItem(decodeURIComponent(m[1]).replace('urn:demo:v:', '')).name = body.data.attributes.name; return {};
+  }
+  throw new Error('Demo mode does not simulate ' + method + ' ' + p);
+}
 
 async function api(method, path, body) {
+  if (DEMO) return demoApi(method, path, body);
   const t = await CDETK.accessToken();
   const r = await fetch(CDETK.APS + path, {
     method, body: body && JSON.stringify(body),
@@ -174,8 +214,10 @@ $('#go').onclick = async () => {
   } catch (e) { $('#log').textContent = 'Rename failed: ' + e.message; $('#go').disabled = false; }
 };
 
+$('#exitDemo').onclick = () => { CDETK.setDemo(false); location.href = '/'; };
 (async () => {
-  if (!CDETK.signedIn()) { $('#gate').hidden = false; return; }
+  $('#demoNote').hidden = !DEMO;
+  if (!CDETK.signedIn() && !DEMO) { $('#gate').hidden = false; return; }
   $('#pick').hidden = false;
   try {
     const hubs = (await api('GET', '/project/v1/hubs')).data.map(h => ({ id: h.id, name: h.attributes.name }));
