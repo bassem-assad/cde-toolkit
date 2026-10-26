@@ -9,7 +9,8 @@
     ['validate', '/modules/validate.html', 'Validate'],
     ['book-out', '/modules/book-out.html', 'Book out'],
     ['rename', '/modules/rename.html', 'Rename'],
-    ['turnaround', '/modules/turnaround.html', 'Review turnaround']
+    ['turnaround', '/modules/turnaround.html', 'Review turnaround'],
+    ['geofed', '/modules/geofed.html', 'GeoFed']
   ];
   let signed = false;
   try { signed = !!sessionStorage.getItem('cdetk.tok'); } catch (e) { }

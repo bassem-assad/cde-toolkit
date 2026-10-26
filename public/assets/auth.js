@@ -3,7 +3,7 @@
    callback URL, so the APS app needs just one registered address. */
 (function () {
   const APS = 'https://developer.api.autodesk.com';
-  const SCOPES = 'data:read data:write data:create data:search account:read bucket:read';
+  const SCOPES = 'data:read data:write data:create data:search account:read bucket:read user-profile:read';
   const K = { tok: 'cdetk.tok', cid: 'cdetk.cid', pkce: 'cdetk.pkce', ret: 'cdetk.return' };
   const store = name => {
     let s = null; try { s = window[name]; } catch (e) { }

@@ -9,6 +9,7 @@ Browser-based tools for Autodesk Construction Cloud (ACC), behind one Autodesk s
 | Rename | Add the upload date to a model's name, e.g. `Model_20260915.rvt`. | Autodesk sign-in |
 | File Book Out | Find drawings by attribute and book them out through an ACC review. | Autodesk sign-in |
 | Review turnaround | See where reviews slow down by step, reviewer and company. | CSV or JSON export |
+| GeoFed | Federate ACC models on a map, with 3D/2D views, snapshots and markup. | Autodesk sign-in |
 
 Everything runs in the browser. Files go directly between the source system and ACC; the
 local server only serves the pages.
@@ -31,7 +32,7 @@ No `npm install` is needed: the server has no dependencies.
 1. At <https://aps.autodesk.com> > **My Apps**, create an app of type
    **Desktop, Mobile, Single-Page App** (a public app that uses PKCE, with no client secret).
 2. Callback URL: `http://localhost:3000/` (the home page shows the exact value with a Copy button).
-3. Enable the **Data Management API** and the **Autodesk Construction Cloud / BIM 360** APIs.
+3. Enable the **Data Management**, **Model Derivative**, **Viewer** and **Autodesk Construction Cloud / BIM 360** APIs.
 4. Ask your ACC account admin to add the Client ID under
    **Account Admin > Custom Integrations**.
 5. Paste the Client ID on the CDE Toolkit home page and click **Sign in with Autodesk**.
