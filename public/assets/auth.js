@@ -42,7 +42,7 @@
     const verifier = b64u(crypto.getRandomValues(new Uint8Array(48)));
     const challenge = b64u(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
     ss.set(K.pkce, verifier);
-    ss.set(K.ret, returnTo || location.pathname);
+    ss.set(K.ret, returnTo || location.pathname);   // where to land after signing in
     const u = new URL(APS + '/authentication/v2/authorize');
     u.search = new URLSearchParams({
       response_type: 'code', client_id: clientId(), redirect_uri: redirect, scope: SCOPES,
@@ -51,16 +51,17 @@
     location.href = u.toString();
   }
 
-  /* Called by the home page. Returns the path to go back to, or null when this is not a callback. */
+  /* Called by the app home page (/app/). The registered callback address is the site root (/), which
+     forwards the sign-in parameters here. Returns the path to go back to, or null when this is not a callback. */
   async function handleCallback() {
     const p = new URLSearchParams(location.search);
-    if (p.get('error')) { history.replaceState({}, '', redirect); throw new Error('Autodesk sign-in: ' + (p.get('error_description') || p.get('error'))); }
+    if (p.get('error')) { history.replaceState({}, '', location.pathname); throw new Error('Autodesk sign-in: ' + (p.get('error_description') || p.get('error'))); }
     if (!p.get('code') || p.get('state') !== 'aps') return null;
-    history.replaceState({}, '', redirect);
+    history.replaceState({}, '', location.pathname);
     await tokenCall({ grant_type: 'authorization_code', code: p.get('code'), redirect_uri: redirect, code_verifier: ss.get(K.pkce) || '' });
     ss.del(K.pkce);
     const back = ss.get(K.ret); ss.del(K.ret);
-    return back && back.startsWith('/') ? back : '/';
+    return back && back.startsWith('/') ? back : '/app/';
   }
 
   /* A valid access token, refreshed when it has expired. Throws when signed out. */

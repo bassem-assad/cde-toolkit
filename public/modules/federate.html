@@ -174,7 +174,7 @@ async function ensureToken() {
   if (!auth.refresh) { signout(); throw new Error("Session expired. Please sign in again."); }
   await tokenRequest({ grant_type: "refresh_token", refresh_token: auth.refresh, scope: CONFIG.SCOPES });
 }
-function signout() { CDETK.signOut(); CDETK.setDemo(false); auth = null; location.href = "/"; }
+function signout() { CDETK.signOut(); CDETK.setDemo(false); auth = null; location.href = "/app/"; }
 
 /* ---------- API wrapper ---------- */
 async function api(path, { method = "GET", body, headers = {} } = {}) {

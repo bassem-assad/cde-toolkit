@@ -3,120 +3,266 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CDE Toolkit</title>
+<title>CDE Toolkit | Tools for Autodesk Construction Cloud</title>
+<meta name="description" content="Move, check, book out and rename files in Autodesk Construction Cloud, and build federated model views, from one browser tab. Your files go straight between your systems and ACC.">
+<meta property="og:title" content="CDE Toolkit">
+<meta property="og:description" content="Tools for BIM and information managers working in Autodesk Construction Cloud.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/app.css">
-<script src="/config.js"></script><script src="/assets/auth.js"></script>
+<script>
+/* Autodesk sends the browser back to this address after sign-in. The app finishes the sign-in. */
+if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + location.search);
+</script>
+<style>
+/* Layout: dark teal masthead and hero with a file-name anatomy, then plain ruled sections on a pale ground */
+:root{
+  --bg:#f2f4f3;--panel:#ffffff;--ink:#16211f;--mut:#566662;--line:#d7dedb;
+  --deep:#0c2725;--deep2:#12403a;--accent:#0d7a6c;--glow:#3fc2ae;--ondeep:#e5ecea;--ondeep2:#9fb5b0;
+  --ok:#1b7a3d;--okbg:#e4f4ea;--bad:#b3261e;--badbg:#fbe9e7;--warn:#7a5a0d;--warnbg:#fbf1d6;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1514;--panel:#172120;--ink:#e5ecea;--mut:#9aaba6;--line:#2a3735;
+  --deep:#0a1f1d;--deep2:#103833;--accent:#3fc2ae;--glow:#3fc2ae;
+  --ok:#6fd195;--okbg:#18301f;--bad:#ff8a80;--badbg:#3a1d1b;--warn:#e2bb5c;--warnbg:#33290f;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1514;--panel:#172120;--ink:#e5ecea;--mut:#9aaba6;--line:#2a3735;
+  --deep:#0a1f1d;--deep2:#103833;--accent:#3fc2ae;--glow:#3fc2ae;
+  --ok:#6fd195;--okbg:#18301f;--bad:#ff8a80;--badbg:#3a1d1b;--warn:#e2bb5c;--warnbg:#33290f;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--glow);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+h1,h2,h3,p,ul,ol,dl,dd{margin:0}
+h1{font-size:clamp(32px,5.2vw,52px);line-height:1.08;letter-spacing:-.025em;font-weight:700;text-wrap:balance}
+h2{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:-.015em;font-weight:700;text-wrap:balance}
+.eyebrow{font:500 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--mut)}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 15px/1 var(--sans);text-decoration:none;padding:13px 20px;border-radius:6px;border:1px solid transparent;cursor:pointer}
+.btn.pri{background:var(--glow);color:#0a1f1d}
+.btn.pri:hover{filter:brightness(1.07)}
+.btn.sec{border-color:rgba(229,236,234,.4);color:var(--ondeep);background:transparent}
+.btn.sec:hover{background:rgba(255,255,255,.08)}
+.btn.line{border-color:var(--line);color:var(--ink);background:var(--panel)}
+
+/* masthead + hero */
+.deep{background:var(--deep);color:var(--ondeep)}
+header .wrap{display:flex;align-items:center;gap:22px;padding-block:14px;flex-wrap:wrap}
+.logo{font-weight:700;letter-spacing:-.01em;color:#fff;text-decoration:none;font-size:18px}
+.logo span{color:var(--glow)}
+header nav{display:flex;gap:4px 18px;flex:1;flex-wrap:wrap}
+header nav a{color:var(--ondeep2);text-decoration:none;font-size:14px;font-weight:500;padding:4px 0}
+header nav a:hover{color:#fff}
+.hero{border-bottom:3px solid var(--glow)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px 56px;padding-block:44px 56px;align-items:center}
+.hero p.lead{margin-top:18px;font-size:18px;color:var(--ondeep2);max-width:52ch}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.hero .note{margin-top:16px;font-size:13px;color:var(--ondeep2)}
+@media(max-width:860px){.hero .wrap{grid-template-columns:1fr}}
+
+/* file-name anatomy */
+.anat{background:var(--deep2);border:1px solid rgba(229,236,234,.16);border-radius:10px;padding:20px 20px 18px;min-width:0}
+.anat .eyebrow{color:var(--ondeep2)}
+.fname{display:flex;flex-wrap:wrap;gap:6px 0;margin-top:14px;font:500 15px/1.2 var(--mono);color:#fff}
+.seg{display:flex;flex-direction:column;align-items:center;gap:6px}
+.seg b{font-weight:500;padding:5px 7px;border-bottom:2px solid var(--glow)}
+.seg i{font:400 10px/1 var(--sans);font-style:normal;color:var(--ondeep2);text-transform:uppercase;letter-spacing:.06em}
+.seg.bad b{border-color:#ff8a80;color:#ffb4ac}
+.sep{padding:5px 1px;color:var(--ondeep2)}
+.ext{padding:5px 0 5px 2px;color:var(--ondeep2)}
+.checks{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:9px;font-size:14px}
+.checks li{display:flex;gap:10px;align-items:baseline}
+.mark{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;transform:translateY(2px)}
+.mark.ok{background:#1d5a3a;color:#9ff0c0}.mark.no{background:#5a2420;color:#ffb4ac}.mark.mv{background:#4a4012;color:#f0d77a}
+.checks code{font:400 13px var(--mono);color:#fff;overflow-wrap:anywhere}
+.checks small{display:block;color:var(--ondeep2);font-size:12.5px}
+
+/* sections */
+section{padding-block:56px;border-bottom:1px solid var(--line)}
+section>.wrap>.eyebrow{display:block;margin-bottom:10px}
+.sub{color:var(--mut);margin-top:10px;max-width:62ch}
+.tools{margin-top:28px;border-top:1px solid var(--line)}
+.tool{display:grid;grid-template-columns:200px minmax(0,1fr) auto;gap:6px 28px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.tool h3{font-size:18px;font-weight:600}
+.tool p{color:var(--mut);max-width:64ch}
+.tag{font:500 12px/1 var(--mono);padding:5px 8px;border:1px solid currentColor;border-radius:4px;white-space:nowrap;align-self:start}
+.tag.live{color:#1d5fbf}.tag.exp{color:#7a5a0d}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.live{color:#7fb0ff}:root:not([data-theme="light"]) .tag.exp{color:#e2bb5c}}
+@media(max-width:760px){.tool{grid-template-columns:1fr;gap:8px}}
+.steps{list-style:none;padding:0;margin:28px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;counter-reset:s}
+.steps li{border-top:2px solid var(--accent);padding-top:14px;counter-increment:s}
+.steps li:before{content:"Step " counter(s);display:block;font:500 12px/1 var(--mono);color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.steps b{display:block;font-size:17px;margin-bottom:6px}
+.steps p{color:var(--mut);font-size:15px}
+@media(max-width:860px){.steps{grid-template-columns:1fr}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;margin-top:26px}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+.two h3{font-size:16px;margin-bottom:10px}
+.two ul{padding-left:20px;display:grid;gap:8px;color:var(--ink)}
+.two li::marker{color:var(--accent)}
+.callout{margin-top:26px;border:1px solid var(--line);border-left:4px solid var(--warn);background:var(--warnbg);border-radius:6px;padding:14px 16px;max-width:76ch}
+.callout b{display:block;margin-bottom:4px}
+.band{background:var(--deep);color:var(--ondeep);border-bottom:0}
+.band .wrap{display:flex;gap:24px 40px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.band p{color:var(--ondeep2);margin-top:8px;max-width:56ch}
+.band .cta{display:flex;gap:12px;flex-wrap:wrap}
+footer{padding-block:30px 40px;color:var(--mut);font-size:13px}
+footer .wrap{display:grid;gap:10px}
+footer nav{display:flex;gap:18px;flex-wrap:wrap}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
 </head>
 <body>
-<script src="/assets/nav.js" data-page="home"></script>
-<main class="wrap">
-  <div style="display:grid;gap:6px">
-    <h1>CDE Toolkit</h1>
-    <p class="lead">Move, check, book out and rename files in Autodesk Construction Cloud, see where reviews slow down, and view federated models on a map. Everything runs in your browser: files go straight between your systems and ACC.</p>
+<header class="deep">
+  <div class="wrap">
+    <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
+    <nav aria-label="Main">
+      <a href="#tools">Tools</a><a href="#how">How it works</a><a href="#requirements">Requirements</a><a href="#security">Security</a><a href="#pilot">Pilot</a>
+    </nav>
+    <a class="btn pri" href="/app/">Open the app</a>
   </div>
+</header>
 
-  <section class="panel" aria-labelledby="conn">
-    <h2 id="conn">Autodesk connection</h2>
-    <div class="row">
-      <label id="cidRow">APS Client ID<input type="text" id="cid" autocomplete="off" placeholder="Paste your Autodesk Platform Services Client ID"></label>
-      <button id="signin">Sign in with Autodesk</button>
-      <button id="demoOn" class="alt" type="button">Try demo mode</button>
-      <button id="signout" class="alt" hidden>Sign out</button>
-      <button id="demoOff" hidden>Exit demo mode</button>
+<section class="deep hero" style="padding:0;border-bottom:3px solid var(--glow)">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow" style="color:var(--ondeep2)">For BIM, digital engineering and information managers</p>
+      <h1 style="margin-top:14px">Keep your ACC project files in order.</h1>
+      <p class="lead">CDE Toolkit moves, checks, books out and renames files in Autodesk Construction Cloud, and builds federated model views, from one browser tab. Your files go straight between your systems and ACC.</p>
+      <div class="cta">
+        <a class="btn pri" href="/app/?demo=1">Try the demo</a>
+        <a class="btn sec" href="#tools">See the tools</a>
+      </div>
+      <p class="note">The demo uses sample data. No sign-in, nothing is sent to Autodesk.</p>
     </div>
-    <div class="copy" id="cbRow"><span class="msg">Callback URL to register in your APS app:</span><code id="cb"></code><button class="alt" id="copycb" type="button">Copy</button></div>
-    <p id="status" class="msg"></p>
-  </section>
+    <div class="anat" aria-label="Example of a file name checked against a naming standard">
+      <span class="eyebrow">Illustration: a file name against a naming standard</span>
+      <div class="fname" role="img" aria-label="DPI-ARC-STN-A-MOD-0001-C02.rvt">
+        <span class="seg"><b>DPI</b><i>Project</i></span><span class="sep">-</span>
+        <span class="seg"><b>ARC</b><i>Originator</i></span><span class="sep">-</span>
+        <span class="seg"><b>STN-A</b><i>Zone</i></span><span class="sep">-</span>
+        <span class="seg"><b>MOD</b><i>Type</i></span><span class="sep">-</span>
+        <span class="seg"><b>0001</b><i>Number</i></span><span class="sep">-</span>
+        <span class="seg"><b>C02</b><i>Revision</i></span><span class="ext">.rvt</span>
+      </div>
+      <ul class="checks">
+        <li><span class="mark ok">✓</span><span><code>DPI-ARC-STN-A-MOD-0001-C02.rvt</code><small>Matches the standard, ready to transfer</small></span></li>
+        <li><span class="mark no">✕</span><span><code>DPI-ARC-MOD-0001.rvt</code><small>3 name parts, standard has 6. Skipped with the reason shown</small></span></li>
+        <li><span class="mark mv">→</span><span><code>Model.rvt → Model_20260915.rvt</code><small>Upload date added to the name, previewed before it changes</small></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-  <section aria-labelledby="move">
-    <h2 id="move">Move and check files</h2>
-    <div class="grid">
-      <a class="tool" href="/modules/migrate.html">
-        <div class="top"><b>CDE Sync</b><span class="open">Open →</span></div>
-        <p>Move files into ACC from ProjectWise, SharePoint, InEight, another ACC project or your computer. Maps attributes and applies the folder's naming standard.</p>
-        <span class="tag live">Autodesk sign-in</span>
-      </a>
-      <a class="tool" href="/modules/validate.html">
-        <div class="top"><b>File validator</b><span class="open">Open →</span></div>
-        <p>Check an ACC Docs file-list export against your naming convention and confirm required attributes are filled in.</p>
-        <span class="tag export">Excel or CSV export</span>
-      </a>
-      <a class="tool" href="/modules/rename.html">
-        <div class="top"><b>Rename</b><span class="open">Open →</span></div>
-        <p>Add the upload date to a model's name in ACC, for example Model_20260915.rvt.</p>
-        <span class="tag live">Autodesk sign-in</span>
-      </a>
+<section id="tools">
+  <div class="wrap">
+    <span class="eyebrow">Seven tools, one sign-in</span>
+    <h2>Everything you do over and over in ACC, in one place.</h2>
+    <p class="sub">Each tool works on its own. Sign in once with your Autodesk account and move between them from the top bar.</p>
+    <div class="tools">
+      <article class="tool"><h3>CDE Sync</h3><p>Move files into ACC from ProjectWise, SharePoint, InEight Document, another ACC project or a local folder. Maps attributes, reads the destination folder's naming standard, flags values that don't fit, and adds droplist values only when you choose.</p><span class="tag live">Autodesk sign-in</span></article>
+      <article class="tool"><h3>File validator</h3><p>Check a file-list export from ACC Docs against your naming convention and confirm required attributes are filled in. Download the failures as a CSV report.</p><span class="tag exp">Excel or CSV export</span></article>
+      <article class="tool"><h3>Rename</h3><p>Add the upload date of the current version to a Revit model's name, with a preview of the new name before anything changes.</p><span class="tag live">Autodesk sign-in</span></article>
+      <article class="tool"><h3>File Book Out</h3><p>Find drawings by attribute, see their booking status and book them out through an ACC review. Files already booked out are left out of the review and listed.</p><span class="tag live">Autodesk sign-in</span></article>
+      <article class="tool"><h3>Review turnaround</h3><p>See where reviews slow down by step, reviewer and company, with late and overdue rates, from a review export.</p><span class="tag exp">CSV or JSON export</span></article>
+      <article class="tool"><h3>GeoFed</h3><p>Federate ACC models on a map. View 3D and 2D side by side, take snapshots with markup and check model coverage by location.</p><span class="tag live">Autodesk sign-in</span></article>
+      <article class="tool"><h3>Federated views</h3><p>Choose a location code and create a Model Coordination view of every published model with that code, without opening ACC. Folder and attribute names are set to match your project conventions.</p><span class="tag live">Autodesk sign-in</span></article>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section aria-labelledby="ctrl">
-    <h2 id="ctrl">Control and review</h2>
-    <div class="grid">
-      <a class="tool" href="/modules/book-out.html">
-        <div class="top"><b>File Book Out</b><span class="open">Open →</span></div>
-        <p>Find drawings by attribute, check their booking status and book them out through an ACC review.</p>
-        <span class="tag live">Autodesk sign-in</span>
-      </a>
-      <a class="tool" href="/modules/turnaround.html">
-        <div class="top"><b>Review turnaround</b><span class="open">Open →</span></div>
-        <p>See where ACC reviews slow down by step, reviewer and company, with late and overdue rates.</p>
-        <span class="tag export">CSV or JSON export</span>
-      </a>
-    </div>
-  </section>
+<section id="how">
+  <div class="wrap">
+    <span class="eyebrow">How it works</span>
+    <h2>One setup step for the ACC admin, then nothing to install.</h2>
+    <ol class="steps">
+      <li><b>Admin adds the app</b><p>Your ACC hub admin adds the CDE Toolkit Client ID under Hub Admin, Custom Integrations. It's a one-off step, and it's also your organisation's approval.</p></li>
+      <li><b>People sign in as themselves</b><p>Each person signs in with their own Autodesk account. The toolkit can only do what that person's ACC permissions already allow.</p></li>
+      <li><b>Work in the browser</b><p>Files go directly between the source system and ACC. Nothing is uploaded to or stored on our servers.</p></li>
+    </ol>
+  </div>
+</section>
 
-  <section aria-labelledby="view">
-    <h2 id="view">View and coordinate</h2>
-    <div class="grid">
-      <a class="tool" href="/modules/geofed.html">
-        <div class="top"><b>GeoFed</b><span class="open">Open →</span></div>
-        <p>Federate ACC models on a map: place them by location, view 3D and 2D side by side, take snapshots with markup and check coverage by location.</p>
-        <span class="tag live">Autodesk sign-in</span>
-      </a>
-      <a class="tool" href="/modules/federate.html">
-        <div class="top"><b>Federated views</b><span class="open">Open →</span></div>
-        <p>Pick a location code and create a Model Coordination view of every published model with that code, without opening ACC.</p>
-        <span class="tag live">Autodesk sign-in</span>
-      </a>
+<section id="requirements">
+  <div class="wrap">
+    <span class="eyebrow">Requirements</span>
+    <h2>Check these before you pilot it.</h2>
+    <div class="two">
+      <div>
+        <h3>You need</h3>
+        <ul>
+          <li>An ACC (Autodesk Forma) hub on a full subscription such as Forma Data Management, Forma Build or Forma Design Collaboration.</li>
+          <li>A hub admin who can add a Custom Integration.</li>
+          <li>Model Coordination, for Federated views.</li>
+          <li>A current version of Chrome or Edge.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Optional sources for CDE Sync</h3>
+        <ul>
+          <li>ProjectWise and InEight servers must allow the toolkit's web address (CORS).</li>
+          <li>SharePoint needs a one-off Microsoft Entra app registration.</li>
+          <li>Local folders and CSV attribute exports need nothing extra.</li>
+        </ul>
+      </div>
     </div>
-  </section>
-</main>
-<footer class="wrap">© 2026 Bassem Assad. All rights reserved. · <a href="/terms.html">Terms of Use</a> · <a href="/privacy.html">Privacy</a></footer>
+    <div class="callout"><b>Trial and Essentials hubs can't use it</b>Autodesk Support notes that the Custom Integrations tab is hidden for trial hubs and for hubs on Essentials subscriptions. Those hubs can't add CDE Toolkit. Ask your admin whether the tab is visible before you plan a pilot.</div>
+  </div>
+</section>
+
+<section id="security">
+  <div class="wrap">
+    <span class="eyebrow">Security and data</span>
+    <h2>Built so your files don't pass through us.</h2>
+    <div class="two">
+      <ul>
+        <li>The toolkit runs in your browser. Files travel between your source system and Autodesk, not through our servers.</li>
+        <li>Sign-in uses Autodesk's OAuth 2.0 with PKCE. There's no client secret and no password is stored.</li>
+        <li>The sign-in token stays in your browser tab and is cleared when you sign out or close the tab.</li>
+      </ul>
+      <ul>
+        <li>There are no advertising or analytics scripts on this site or in the app.</li>
+        <li>Tools that change data (CDE Sync, Rename, File Book Out, Federated views) show what will happen before they do it. Test on non-critical projects first and keep your own backups.</li>
+        <li>Read the <a href="/terms.html">Terms of Use</a> and <a href="/privacy.html">Privacy</a> pages.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="pilot">
+  <div class="wrap">
+    <div>
+      <h2 style="color:#fff">Want to pilot it?</h2>
+      <p id="pilotText">Pricing is being finalised. If you'd like to try CDE Toolkit on a non-critical project, get in touch. Meanwhile the demo shows every tool on sample data.</p>
+    </div>
+    <div class="cta">
+      <a class="btn pri" href="/app/?demo=1">Try the demo</a>
+      <a class="btn sec" id="mailBtn" href="#" hidden>Request a pilot</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <p>© 2026 Bassem Assad. All rights reserved.</p>
+    <p>Autodesk, Autodesk Construction Cloud, Forma, Revit and Navisworks are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
+  </div>
+</footer>
+
+<script src="/config.js"></script>
 <script>
-const $ = s => document.querySelector(s);
-function paint(msg, bad) {
-  const demo = CDETK.isDemo(), on = CDETK.signedIn() && !demo;
-  $('#signin').hidden = on || demo; $('#demoOn').hidden = demo; $('#signout').hidden = !on; $('#demoOff').hidden = !demo;
-  $('#cidRow').hidden = demo || CDETK.builtIn(); $('#cbRow').hidden = demo || CDETK.builtIn();
-  $('#status').className = 'msg ' + (bad ? 'bad' : (on || demo) ? 'ok' : '');
-  $('#status').textContent = msg || (demo ? 'Demo mode is on. Every module uses sample data and nothing is sent to Autodesk or changed in ACC. Open any module below.'
-    : on ? 'Signed in to Autodesk. Open a module below.' : 'Not signed in. Modules that read from ACC need you to sign in first, or try demo mode.');
-}
-$('#cid').value = CDETK.clientId();
-$('#cb').textContent = CDETK.redirect;
-$('#cid').addEventListener('change', e => CDETK.setClientId(e.target.value));
-$('#signin').onclick = async () => {
-  CDETK.setClientId($('#cid').value);
-  try { await CDETK.login('/'); } catch (e) { paint(e.message, true); }
-};
-$('#signout').onclick = () => { CDETK.signOut(); location.reload(); };
-$('#demoOn').onclick = () => { CDETK.setDemo(true); location.reload(); };
-$('#demoOff').onclick = () => { CDETK.setDemo(false); location.href = '/'; };
-$('#copycb').onclick = async e => {
-  try { await navigator.clipboard.writeText(CDETK.redirect); e.target.textContent = 'Copied'; }
-  catch (err) { getSelection().selectAllChildren($('#cb')); e.target.textContent = 'Press Ctrl+C'; }
-  setTimeout(() => e.target.textContent = 'Copy', 1800);
-};
-(async () => {
-  try {
-    const back = await CDETK.handleCallback();
-    if (back && back !== '/') return location.replace(back);
-    if (back) location.replace('/'); // reload so the top bar shows the new status
-  } catch (e) { return paint(e.message, true); }
-  paint();
+(function () {
+  var email = String((window.CDETK_CONFIG && window.CDETK_CONFIG.contactEmail) || '').trim();
+  var btn = document.getElementById('mailBtn');
+  if (email) { btn.href = 'mailto:' + email + '?subject=' + encodeURIComponent('CDE Toolkit pilot'); btn.hidden = false; }
 })();
 </script>
 </body>

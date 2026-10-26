@@ -2520,7 +2520,7 @@ $('#layoutSeg').addEventListener('click', ev => { const b = ev.target.closest('b
 $('#btnTheme').onclick = () => setTheme(S.theme === 'dark' ? 'light' : 'dark');
 $('#btnLeft').onclick = () => { $('#main').classList.toggle('noLeft'); afterResize(); };
 $('#btnRight').onclick = () => { $('#main').classList.toggle('noRight'); afterResize(); };
-$('#btnOut').onclick = () => { if (DEMO) { CDETK.setDemo(false); location.href = '/'; return; } Auth.logout(); location.href = Auth.redirect; };
+$('#btnOut').onclick = () => { if (DEMO) { CDETK.setDemo(false); location.href = '/app/'; return; } Auth.logout(); location.href = Auth.redirect; };
 document.addEventListener('keydown', ev => { if (ev.key === 'Escape') { if ($('#modalHost').innerHTML) $('#modalHost').innerHTML = ''; else if (MapUI.pick) MapUI.endPick(); else if (Viewer.pop) { Viewer.pop = null; renderVTools(); } } });
 window.addEventListener('resize', () => afterResize());
 

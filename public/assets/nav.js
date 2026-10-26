@@ -4,7 +4,7 @@
 (function () {
   const me = document.currentScript, page = me && me.dataset.page;
   const LINKS = [
-    ['home', '/', 'Home'],
+    ['home', '/app/', 'Home'],
     ['migrate', '/modules/migrate.html', 'CDE Sync'],
     ['validate', '/modules/validate.html', 'Validate'],
     ['book-out', '/modules/book-out.html', 'Book out'],
@@ -35,9 +35,9 @@
     .dot{width:8px;height:8px;border-radius:50%;background:${demo ? '#f0c25a' : signed ? '#5fd39b' : '#e38b7a'}}
   </style>
   <nav aria-label="CDE Toolkit">
-    <a class="brand" href="/">CDE Toolkit</a>
+    <a class="brand" href="/app/">CDE Toolkit</a>
     <div class="links">${LINKS.slice(1).map(([id, href, label]) =>
       `<a class="l" href="${href}"${id === page ? ' aria-current="page"' : ''}>${label}</a>`).join('')}</div>
-    <a class="st" href="/" title="${demo ? 'Demo mode: sample data. Exit on the home page.' : 'Autodesk connection'}"><span class="dot"></span>${demo ? 'Demo mode' : signed ? 'Autodesk connected' : 'Not signed in'}</a>
+    <a class="st" href="/app/" title="${demo ? 'Demo mode: sample data. Exit on the home page.' : 'Autodesk connection'}"><span class="dot"></span>${demo ? 'Demo mode' : signed ? 'Autodesk connected' : 'Not signed in'}</a>
   </nav>`;
 })();

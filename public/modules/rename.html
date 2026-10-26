@@ -38,7 +38,7 @@ pre{margin:0;font-family:var(--mono);font-size:13px;white-space:pre-wrap;color:v
 
   <section class="panel" id="gate" hidden>
     <p class="msg bad">You're not signed in to Autodesk.</p>
-    <p><a href="/">Go to the home page to sign in</a>, then come back here. Or <a href="/modules/rename.html?demo=1">try it in demo mode</a> with sample data.</p>
+    <p><a href="/app/">Go to the app home page to sign in</a>, then come back here. Or <a href="/modules/rename.html?demo=1">try it in demo mode</a> with sample data.</p>
   </section>
 
   <section class="panel" id="pick" hidden>
@@ -214,7 +214,7 @@ $('#go').onclick = async () => {
   } catch (e) { $('#log').textContent = 'Rename failed: ' + e.message; $('#go').disabled = false; }
 };
 
-$('#exitDemo').onclick = () => { CDETK.setDemo(false); location.href = '/'; };
+$('#exitDemo').onclick = () => { CDETK.setDemo(false); location.href = '/app/'; };
 (async () => {
   $('#demoNote').hidden = !DEMO;
   if (!CDETK.signedIn() && !DEMO) { $('#gate').hidden = false; return; }

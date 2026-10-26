@@ -24,13 +24,13 @@ local server only serves the pages.
    cd C:\cde-toolkit
    npm start
    ```
-4. Open <http://localhost:3000>. Stop the server with `Ctrl+C`.
+4. Open <http://localhost:3000> for the product website, or <http://localhost:3000/app/> for the tools. Stop the server with `Ctrl+C`.
 
 No `npm install` is needed: the server has no dependencies.
 
 ## Try it without Autodesk (demo mode)
 
-On the home page click **Try demo mode**. Every module then runs on built-in sample data (a
+On the app home page (`/app/`) click **Try demo mode**, or use the **Try the demo** button on the website. Every module then runs on built-in sample data (a
 sample ACC hub, projects, Revit models, a model set, a file list and review data), nothing is
 sent to Autodesk, and nothing in ACC is changed. Use it to see how each tool works, take
 screenshots or show it to someone. Demo mode lasts for the browser tab; **Exit demo mode**
@@ -41,11 +41,11 @@ also turns it on.
 
 1. At <https://aps.autodesk.com> > **My Apps**, create an app of type
    **Desktop, Mobile, Single-Page App** (a public app that uses PKCE, with no client secret).
-2. Callback URL: `http://localhost:3000/` (the home page shows the exact value with a Copy button).
+2. Callback URL: `http://localhost:3000/` (the app home page at `/app/` shows the exact value with a Copy button). Autodesk returns to the site root, which forwards the sign-in to the app.
 3. Enable the **Data Management**, **Model Derivative**, **Viewer** and **Autodesk Construction Cloud / BIM 360** APIs.
 4. Ask your ACC account admin to add the Client ID under
    **Account Admin > Custom Integrations**.
-5. Paste the Client ID on the CDE Toolkit home page and click **Sign in with Autodesk**.
+5. Open `/app/`, paste the Client ID and click **Sign in with Autodesk**.
 
 Autodesk renames portal menus from time to time, so the labels above may differ slightly.
 
@@ -70,7 +70,9 @@ updates its dashboard.
 5. At <https://aps.autodesk.com>, create a **production** APS app
    (Desktop, Mobile, Single-Page App) with callback URL `https://cde-toolkit.pages.dev/`
    (your exact address, with the trailing `/`). Enable the same APIs as above.
-6. In GitHub, edit `public/config.js` and paste that app's Client ID into `clientId`.
+6. In GitHub, edit `public/config.js` and paste that app's Client ID into `clientId`. Set
+   `contactEmail` to a business address you are happy to publish; it shows a **Request a pilot**
+   button on the website (leave it empty to hide the button).
    Commit the change: Cloudflare redeploys automatically in about a minute. The Client ID is
    not a secret (sign-in uses PKCE), so it is safe in this file.
 7. Each company that uses it: their ACC account admin adds your production Client ID under
@@ -95,7 +97,10 @@ project's **Custom domains** (the only cost is the domain registration).
 
 ```
 server.js               local web server (no dependencies)
-public/index.html       home page, Autodesk sign-in and callback
+public/index.html       product website (landing page); forwards the Autodesk sign-in return to /app/
+public/app/index.html   app home: Autodesk sign-in, demo mode and the tool list
+public/terms.html       draft Terms of Use      public/privacy.html   draft Privacy page
+public/favicon.svg, robots.txt
 public/config.js        built-in APS Client ID for a hosted deployment (optional)
 public/_headers         security headers used by Cloudflare Pages
 public/assets/auth.js   shared Autodesk sign-in (OAuth 2 with PKCE)
