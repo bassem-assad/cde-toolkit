@@ -70,9 +70,25 @@ input[readonly]{opacity:.85;cursor:not-allowed}
   <div class="logo"><div class="mark">F</div><div><h1>File Book Out</h1><small>Find and book out project files</small></div></div>
   <select id="hub" class="hide" aria-label="Hub"></select>
   <select id="proj" class="hide" aria-label="Project"></select>
+  <button id="cfgBtn" type="button">Settings</button>
   <button id="out" class="hide">Sign out</button>
 </header>
 <main>
+  <div id="cfg" class="card hide">
+    <h2 style="margin-top:0">Settings</h2>
+    <p class="mut small">Match these to your project's ACC conventions. Attribute names are matched ignoring case, spaces and punctuation, so "Booking Status" also finds "001-BOOKING_STATUS". Saved in this browser.</p>
+    <div class="row">
+      <label>Location code attribute<input type="text" id="cfgLoc"></label>
+      <label>Booking status attribute<input type="text" id="cfgStatus"></label>
+      <label>Status value(s) meaning "booked out" <span class="mut">(comma-separated)</span><input type="text" id="cfgBooked"></label>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label>Preferred review template name contains<input type="text" id="cfgTpl"></label>
+      <label>Review name starts with<input type="text" id="cfgPrefix"></label>
+    </div>
+    <div class="row2" style="margin-top:14px"><button id="cfgSave" type="button">Save</button><button class="ghost" id="cfgReset" type="button">Reset to defaults</button><button class="ghost" id="cfgClose" type="button">Close</button></div>
+    <p id="cfgMsg" class="mut small" style="margin:10px 0 0"></p>
+  </div>
   <div id="gate" class="card hero">
     <h2>Welcome to File Book Out</h2>
     <p class="mut">Sign in with your Autodesk account, or explore with sample data.</p>
@@ -122,6 +138,13 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const ls={get:k=>{try{return localStorage[k]||''}catch{return ''}},set:(k,v)=>{try{localStorage[k]=v}catch{}}};
 const ss={get:k=>{try{return sessionStorage[k]||''}catch{return ''}},set:(k,v)=>{try{sessionStorage[k]=v}catch{}}};
 const redirect=location.origin+location.pathname;
+/* Names that differ between companies. Saved in this browser; the defaults match the original behaviour. */
+const FBO_DEFAULTS={locAttr:'Location Code',statusAttr:'Booking Status',booked:'Booked out',template:'Book out',prefix:'Book_Out_Request_'};
+const CFG={...FBO_DEFAULTS};
+try{const c=JSON.parse(ls.get('fbo_cfg')||'{}');Object.keys(FBO_DEFAULTS).forEach(k=>{if(typeof c[k]==='string'&&c[k].trim()!=='')CFG[k]=c[k]})}catch{}
+const nz=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const findAttr=(defs,name)=>{const n=nz(name);if(!n)return null;return defs.find(a=>nz(a.name)===n)||defs.find(a=>nz(a.name).includes(n))||null};
+const isBooked=v=>{const x=nz(v);return !!x&&CFG.booked.split(',').map(nz).filter(Boolean).includes(x)};
 const S={demo:false,tab:'find',groups:[],sel:new Set(),basket:new Map(),proj:null,defs:[]};
 const KIND=e=>e==='pdf'?'pdf':['dwg','dxf','dgn'].includes(e)?'cad':['rvt','ifc','nwd','nwc','nwf','skp','fbx','obj','3dm','rfa'].includes(e)?'d3':'doc';
 const LBL={pdf:'PDF',cad:'CAD',d3:'3D',doc:'Doc'};
@@ -196,7 +219,7 @@ async function loadAttrs(){
 function setAttrs(d){
   S.defs=d.slice().sort((a,b)=>a.name.localeCompare(b.name));
   $('#filters').innerHTML='';
-  const loc=S.defs.find(a=>/location/i.test(a.name))||S.defs[0];
+  const loc=findAttr(S.defs,CFG.locAttr)||S.defs.find(a=>/location/i.test(a.name))||S.defs[0];
   if(loc)addFilter(loc.id,'');
   $('#atn').textContent=S.defs.length?S.defs.length+' attributes available.':'No attributes found.';
 }
@@ -303,26 +326,26 @@ $('#add').onclick=()=>{
 };
 
 /* book out */
-/* review name: Book_Out_Request_<Location Code value> */
-const locDef=()=>S.defs.find(a=>/location[\s_-]*code/i.test(a.name));
+/* review name: <prefix><location code value> */
+const locDef=()=>findAttr(S.defs,CFG.locAttr);
 function reviewName(fs){
   if(!fs.length)return {name:'',err:''};
-  if(!S.demo&&!locDef())return {name:'',err:'The attribute "Location Code" was not found in this project, so the review name cannot be set.'};
-  if(fs.some(f=>!f.bs||f.bs==='checking'))return {name:'',err:'Reading Location Codes…'};
+  if(!S.demo&&!locDef())return {name:'',err:'The attribute "'+CFG.locAttr+'" was not found in this project, so the review name cannot be set. Check the attribute name in Settings.'};
+  if(fs.some(f=>!f.bs||f.bs==='checking'))return {name:'',err:'Reading '+CFG.locAttr+' values…'};
   const miss=fs.filter(f=>!f.lc);
-  if(miss.length)return {name:'',err:'No Location Code value on: '+miss.map(f=>f.name).join(', ')+'.'};
+  if(miss.length)return {name:'',err:'No '+CFG.locAttr+' value on: '+miss.map(f=>f.name).join(', ')+'.'};
   const codes=[...new Set(fs.map(f=>f.lc))];
-  if(codes.length>1)return {name:'',err:'The files have different Location Codes ('+codes.join(', ')+'). A review can only be for one Location Code, so book them out separately.'};
-  return {name:'Book_Out_Request_'+codes[0],err:''};
+  if(codes.length>1)return {name:'',err:'The files have different values for '+CFG.locAttr+' ('+codes.join(', ')+'). A review can only be for one value, so book them out separately.'};
+  return {name:CFG.prefix+codes[0],err:''};
 }
 function updateName(){
   const fs=[...S.basket.values()].flatMap(g=>g.files).filter(f=>f.on&&f.bs!=='booked');
   const r=reviewName(fs);
-  $('#rname').value=r.name||'Book_Out_Request_';
+  $('#rname').value=r.name||CFG.prefix;
   $('#rnote').textContent=r.err;
 }
-/* booking status (attribute 001-BOOKING_STATUS) */
-const bookDef=()=>S.defs.find(a=>/booking[\s_-]*status/i.test(a.name));
+/* booking status (the attribute named in Settings) */
+const bookDef=()=>findAttr(S.defs,CFG.statusAttr);
 async function checkBooking(files){
   if(S.demo){files.forEach(f=>{f.bs=/-GA-001/i.test(f.name)?'booked':'available';f.bsv=f.bs==='booked'?'Booked out':'Available';f.lc=f.name.split('-')[0]});return 'ok'}
   const def=bookDef();
@@ -337,7 +360,7 @@ async function checkBooking(files){
       const f=by[x.urn]||chunk[k];if(!f)return;
       const a=(x.customAttributes||[]).find(c=>String(c.id)===String(def.id)),v=String(a?.value??'').trim();
       const l=ld&&(x.customAttributes||[]).find(c=>String(c.id)===String(ld.id));f.lc=String(l?.value??'').trim();
-      f.bsv=v;f.bs=v.toLowerCase()==='booked out'?'booked':v?'available':'blank';
+      f.bsv=v;f.bs=isBooked(v)?'booked':v?'available':'blank';
     });
   }
   return 'ok';
@@ -385,7 +408,7 @@ async function loadWf(){
     list=list.map(w=>({id:w.id||w.workflowId,name:w.name||w.title||w.id||'Unnamed template'}));
   }
   list=list.slice().sort((a,b)=>a.name.localeCompare(b.name));
-  const prev=$('#wf').value,bo=list.find(w=>/book\s*-?\s*out/i.test(w.name));
+  const prev=$('#wf').value,bo=nz(CFG.template)?list.find(w=>nz(w.name).includes(nz(CFG.template))):null;
   $('#wf').innerHTML=list.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('');
   $('#wf').value=list.some(w=>w.id===prev)?prev:(bo||list[0]||{}).id;
   $('#wfn').textContent='('+list.length+' in this project)';
@@ -398,7 +421,7 @@ $('#mk').onclick=async()=>{
   try{
     /* re-check now so the status is current, then reject files already booked out */
     const st=await checkBooking(files);
-    if(st==='noattr')throw new Error('The attribute 001-BOOKING_STATUS was not found in this project, so the booking status could not be checked. Nothing was booked out.');
+    if(st==='noattr')throw new Error('The attribute "'+CFG.statusAttr+'" was not found in this project, so the booking status could not be checked. Check the attribute name in Settings. Nothing was booked out.');
     const rejected=new Set(files.filter(f=>f.bs==='booked'));
     const send=files.filter(f=>!rejected.has(f));
     const warn=rejected.size?`<div class="done" style="border-color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent)"><b>Warning: already booked out, not included in this review (${rejected.size} file${rejected.size>1?'s':''})</b><br><span class="mut">${[...rejected].map(f=>esc(f.name)).join('<br>')}</span></div>`:'';
@@ -433,7 +456,7 @@ $('#demo').onclick=()=>{
   S.demo=true;showApp();$('#out').textContent='Exit demo';
   $('#hub').innerHTML='<option>Demo hub</option>';$('#proj').innerHTML='<option>Demo project</option>';
   setFolder({id:'Project Files',name:'Project Files',path:'Project Files'});
-  setAttrs([{id:'loc',name:'Location',arrayValues:[{value:'Clapham Junction'},{value:'Croydon'},{value:'Victoria'}]},{id:'a',name:'Asset type',arrayValues:[{value:'Bridge'},{value:'Signalling'},{value:'Retaining wall'},{value:'Station'}]},{id:'disc',name:'Discipline',arrayValues:[{value:'Structural'},{value:'Signalling'},{value:'Architecture'}]},{id:'rev',name:'Revision'},{id:'bs',name:'001-BOOKING_STATUS',arrayValues:[{value:'Booked out'},{value:'Available'}]},{id:'stat',name:'Document status',arrayValues:[{value:'Approved'},{value:'For review'}]}]);
+  setAttrs([{id:'loc',name:'Location',arrayValues:[{value:'Clapham Junction'},{value:'Croydon'},{value:'Victoria'}]},{id:'a',name:'Asset type',arrayValues:[{value:'Bridge'},{value:'Signalling'},{value:'Retaining wall'},{value:'Station'}]},{id:'disc',name:'Discipline',arrayValues:[{value:'Structural'},{value:'Signalling'},{value:'Architecture'}]},{id:'rev',name:'Revision'},{id:'bs',name:'Booking Status',arrayValues:[{value:'Booked out'},{value:'Available'}]},{id:'stat',name:'Document status',arrayValues:[{value:'Approved'},{value:'For review'}]}]);
   document.querySelector('.fv').value='Clapham';renderBasket();loadWf();
 };
 $('#out').onclick=()=>{CDETK.signOut();CDETK.setDemo(false);location=redirect};
@@ -449,6 +472,17 @@ $('#filters').onchange=e=>{if(e.target.classList.contains('fa'))suggest(e.target
 $('#filters').onkeydown=e=>{if(e.key==='Enter')find()};
 $('#go').onclick=find;
 $('#q').onkeydown=e=>{if(e.key==='Enter')find()};
+/* settings panel */
+const fillCfg=()=>{$('#cfgLoc').value=CFG.locAttr;$('#cfgStatus').value=CFG.statusAttr;$('#cfgBooked').value=CFG.booked;$('#cfgTpl').value=CFG.template;$('#cfgPrefix').value=CFG.prefix};
+function afterCfg(msg){$('#cfgMsg').textContent=msg;S.basket.forEach(g=>g.files.forEach(f=>{delete f.bs;delete f.lc}));renderBasket();if(S.proj&&!S.demo)loadWf()}
+$('#cfgBtn').onclick=()=>{fillCfg();$('#cfgMsg').textContent='';$('#cfg').classList.toggle('hide')};
+$('#cfgClose').onclick=()=>$('#cfg').classList.add('hide');
+$('#cfgSave').onclick=()=>{
+  const v={locAttr:$('#cfgLoc').value.trim(),statusAttr:$('#cfgStatus').value.trim(),booked:$('#cfgBooked').value.trim(),template:$('#cfgTpl').value.trim(),prefix:$('#cfgPrefix').value};
+  Object.keys(FBO_DEFAULTS).forEach(k=>{CFG[k]=v[k]!==''?v[k]:FBO_DEFAULTS[k]});
+  ls.set('fbo_cfg',JSON.stringify(CFG));fillCfg();afterCfg('Saved. Files in the basket are being re-checked with these settings.');
+};
+$('#cfgReset').onclick=()=>{Object.assign(CFG,FBO_DEFAULTS);ls.set('fbo_cfg','');fillCfg();afterCfg('Reset to the defaults.')};
 renderBasket();
 if(CDETK.isDemo())$('#demo').click();else init();
 </script>

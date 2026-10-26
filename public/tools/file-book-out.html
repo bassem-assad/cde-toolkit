@@ -51,14 +51,14 @@
   <div class="wrap">
     <h2>What it does</h2>
     
-    <ul class="tick"><li>Searches a folder and all its subfolders by attribute values and by file name.</li><li>Groups files by drawing, so the PDF, DWG and model of one drawing are handled together.</li><li>Shows each file's booking status and leaves out files that are already booked out, listing them for you.</li><li>Names the review automatically from the files' location code (one location code per review).</li><li>Lets you choose the review template, then creates the ACC review with the selected file versions.</li></ul>
+    <ul class="tick"><li>Searches a folder and all its subfolders by attribute values and by file name.</li><li>Groups files by drawing, so the PDF, DWG and model of one drawing are handled together.</li><li>Shows each file's booking status and leaves out files that are already booked out, listing them for you.</li><li>Names the review automatically from a prefix you set plus the files' location code (one location code per review).</li><li>Lets you choose the review template, then creates the ACC review with the selected file versions.</li></ul>
     <div class="scenario"><span class="eyebrow">Example scenario</span><p>An engineer needs to update three drawings for one location. They search by location, tick the sets, add them to the basket and start the review from the book-out template. Two files already booked out by a colleague are listed and left out.</p></div>
   </div>
 </section>
 
 <section class="tsec">
   <div class="wrap cols">
-    <div><h2>What you need</h2><ul class="tick"><li>An Autodesk sign-in and permission to start reviews.</li><li>Reviews with a workflow template. The tool prefers a template with "book out" in its name.</li><li>File attributes named Location Code and Booking Status. The tool looks for these by name.</li></ul>
+    <div><h2>What you need</h2><ul class="tick"><li>An Autodesk sign-in and permission to start reviews.</li><li>Reviews with a workflow template. You set the words the tool looks for in the template's name (the default is "book out").</li><li>A location code attribute and a booking status attribute on your files. You set their names, the status value that means "booked out" and the review name prefix in Settings.</li></ul>
       <p class="sub" style="margin-top:14px">See the <a href="/#requirements">requirements</a> for hub plans, and the <a href="/admin-guide.html">admin guide</a> for the one-off setup.</p></div>
     <div><h2>Good to know</h2><ul class="dash"><li>All files in one review must share a location code, so book out different locations separately.</li><li>The tool reads the booking status and starts the review. It doesn't change the status itself; your ACC workflow does that.</li></ul></div>
   </div>
