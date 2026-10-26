@@ -81,6 +81,27 @@ updates its dashboard.
 Every push to `main` now updates the live site. Optional: add your own domain under the Pages
 project's **Custom domains** (the only cost is the domain registration).
 
+### Turn on the Contact form (free, 5 minutes)
+
+The website's Contact page needs somewhere to send messages. Web3Forms does this without
+publishing your email address (free plan: 250 messages a month at the time of writing; check
+<https://web3forms.com> for current limits).
+
+1. Go to <https://web3forms.com>, enter the email address that should receive messages, and
+   get your **Access Key** (it is emailed to you).
+2. In GitHub, edit `public/config.js` and set:
+   ```js
+   contactEndpoint: 'https://api.web3forms.com/submit',
+   contactAccessKey: 'paste-your-access-key-here',
+   ```
+   The access key is safe to publish. Optionally set `contactEmail` (shown as an alternative
+   on the Contact page) and `linkedinUrl` (adds a LinkedIn button on the About page).
+3. Commit. The site updates in about a minute. Send yourself a test message.
+4. Complete the contact-form paragraph on `public/privacy.html`.
+
+Until step 2 is done the form shows "This form isn't connected yet" and cannot be submitted.
+Another form service works too: set `contactEndpoint` to its URL and leave the key empty.
+
 `public/_headers` adds security headers on Cloudflare. `public/terms.html` and
 `public/privacy.html` are draft templates: have them reviewed before charging anyone.
 
@@ -99,6 +120,8 @@ project's **Custom domains** (the only cost is the domain registration).
 server.js               local web server (no dependencies)
 public/index.html       product website (landing page); forwards the Autodesk sign-in return to /app/
 public/app/index.html   app home: Autodesk sign-in, demo mode and the tool list
+public/about.html, contact.html   About page and Contact page (form)
+public/assets/site.css  styles shared by the website pages
 public/terms.html       draft Terms of Use      public/privacy.html   draft Privacy page
 public/favicon.svg, robots.txt
 public/config.js        built-in APS Client ID for a hosted deployment (optional)

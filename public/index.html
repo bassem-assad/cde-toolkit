@@ -16,65 +16,21 @@
 /* Autodesk sends the browser back to this address after sign-in. The app finishes the sign-in. */
 if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + location.search);
 </script>
+<link rel="stylesheet" href="/assets/site.css">
 <style>
-/* Layout: dark teal masthead and hero with a file-name anatomy, then plain ruled sections on a pale ground */
-:root{
-  --bg:#f2f4f3;--panel:#ffffff;--ink:#16211f;--mut:#566662;--line:#d7dedb;
-  --deep:#0c2725;--deep2:#12403a;--accent:#0d7a6c;--glow:#3fc2ae;--ondeep:#e5ecea;--ondeep2:#9fb5b0;
-  --ok:#1b7a3d;--okbg:#e4f4ea;--bad:#b3261e;--badbg:#fbe9e7;--warn:#7a5a0d;--warnbg:#fbf1d6;
-  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f1514;--panel:#172120;--ink:#e5ecea;--mut:#9aaba6;--line:#2a3735;
-  --deep:#0a1f1d;--deep2:#103833;--accent:#3fc2ae;--glow:#3fc2ae;
-  --ok:#6fd195;--okbg:#18301f;--bad:#ff8a80;--badbg:#3a1d1b;--warn:#e2bb5c;--warnbg:#33290f;color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0f1514;--panel:#172120;--ink:#e5ecea;--mut:#9aaba6;--line:#2a3735;
-  --deep:#0a1f1d;--deep2:#103833;--accent:#3fc2ae;--glow:#3fc2ae;
-  --ok:#6fd195;--okbg:#18301f;--bad:#ff8a80;--badbg:#3a1d1b;--warn:#e2bb5c;--warnbg:#33290f;color-scheme:dark}
-*{box-sizing:border-box}
-[hidden]{display:none!important}
-html{scroll-behavior:smooth}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans)}
-a{color:var(--accent)}
-:focus-visible{outline:2px solid var(--glow);outline-offset:3px}
-.wrap{max-width:1080px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
-h1,h2,h3,p,ul,ol,dl,dd{margin:0}
-h1{font-size:clamp(32px,5.2vw,52px);line-height:1.08;letter-spacing:-.025em;font-weight:700;text-wrap:balance}
-h2{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:-.015em;font-weight:700;text-wrap:balance}
-.eyebrow{font:500 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--mut)}
-.btn{display:inline-flex;align-items:center;gap:8px;font:600 15px/1 var(--sans);text-decoration:none;padding:13px 20px;border-radius:6px;border:1px solid transparent;cursor:pointer}
-.btn.pri{background:var(--glow);color:#0a1f1d}
-.btn.pri:hover{filter:brightness(1.07)}
-.btn.sec{border-color:rgba(229,236,234,.4);color:var(--ondeep);background:transparent}
-.btn.sec:hover{background:rgba(255,255,255,.08)}
-.btn.line{border-color:var(--line);color:var(--ink);background:var(--panel)}
-
-/* masthead + hero */
-.deep{background:var(--deep);color:var(--ondeep)}
-header .wrap{display:flex;align-items:center;gap:22px;padding-block:14px;flex-wrap:wrap}
-.logo{font-weight:700;letter-spacing:-.01em;color:#fff;text-decoration:none;font-size:18px}
-.logo span{color:var(--glow)}
-header nav{display:flex;gap:4px 18px;flex:1;flex-wrap:wrap}
-header nav a{color:var(--ondeep2);text-decoration:none;font-size:14px;font-weight:500;padding:4px 0}
-header nav a:hover{color:#fff}
+/* Landing page only: hero with a file-name anatomy, tool list, steps, requirements */
 .hero{border-bottom:3px solid var(--glow)}
 .hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px 56px;padding-block:44px 56px;align-items:center}
 .hero p.lead{margin-top:18px;font-size:18px;color:var(--ondeep2);max-width:52ch}
 .hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
 .hero .note{margin-top:16px;font-size:13px;color:var(--ondeep2)}
 @media(max-width:860px){.hero .wrap{grid-template-columns:1fr}}
-
-/* file-name anatomy */
 .anat{background:var(--deep2);border:1px solid rgba(229,236,234,.16);border-radius:10px;padding:20px 20px 18px;min-width:0}
 .anat .eyebrow{color:var(--ondeep2)}
 .fname{display:flex;flex-wrap:wrap;gap:6px 0;margin-top:14px;font:500 15px/1.2 var(--mono);color:#fff}
 .seg{display:flex;flex-direction:column;align-items:center;gap:6px}
 .seg b{font-weight:500;padding:5px 7px;border-bottom:2px solid var(--glow)}
 .seg i{font:400 10px/1 var(--sans);font-style:normal;color:var(--ondeep2);text-transform:uppercase;letter-spacing:.06em}
-.seg.bad b{border-color:#ff8a80;color:#ffb4ac}
 .sep{padding:5px 1px;color:var(--ondeep2)}
 .ext{padding:5px 0 5px 2px;color:var(--ondeep2)}
 .checks{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:9px;font-size:14px}
@@ -83,11 +39,6 @@ header nav a:hover{color:#fff}
 .mark.ok{background:#1d5a3a;color:#9ff0c0}.mark.no{background:#5a2420;color:#ffb4ac}.mark.mv{background:#4a4012;color:#f0d77a}
 .checks code{font:400 13px var(--mono);color:#fff;overflow-wrap:anywhere}
 .checks small{display:block;color:var(--ondeep2);font-size:12.5px}
-
-/* sections */
-section{padding-block:56px;border-bottom:1px solid var(--line)}
-section>.wrap>.eyebrow{display:block;margin-bottom:10px}
-.sub{color:var(--mut);margin-top:10px;max-width:62ch}
 .tools{margin-top:28px;border-top:1px solid var(--line)}
 .tool{display:grid;grid-template-columns:200px minmax(0,1fr) auto;gap:6px 28px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
 .tool h3{font-size:18px;font-weight:600}
@@ -109,14 +60,6 @@ section>.wrap>.eyebrow{display:block;margin-bottom:10px}
 .two li::marker{color:var(--accent)}
 .callout{margin-top:26px;border:1px solid var(--line);border-left:4px solid var(--warn);background:var(--warnbg);border-radius:6px;padding:14px 16px;max-width:76ch}
 .callout b{display:block;margin-bottom:4px}
-.band{background:var(--deep);color:var(--ondeep);border-bottom:0}
-.band .wrap{display:flex;gap:24px 40px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.band p{color:var(--ondeep2);margin-top:8px;max-width:56ch}
-.band .cta{display:flex;gap:12px;flex-wrap:wrap}
-footer{padding-block:30px 40px;color:var(--mut);font-size:13px}
-footer .wrap{display:grid;gap:10px}
-footer nav{display:flex;gap:18px;flex-wrap:wrap}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
@@ -124,7 +67,7 @@ footer nav{display:flex;gap:18px;flex-wrap:wrap}
   <div class="wrap">
     <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
     <nav aria-label="Main">
-      <a href="#tools">Tools</a><a href="#how">How it works</a><a href="#requirements">Requirements</a><a href="#security">Security</a><a href="#pilot">Pilot</a>
+      <a href="/#tools">Tools</a><a href="/#how">How it works</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html">Contact</a>
     </nav>
     <a class="btn pri" href="/app/">Open the app</a>
   </div>
@@ -240,30 +183,22 @@ footer nav{display:flex;gap:18px;flex-wrap:wrap}
   <div class="wrap">
     <div>
       <h2 style="color:#fff">Want to pilot it?</h2>
-      <p id="pilotText">Pricing is being finalised. If you'd like to try CDE Toolkit on a non-critical project, get in touch. Meanwhile the demo shows every tool on sample data.</p>
+      <p>Pricing is being finalised. If you'd like to try CDE Toolkit on a non-critical project, send a message. Meanwhile the demo shows every tool on sample data.</p>
     </div>
     <div class="cta">
-      <a class="btn pri" href="/app/?demo=1">Try the demo</a>
-      <a class="btn sec" id="mailBtn" href="#" hidden>Request a pilot</a>
+      <a class="btn pri" href="/contact.html">Request a pilot</a>
+      <a class="btn sec" href="/app/?demo=1">Try the demo</a>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
     <p>© 2026 Bassem Assad. All rights reserved.</p>
     <p>Autodesk, Autodesk Construction Cloud, Forma, Revit and Navisworks are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
   </div>
 </footer>
 
-<script src="/config.js"></script>
-<script>
-(function () {
-  var email = String((window.CDETK_CONFIG && window.CDETK_CONFIG.contactEmail) || '').trim();
-  var btn = document.getElementById('mailBtn');
-  if (email) { btn.href = 'mailto:' + email + '?subject=' + encodeURIComponent('CDE Toolkit pilot'); btn.hidden = false; }
-})();
-</script>
 </body>
 </html>

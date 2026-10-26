@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Contact | CDE Toolkit</title>
+<meta name="description" content="Ask a question about CDE Toolkit or request a pilot.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Contact page: short brief on the left, the form on the right */
+.page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px 64px;padding-block:52px 64px;align-items:start}
+@media(max-width:860px){.page{grid-template-columns:1fr}}
+.page h1{margin-top:12px}
+.brief{display:grid;gap:16px;margin-top:22px;max-width:46ch}
+.brief p{color:var(--mut)}
+.brief h2{font-size:16px;margin-top:6px}
+.brief ul{margin:0;padding-left:20px;display:grid;gap:7px}
+.brief li::marker{color:var(--accent)}
+.warn{border-left:4px solid var(--warn);background:var(--warnbg);border-radius:6px;padding:12px 14px;font-size:14px}
+form{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px;display:grid;gap:16px;min-width:0}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}}
+label{display:grid;gap:6px;font-size:14px;font-weight:600;min-width:0}
+label small{font-weight:400;color:var(--mut)}
+input,select,textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;width:100%;min-width:0}
+textarea{min-height:150px;resize:vertical}
+.fine{font-size:13px;color:var(--mut)}
+.trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+#status{font-size:15px;min-height:1.4em}
+#status.ok{color:var(--ok)}#status.bad{color:var(--bad)}
+.notready{font-size:14px;border:1px dashed var(--line);border-radius:6px;padding:10px 12px;color:var(--mut)}
+.sent{display:grid;gap:10px;padding:8px 0}
+.sent h2{font-size:22px}
+</style>
+</head>
+<body>
+<header class="deep">
+  <div class="wrap">
+    <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
+    <nav aria-label="Main">
+      <a href="/#tools">Tools</a><a href="/#how">How it works</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html" aria-current="page">Contact</a>
+    </nav>
+    <a class="btn pri" href="/app/">Open the app</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap page">
+    <div>
+      <span class="eyebrow">Contact</span>
+      <h1>Send a question or a pilot request.</h1>
+      <div class="brief">
+        <p>Messages come straight to me. It helps if you say:</p>
+        <ul>
+          <li>which Forma plan your hub is on (Data Management, Build or Design Collaboration)</li>
+          <li>which tools you're interested in</li>
+          <li>roughly how many projects and people</li>
+        </ul>
+        <p class="warn"><b>Please don't send</b> passwords, access tokens or project files through this form.</p>
+        <p id="altEmail" hidden>You can also email <a id="altEmailLink" href="#"></a>.</p>
+      </div>
+    </div>
+
+    <div>
+      <form id="form" novalidate>
+        <div class="row2">
+          <label>Your name<input id="name" name="name" type="text" autocomplete="name" required maxlength="120"></label>
+          <label>Email<input id="email" name="email" type="email" autocomplete="email" required maxlength="200"></label>
+        </div>
+        <div class="row2">
+          <label>Organisation <small>optional</small><input id="org" name="organisation" type="text" autocomplete="organization" maxlength="160"></label>
+          <label>Topic
+            <select id="topic" name="topic">
+              <option>Pilot request</option>
+              <option>Question about a tool</option>
+              <option>Requirements and ACC setup</option>
+              <option>Something else</option>
+            </select>
+          </label>
+        </div>
+        <label>Message<textarea id="message" name="message" required minlength="10" maxlength="3000"></textarea></label>
+        <div class="trap" aria-hidden="true"><label>Leave this empty<input id="botcheck" name="botcheck" type="checkbox" tabindex="-1" autocomplete="off"></label></div>
+        <p class="fine">By sending this you agree that I may use your details to reply to you. See <a href="/privacy.html">Privacy</a>.</p>
+        <p class="notready" id="notReady" hidden>This form isn't connected yet. The site owner needs to finish the setup in the README (contact form).</p>
+        <div><button class="btn pri" id="send" type="submit" style="background:var(--accent);color:#fff">Send message</button></div>
+        <p id="status" role="status" aria-live="polite"></p>
+      </form>
+      <div class="sent" id="sent" hidden tabindex="-1">
+        <h2>Thanks, your message has been sent.</h2>
+        <p class="fine">I'll reply to the email address you gave.</p>
+        <div><a class="btn line" href="/app/?demo=1">Try the demo meanwhile</a></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <p>© 2026 Bassem Assad. All rights reserved.</p>
+    <p>Autodesk, Autodesk Construction Cloud, Forma and Revit are registered trademarks or trademarks of Autodesk, Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by Autodesk.</p>
+  </div>
+</footer>
+
+<script src="/config.js"></script>
+<script>
+(function () {
+  var cfg = window.CDETK_CONFIG || {};
+  var endpoint = String(cfg.contactEndpoint || '').trim();
+  var email = String(cfg.contactEmail || '').trim();
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('form'), status = $('status'), t0 = Date.now();
+
+  if (email) { $('altEmail').hidden = false; $('altEmailLink').href = 'mailto:' + email; $('altEmailLink').textContent = email; }
+  if (!/^https:\/\//.test(endpoint)) { $('notReady').hidden = false; $('send').disabled = true; }
+
+  function say(msg, kind) { status.textContent = msg; status.className = kind || ''; }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if ($('botcheck').checked) return;                               // a bot filled the hidden box
+    var name = $('name').value.trim(), from = $('email').value.trim(), message = $('message').value.trim();
+    if (!name) { say('Please enter your name.', 'bad'); return $('name').focus(); }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(from)) { say('Please enter a valid email address so I can reply.', 'bad'); return $('email').focus(); }
+    if (message.length < 10) { say('Please write a little more in the message.', 'bad'); return $('message').focus(); }
+    if (Date.now() - t0 < 2500) { say('One moment, then press Send again.', 'bad'); return; }   // too fast to be a person
+
+    var topic = $('topic').value;
+    var data = { name: name, email: from, organisation: $('org').value.trim(), topic: topic, message: message,
+                 subject: 'CDE Toolkit enquiry: ' + topic, from_name: 'CDE Toolkit website' };
+    if (cfg.contactAccessKey) data.access_key = cfg.contactAccessKey;
+
+    $('send').disabled = true; say('Sending…');
+    try {
+      var res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
+      var j = {}; try { j = await res.json(); } catch (_) { }
+      var ok = res.ok && j.success !== false && j.ok !== false;
+      if (!ok) throw new Error(j.message || ('The message service answered ' + res.status + '.'));
+      form.hidden = true; $('sent').hidden = false; $('sent').focus();
+    } catch (err) {
+      say('Sorry, that did not send. ' + (err && err.message ? err.message.replace(/[.!?]?$/, '.') + ' ' : '') + (email ? 'You can email ' + email + ' instead.' : 'Please try again in a few minutes.'), 'bad');
+      $('send').disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
