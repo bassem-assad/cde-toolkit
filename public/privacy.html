@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Privacy · CDE Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/app.css">
+<style>
+.doc{max-width:72ch;display:grid;gap:14px}
+.doc h2{font-size:17px;text-transform:none;letter-spacing:0;color:var(--ink);margin:12px 0 0}
+.doc p,.doc li{color:var(--ink)}
+.doc ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.draft{border:1px solid var(--bad);background:var(--badbg);color:var(--bad);border-radius:6px;padding:10px 14px;font-weight:600}
+</style>
+</head>
+<body>
+<script src="/assets/nav.js" data-page="privacy"></script>
+<main class="wrap"><article class="doc">
+  <p class="draft">DRAFT TEMPLATE. Have it reviewed against the Privacy Act 1988 (Cth) and the Australian Privacy Principles before relying on it. Replace every [bracketed] item, and update it whenever the app starts collecting anything new (for example a licence check or analytics).</p>
+  <h1>Privacy</h1>
+  <p>Last updated: [date]. Provided by [Bassem Assad / legal entity name], ABN [number]. Contact: [privacy email].</p>
+
+  <h2>The short version</h2>
+  <p>CDE Toolkit runs in your browser. Your ACC files, project data and Autodesk sign-in go directly between your browser and Autodesk (or your other source systems). We do not receive or store them.</p>
+
+  <h2>What stays in your browser</h2>
+  <ul>
+    <li><b>Autodesk sign-in token:</b> kept in your browser tab's session storage and cleared when you close the tab or sign out.</li>
+    <li><b>Preferences:</b> such as your APS Client ID, folder and attribute names, and layout choices, kept in your browser's local storage on your device.</li>
+  </ul>
+
+  <h2>What our hosting provider sees</h2>
+  <p>CDE Toolkit's pages are served by [Cloudflare, Inc.]. Like any website host, it processes technical data such as IP addresses and browser details to deliver and protect the site. See [Cloudflare's privacy policy].</p>
+
+  <h2>Third-party services</h2>
+  <p>When you use CDE Toolkit, your browser connects directly to: Autodesk (sign-in, ACC and Model Coordination), and where you choose to use them, Microsoft (SharePoint), your ProjectWise or InEight servers, map tile providers (OpenStreetMap, Esri, OpenTopoMap), Google Fonts and the cdnjs content network. Their own privacy policies apply.</p>
+
+  <h2>What we may collect in future</h2>
+  <p>[If you add a licence check, support tickets, analytics or billing, describe here exactly what is collected, why, where it is stored (including if outside Australia), how long it is kept, and who can access it.]</p>
+
+  <h2>Access, correction and complaints</h2>
+  <p>Contact [privacy email]. If you are not satisfied with our response, you can contact the Office of the Australian Information Commissioner (oaic.gov.au).</p>
+</article></main>
+<footer class="wrap">© 2026 Bassem Assad. All rights reserved. · <a href="/terms.html">Terms of Use</a></footer>
+</body>
+</html>

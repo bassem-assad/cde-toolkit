@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="/assets/app.css">
-<script src="/assets/auth.js"></script>
+<script src="/config.js"></script><script src="/assets/auth.js"></script>
 </head>
 <body>
 <script src="/assets/nav.js" data-page="home"></script>
@@ -21,11 +21,11 @@
   <section class="panel" aria-labelledby="conn">
     <h2 id="conn">Autodesk connection</h2>
     <div class="row">
-      <label>APS Client ID<input type="text" id="cid" autocomplete="off" placeholder="Paste your Autodesk Platform Services Client ID"></label>
+      <label id="cidRow">APS Client ID<input type="text" id="cid" autocomplete="off" placeholder="Paste your Autodesk Platform Services Client ID"></label>
       <button id="signin">Sign in with Autodesk</button>
       <button id="signout" class="alt" hidden>Sign out</button>
     </div>
-    <div class="copy"><span class="msg">Callback URL to register in your APS app:</span><code id="cb"></code><button class="alt" id="copycb" type="button">Copy</button></div>
+    <div class="copy" id="cbRow"><span class="msg">Callback URL to register in your APS app:</span><code id="cb"></code><button class="alt" id="copycb" type="button">Copy</button></div>
     <p id="status" class="msg"></p>
   </section>
 
@@ -82,7 +82,7 @@
     </div>
   </section>
 </main>
-<footer class="wrap">© 2026 Bassem Assad. All rights reserved.</footer>
+<footer class="wrap">© 2026 Bassem Assad. All rights reserved. · <a href="/terms.html">Terms of Use</a> · <a href="/privacy.html">Privacy</a></footer>
 <script>
 const $ = s => document.querySelector(s);
 function paint(msg, bad) {
@@ -92,6 +92,7 @@ function paint(msg, bad) {
   $('#status').textContent = msg || (on ? 'Signed in to Autodesk. Open a module below.' : 'Not signed in. Modules that read from ACC need you to sign in first.');
 }
 $('#cid').value = CDETK.clientId();
+if (CDETK.builtIn()) { $('#cidRow').hidden = true; $('#cbRow').hidden = true; }
 $('#cb').textContent = CDETK.redirect;
 $('#cid').addEventListener('change', e => CDETK.setClientId(e.target.value));
 $('#signin').onclick = async () => {

@@ -46,6 +46,33 @@ Register an app in Microsoft Entra ID with a **Single-page application** redirec
 `http://localhost:3000/modules/migrate.html` and delegated Microsoft Graph permissions
 `Files.Read.All` and `Sites.Read.All`. Enter its Client ID in CDE Sync > Settings.
 
+## Put it online for other people (Cloudflare Pages, free)
+
+Hosting gives everyone one web address, with nothing to install. The app is a static site, so
+the free Cloudflare Pages plan is enough. Menu names below may differ slightly as Cloudflare
+updates its dashboard.
+
+1. Create a free account at <https://dash.cloudflare.com/sign-up>.
+2. Go to **Workers & Pages > Create > Pages > Connect to Git**, sign in to GitHub and give
+   Cloudflare access to the `cde-toolkit` repository only.
+3. Build settings: **Framework preset** `None`, **Build command** empty,
+   **Build output directory** `public`. Click **Save and Deploy**.
+4. Note your address, e.g. `https://cde-toolkit.pages.dev`.
+5. At <https://aps.autodesk.com>, create a **production** APS app
+   (Desktop, Mobile, Single-Page App) with callback URL `https://cde-toolkit.pages.dev/`
+   (your exact address, with the trailing `/`). Enable the same APIs as above.
+6. In GitHub, edit `public/config.js` and paste that app's Client ID into `clientId`.
+   Commit the change: Cloudflare redeploys automatically in about a minute. The Client ID is
+   not a secret (sign-in uses PKCE), so it is safe in this file.
+7. Each company that uses it: their ACC account admin adds your production Client ID under
+   **Account Admin > Custom Integrations**.
+
+Every push to `main` now updates the live site. Optional: add your own domain under the Pages
+project's **Custom domains** (the only cost is the domain registration).
+
+`public/_headers` adds security headers on Cloudflare. `public/terms.html` and
+`public/privacy.html` are draft templates: have them reviewed before charging anyone.
+
 ## Notes
 
 - The Autodesk session is kept in the browser tab (`sessionStorage`). Opening the toolkit in a
@@ -60,6 +87,8 @@ Register an app in Microsoft Entra ID with a **Single-page application** redirec
 ```
 server.js               local web server (no dependencies)
 public/index.html       home page, Autodesk sign-in and callback
+public/config.js        built-in APS Client ID for a hosted deployment (optional)
+public/_headers         security headers used by Cloudflare Pages
 public/assets/auth.js   shared Autodesk sign-in (OAuth 2 with PKCE)
 public/assets/nav.js    shared top bar
 public/assets/app.css   shared styles (home and Rename)

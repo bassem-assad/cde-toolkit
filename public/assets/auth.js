@@ -19,8 +19,10 @@
 
   const raw = () => { try { return JSON.parse(ss.get(K.tok) || 'null'); } catch (e) { return null; } };
   const save = t => ss.set(K.tok, JSON.stringify(t));
-  const clientId = () => ls.get(K.cid) || '';
-  const setClientId = id => ls.set(K.cid, String(id || '').trim());
+  /* A Client ID built into config.js (hosted deployments) wins over one typed by the user. */
+  const builtIn = () => String((window.CDETK_CONFIG && window.CDETK_CONFIG.clientId) || '').trim();
+  const clientId = () => builtIn() || ls.get(K.cid) || '';
+  const setClientId = id => { if (!builtIn()) ls.set(K.cid, String(id || '').trim()); };
 
   async function tokenCall(params) {
     const r = await fetch(APS + '/authentication/v2/token', {
@@ -76,5 +78,5 @@
   const signedIn = () => !!raw();
   const signOut = () => ss.del(K.tok);
 
-  window.CDETK = { APS, SCOPES, redirect, raw, save, clientId, setClientId, login, handleCallback, accessToken, tokenSync, signedIn, signOut };
+  window.CDETK = { APS, SCOPES, redirect, raw, save, clientId, setClientId, builtIn, login, handleCallback, accessToken, tokenSync, signedIn, signOut };
 })();
