@@ -1,0 +1,455 @@
+<!doctype html><html><head><script src="/assets/auth.js"></script><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><script src="/assets/nav.js" data-page="book-out"></script>
+<title>File Book Out · CDE Toolkit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: header band, two-step tabs (Find files / Book out), card grid of drawings, sticky basket bar */
+:root{--bg:#f3f5fb;--card:#fff;--ink:#12204a;--mut:#5d6a8c;--line:#dde3f2;--blue:#1f6bff;--teal:#00a58e;--amber:#e08a00;--pink:#d6336c;--bad:#d64545;--ok:#0f9d6b;--focus:#8fb3ff}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1124;--card:#141c38;--ink:#e8ecfa;--mut:#9aa6c9;--line:#27315a;--amber:#fbb43a;--pink:#ff6b9a;--blue:#5b92ff;--teal:#2dd4bf;--bad:#ff7a7a;--ok:#34d399;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1124;--card:#141c38;--ink:#e8ecfa;--mut:#9aa6c9;--line:#27315a;--amber:#fbb43a;--pink:#ff6b9a;--blue:#5b92ff;--teal:#2dd4bf;--bad:#ff7a7a;--ok:#34d399;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+header{background:linear-gradient(120deg,#12204a,#1f3f9e);color:#fff;padding:14px max(20px,env(safe-area-inset-right,0px)) 18px max(20px,env(safe-area-inset-left,0px));position:relative;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:linear-gradient(90deg,#d6336c 0 25%,#1f6bff 25% 50%,#00a58e 50% 75%,#f59e0b 75%)}
+.logo{display:flex;align-items:center;gap:10px;margin-right:auto}
+.mark{width:34px;height:34px;border-radius:10px;background:#fff;color:#1f3f9e;display:grid;place-items:center;font-weight:800;font-size:17px}
+h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.2px}
+header small{display:block;opacity:.8;font-size:12px;margin-top:-2px}
+select,input[type=text]{font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);min-width:0;width:100%}
+header select{width:auto;max-width:230px;background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.3)}
+header option{color:#12204a}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 18px;font-weight:600;color:#fff;background:var(--blue)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+header button{background:#fff;color:#1f3f9e}
+button:disabled{opacity:.5;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+main{max-width:1060px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px))}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:0 max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.steps button{background:var(--card);color:var(--ink);border:2px solid var(--line);display:flex;align-items:center;gap:10px;text-align:left;padding:12px 14px}
+.steps b{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--line);font-size:14px;flex:none}
+.steps small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.steps .on{border-color:var(--blue)}.steps .on b{background:var(--blue);color:#fff}
+.steps [data-t=book].on{border-color:var(--amber)}.steps [data-t=book].on b{background:var(--amber);color:#1c1300}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.row label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut);flex:1;min-width:min(150px,100%)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(270px,100%),1fr));gap:12px}
+.g{position:relative;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px 14px 12px 20px;cursor:pointer;word-break:break-word;overflow:hidden}
+.g::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c)}
+.g.sel{border-color:var(--blue)}
+.g.sel::after{content:"\2713";position:absolute;right:10px;top:10px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:14px}
+.g b{display:block;padding-right:28px}.g small{color:var(--mut)}
+.pdf{--c:var(--pink)}.cad{--c:var(--blue)}.d3{--c:var(--teal)}.doc{--c:var(--amber)}
+.chip{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;margin:6px 6px 0 0;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.chip.off{color:var(--mut);background:transparent;border-style:dashed;text-decoration:line-through}
+.mut{color:var(--mut)}.bad{color:var(--bad)}.ok{color:var(--ok)}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border:0}
+#bar{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.hide{display:none!important}
+#toast{position:fixed;left:50%;bottom:calc(70px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;max-width:90vw;display:none;z-index:9}
+.hero{text-align:center;padding:26px 16px}
+.hero h2{margin:0 0 6px}
+.done{background:color-mix(in srgb,var(--ok) 12%,transparent);border:1px solid var(--ok);border-radius:14px;padding:14px;margin-top:12px}
+.fbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px}.fbar b{min-width:0;word-break:break-word}
+.fpick{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
+.fli{display:flex;justify-content:space-between;gap:8px;padding:9px 6px;border-bottom:1px solid var(--line);cursor:pointer}.fli:hover{background:color-mix(in srgb,var(--blue) 8%,transparent)}
+.lnk{padding:2px 8px;border-radius:8px;font-size:13px}
+.frow{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}.frow select,.frow input{flex:1;width:auto;min-width:min(160px,100%)}
+.small{font-size:13px;margin:0 0 10px}.row2{display:flex;gap:8px;flex-wrap:wrap}
+input[readonly]{opacity:.85;cursor:not-allowed}
+.bf{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.bf .chip{min-width:104px;text-align:center}
+.bs{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;margin-top:6px;border:1px solid var(--line)}
+.bs.mut{border-style:dashed;font-weight:600}
+.bs.bk{color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent);border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+.bs.av{color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
+@media(max-width:640px){.steps small{display:none}}
+</style>
+
+<header>
+  <div class="logo"><div class="mark">F</div><div><h1>File Book Out</h1><small>Find and book out project files</small></div></div>
+  <select id="hub" class="hide" aria-label="Hub"></select>
+  <select id="proj" class="hide" aria-label="Project"></select>
+  <button id="out" class="hide">Sign out</button>
+</header>
+<main>
+  <div id="gate" class="card hero">
+    <h2>Welcome to File Book Out</h2>
+    <p class="mut">Sign in with your Autodesk account, or explore with sample data.</p>
+    <div class="row" style="max-width:520px;margin:0 auto 12px"><label>APS client ID<input type="text" id="cid"></label></div>
+    <p><button id="in">Sign in</button> <button id="demo" class="ghost">Try demo</button></p>
+    <p class="mut" style="font-size:13px">Callback URL to register in your APS app:<br><b id="redir"></b></p>
+  </div>
+  <div id="app" class="hide">
+    <div class="steps">
+      <button data-t="find" class="on"><b>1</b><span>Find files<small>By location or asset</small></span></button>
+      <button data-t="book"><b>2</b><span id="bt">Book out<small>Start a review</small></span></button>
+    </div>
+    <section id="find">
+      <div class="card">
+        <div class="fbar"><span class="mut">Search in</span><b id="fpath">No folder</b><button class="ghost" id="fchg" type="button">Change folder</button></div>
+        <div id="fpick" class="fpick hide">
+          <div id="fcrumb" class="row2"></div>
+          <div id="flist"></div>
+          <div class="row2"><button id="fuse" type="button">Use this folder</button><button class="ghost" id="fclose" type="button">Cancel</button></div>
+        </div>
+        <p class="mut small">Searches this folder and all its subfolders that you can access. <span id="atn"></span> All filters must match.</p>
+        <div id="filters"></div>
+        <div class="row"><button class="ghost" id="addf" type="button">+ Add attribute filter</button>
+        <label>Name contains (optional)<input type="text" id="q"></label>
+        <button id="go">Find files</button>
+      </div><p id="fmsg" class="mut" style="margin:10px 0 0"></p></div>
+      <div id="res" class="grid"></div>
+    </section>
+    <section id="book" class="hide">
+      <div class="card"><h2 style="margin-top:0">Your basket</h2><div id="bask"></div></div>
+      <div class="card"><div class="row">
+        <label>Review name (set automatically)<input type="text" id="rname" readonly><span id="rnote" class="bad small"></span></label>
+        <label>Review template <span id="wfn" class="mut"></span><select id="wf"></select></label>
+      </div>
+      <p><button id="mk" style="background:var(--amber);color:#1c1300">Book out</button></p>
+      <div id="bmsg"></div></div>
+    </section>
+  </div>
+</main>
+<footer>&copy; 2026 Bassem Assad. All rights reserved.</footer>
+<div id="bar" class="hide"><span id="cnt" class="mut"></span><button id="selall" class="ghost">Select all</button><button id="add">Add to book-out</button></div>
+<div id="toast" role="status"></div>
+<script>
+const API='https://developer.api.autodesk.com',SCOPES='data:read data:write data:create account:read',WF_FIELD='workflowId';
+const $=s=>document.querySelector(s),enc=encodeURIComponent,sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ls={get:k=>{try{return localStorage[k]||''}catch{return ''}},set:(k,v)=>{try{localStorage[k]=v}catch{}}};
+const ss={get:k=>{try{return sessionStorage[k]||''}catch{return ''}},set:(k,v)=>{try{sessionStorage[k]=v}catch{}}};
+const redirect=location.origin+location.pathname;
+const S={demo:false,tab:'find',groups:[],sel:new Set(),basket:new Map(),proj:null,defs:[]};
+const KIND=e=>e==='pdf'?'pdf':['dwg','dxf','dgn'].includes(e)?'cad':['rvt','ifc','nwd','nwc','nwf','skp','fbx','obj','3dm','rfa'].includes(e)?'d3':'doc';
+const LBL={pdf:'PDF',cad:'CAD',d3:'3D',doc:'Doc'};
+$('#redir').textContent=CDETK.redirect;$('#cid').value=CDETK.clientId();
+
+function toast(m,bad){const t=$('#toast');t.textContent=m;t.style.background=bad?'var(--bad)':'var(--ink)';t.style.color='#fff';t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',6000)}
+
+/* sample data for demo mode */
+const DEMO=[
+['CLJ-BR214-GA-001','Clapham Junction','Bridge',['pdf','dwg']],['CLJ-BR214-GA-002','Clapham Junction','Bridge',['pdf','dwg']],
+['CLJ-BR214-STRUCT-MODEL','Clapham Junction','Bridge',['ifc','rvt']],['CLJ-PW05-SIGNAL-LAYOUT','Clapham Junction','Signalling',['pdf','dgn']],
+['CLJ-BR214-INSPECTION-2025','Clapham Junction','Bridge',['docx']],['CRY-BR088-GA-001','Croydon','Bridge',['pdf','dwg','ifc']],
+['CRY-RET12-DETAIL','Croydon','Retaining wall',['pdf','dwg']],['VIC-STN-CONCOURSE-PLAN','Victoria','Station',['pdf','dwg','rvt']]];
+const FOLD={Bridge:'Project Files/Structures/Bridges','Retaining wall':'Project Files/Structures/Retaining walls',Signalling:'Project Files/Signalling',Station:'Project Files/Stations'};
+DEMO.forEach((d,i)=>{d[4]=d[3].includes('docx')?'Project Files/Documents':FOLD[d[2]];d[5]=d[2]==='Signalling'?'Signalling':d[2]==='Station'?'Architecture':'Structural';d[6]=i%2?'Approved':'For review'});
+const DEMO_TREE={'Project Files':['Structures','Signalling','Stations','Documents'],'Project Files/Structures':['Bridges','Retaining walls']};
+const DEMO_WF=[{id:'1',name:'Book out - standard'},{id:'2',name:'Book out - urgent'},{id:'3',name:'Structural design review'},{id:'4',name:'Final approval'}];
+
+/* sign-in */
+const b64u=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+/* sign-in is shared across CDE Toolkit (assets/auth.js) */
+function token(){return CDETK.tokenSync()}
+async function login(){
+  const id=$('#cid').value.trim();if(!id)return toast('Enter your client ID first',1);
+  CDETK.setClientId(id);CDETK.login();
+}
+async function api(path,o={}){
+  let t;try{t=await CDETK.accessToken()}catch(e){toast('Your session ended. Sign in again.',1);throw new Error('auth')}
+  const h={Authorization:'Bearer '+t};if(o.json)h['Content-Type']='application/json';
+  const r=await fetch(path.startsWith('http')?path:API+path,{method:o.method||'GET',headers:h,body:o.json?JSON.stringify(o.json):undefined});
+  const tx=await r.text();let d={};try{d=tx?JSON.parse(tx):{}}catch{d=tx}
+  if(!r.ok){const e=new Error(r.status+' '+(typeof d==='string'?d:JSON.stringify(d)).slice(0,400));e.status=r.status;throw e}
+  return d;
+}
+async function all(path,max=15){let out=[],u=path,n=0;while(u&&n++<max){const d=await api(u);out.push(...(d.data||d.results||[]));u=d.links?.next?.href||d.pagination?.nextUrl||null}return out}
+function showApp(){['#gate'].forEach(s=>$(s).classList.add('hide'));$('#app').classList.remove('hide');['#hub','#proj','#out'].forEach(s=>$(s).classList.remove('hide'))}
+
+async function init(){
+  if(!CDETK.signedIn())return;showApp();
+  try{
+    const hubs=(await api('/project/v1/hubs')).data.filter(h=>h.attributes.extension.type==='hubs:autodesk.bim360:Account');
+    $('#hub').innerHTML=hubs.map(h=>`<option value="${h.id}">${esc(h.attributes.name)}</option>`).join('');
+    if(ls.get('hub'))$('#hub').value=ls.get('hub');
+    await loadProjects();
+  }catch(e){toast('Could not load hubs: '+e.message,1)}
+}
+async function loadProjects(){
+  ls.set('hub',$('#hub').value);
+  const ps=(await all(`/project/v1/hubs/${$('#hub').value}/projects`)).sort((a,b)=>a.attributes.name.localeCompare(b.attributes.name));
+  $('#proj').innerHTML=ps.map(p=>`<option value="${p.id}">${esc(p.attributes.name)}</option>`).join('');
+  if(ps.some(p=>p.id===ls.get('proj')))$('#proj').value=ls.get('proj');
+  await pickProject();
+}
+async function pickProject(){
+  const id=$('#proj').value;ls.set('proj',id);
+  S.proj={id,pid:id.replace(/^b\./,'')};S.groups=[];S.sel.clear();S.basket.clear();renderRes();renderBasket();
+  try{
+    const tf=(await api(`/project/v1/hubs/${$('#hub').value}/projects/${id}/topFolders`)).data;
+    S.top=tf.map(f=>({id:f.id,name:f.attributes.displayName}));
+    const pf=S.top.find(f=>/project files/i.test(f.name))||S.top[0];
+    setFolder(pf?{id:pf.id,name:pf.name,path:pf.name}:null);
+    loadAttrs();loadWf();
+  }catch(e){toast('Could not load folders: '+e.message,1)}
+}
+async function loadAttrs(){
+  let d=[];
+  for(const u of [`/construction/files/v1/projects/${S.proj.pid}/custom-attribute-definitions`,`/bim360/docs/v1/projects/${S.proj.pid}/folders/${enc(S.folder?.id||'')}/custom-attribute-definitions`]){
+    try{d=await all(u);if(d.length)break}catch{}
+  }
+  setAttrs(d);
+}
+function setAttrs(d){
+  S.defs=d.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  $('#filters').innerHTML='';
+  const loc=S.defs.find(a=>/location/i.test(a.name))||S.defs[0];
+  if(loc)addFilter(loc.id,'');
+  $('#atn').textContent=S.defs.length?S.defs.length+' attributes available.':'No attributes found.';
+}
+let fn=0;
+function addFilter(id,val){
+  if(!S.defs.length)return toast('No attributes found in this project',1);
+  const n=++fn,r=document.createElement('div');r.className='frow';
+  r.innerHTML=`<select class="fa" aria-label="Attribute">${S.defs.map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('')}</select><input type="text" class="fv" placeholder="Value contains…" list="dl${n}" aria-label="Value"><datalist id="dl${n}"></datalist><button class="ghost fx" type="button">Remove</button>`;
+  if(id)r.querySelector('.fa').value=id;
+  r.querySelector('.fv').value=val||'';
+  $('#filters').append(r);suggest(r);
+}
+function suggest(r){
+  const a=S.defs.find(x=>String(x.id)===r.querySelector('.fa').value);
+  r.querySelector('datalist').innerHTML=(a?.arrayValues||[]).map(v=>`<option value="${esc(v.value)}">`).join('');
+}
+const getFilters=()=>[...document.querySelectorAll('.frow')].map(r=>({id:r.querySelector('.fa').value,val:r.querySelector('.fv').value.trim().toLowerCase()})).filter(f=>f.val);
+
+/* folder picker */
+S.browse=[];
+function setFolder(f){S.folder=f;$('#fpath').textContent=f?f.path:'No folder'}
+async function subfolders(){
+  const cur=S.browse[S.browse.length-1];
+  if(S.demo){const p=cur?cur.path:'';return (p?(DEMO_TREE[p]||[]):['Project Files']).map(n=>({id:(p?p+'/':'')+n,name:n,path:(p?p+'/':'')+n}))}
+  if(!cur)return S.top.map(f=>({id:f.id,name:f.name,path:f.name}));
+  const d=await all(`/data/v1/projects/${S.proj.id}/folders/${enc(cur.id)}/contents?`+new URLSearchParams({'filter[type]':'folders','page[limit]':'200'}));
+  return d.filter(x=>x.type==='folders').map(x=>({id:x.id,name:x.attributes.displayName,path:cur.path+' / '+x.attributes.displayName})).sort((a,b)=>a.name.localeCompare(b.name));
+}
+async function renderPicker(){
+  const cur=S.browse[S.browse.length-1];
+  $('#fcrumb').innerHTML=['Project'].concat(S.browse.map(b=>b.name)).map((n,i)=>`<button class="ghost lnk" type="button" data-b="${i}">${esc(n)}</button>`).join(' › ');
+  $('#fuse').disabled=!cur;
+  $('#flist').innerHTML='<p class="mut">Loading…</p>';
+  try{
+    S.subs=await subfolders();
+    $('#flist').innerHTML=S.subs.length?S.subs.map((s,i)=>`<div class="fli" data-i="${i}"><span>${esc(s.name)}</span><span class="mut">Open ›</span></div>`).join(''):'<p class="mut">No subfolders here. You can use this folder.</p>';
+  }catch(e){$('#flist').innerHTML='<p class="bad">Could not list folders: '+esc(e.message)+'</p>'}
+}
+
+/* find */
+async function tip(f){return f.type==='versions'?f.id:(await api(`/data/v1/projects/${S.proj.id}/items/${enc(f.id)}/tip`)).data.id}
+async function find(){
+  const F=getFilters(),terms=$('#q').value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  if(!S.folder)return toast('Choose a folder to search in',1);
+  if(!F.length&&!terms.length)return toast('Enter an attribute value or a name term',1);
+  $('#go').disabled=true;let files=[];
+  try{
+    if(S.demo){
+      for(let i=0;i<3;i++){$('#fmsg').textContent=`Reading attributes: ${Math.min((i+1)*3,8)} of 8…`;await sleep(300)}
+      const COL={loc:1,a:2,disc:5,stat:6};
+      files=DEMO.filter(d=>d[4].startsWith(S.folder.path)&&F.every(f=>COL[f.id]&&String(d[COL[f.id]]).toLowerCase().includes(f.val))&&terms.every(t=>d[0].toLowerCase().includes(t)))
+        .flatMap(d=>d[3].map(e=>({name:d[0]+'.'+e,loc:d[1],asset:d[2]})));
+    }else{
+      $('#fmsg').textContent='Listing files…';
+      const raw=await all(`/data/v1/projects/${S.proj.id}/folders/${enc(S.folder.id)}/search?`+new URLSearchParams({'filter[attributes.displayName]-contains':terms[0]||'.','page[limit]':'200'}),30),best=new Map();
+      for(const r of raw){
+        if(!['versions','items'].includes(r.type))continue;
+        const name=r.attributes.displayName||r.attributes.name||'';
+        if(!terms.every(t=>name.toLowerCase().includes(t)))continue;
+        const key=r.relationships?.item?.data?.id||r.id,vn=r.attributes.versionNumber||0;
+        if(!best.has(key)||vn>best.get(key).vn)best.set(key,{id:r.id,type:r.type,name,vn});
+      }
+      files=[...best.values()];
+      if(F.length){
+        const keep=[];
+        for(let i=0;i<files.length;i+=50){
+          $('#fmsg').textContent=`Reading attributes: ${Math.min(i+50,files.length)} of ${files.length}…`;
+          const chunk=files.slice(i,i+50),urns=[],by={};
+          for(const f of chunk){const u=await tip(f);urns.push(u);by[u]=f}
+          const r=await api(`/bim360/docs/v1/projects/${S.proj.pid}/versions:batch-get`,{method:'POST',json:{urns}});
+          (r.results||[]).forEach((x,k)=>{const f=by[x.urn]||chunk[k],ca=x.customAttributes||[];if(f&&F.every(q=>{const a=ca.find(c=>String(c.id)===q.id);return a&&String(a.value??'').toLowerCase().includes(q.val)}))keep.push(f)});
+        }
+        files=keep;
+      }
+    }
+    const g=new Map();
+    for(const f of files){
+      const m=f.name.match(/^(.*?)(?:\.([^.]+))?$/),ext=(m[2]||'').toLowerCase();
+      Object.assign(f,{ext,kind:KIND(ext),on:true});
+      const key=m[1].toLowerCase();if(!g.has(key))g.set(key,{base:m[1],loc:f.loc,asset:f.asset,files:[]});
+      g.get(key).files.push(f);
+    }
+    S.groups=[...g.values()].sort((a,b)=>a.base.localeCompare(b.base));S.sel.clear();
+    $('#fmsg').textContent=S.groups.length?`${S.groups.length} drawings and documents, ${files.length} files`:'Nothing matched. Check the attribute and value, or try another folder.';
+    renderRes();
+  }catch(e){$('#fmsg').textContent='';toast('Search failed: '+e.message,1)}
+  $('#go').disabled=false;
+}
+function renderRes(){
+  $('#res').innerHTML=S.groups.map((g,i)=>`<div class="g ${g.files[0].kind} ${S.sel.has(i)?'sel':''}" data-i="${i}"><b>${esc(g.base)}</b>${g.loc?`<small>${esc(g.loc)} · ${esc(g.asset)}</small><br>`:''}${g.files.map(f=>`<span class="chip ${f.kind} ${f.on?'':'off'}" data-i="${i}" data-e="${esc(f.ext)}" title="Tap to include or exclude">${LBL[f.kind]} .${esc(f.ext||'?')}</span>`).join('')}</div>`).join('');
+  $('#bar').classList.toggle('hide',!S.groups.length||S.tab!=='find');$('#cnt').textContent=S.sel.size+' selected';
+}
+$('#res').onclick=e=>{
+  const c=e.target.closest('.chip');
+  if(c){const f=S.groups[c.dataset.i].files.find(f=>f.ext===c.dataset.e);f.on=!f.on;return renderRes()}
+  const g=e.target.closest('.g');if(!g)return;
+  const i=+g.dataset.i;S.sel.has(i)?S.sel.delete(i):S.sel.add(i);renderRes();
+};
+$('#selall').onclick=()=>{S.groups.forEach((_,i)=>S.sel.add(i));renderRes()};
+$('#add').onclick=()=>{
+  if(!S.sel.size)return toast('Select at least one drawing',1);
+  const n=S.sel.size;S.sel.forEach(i=>S.basket.set(S.groups[i].base.toLowerCase(),S.groups[i]));S.sel.clear();
+  toast(n+' added to book-out');renderRes();renderBasket();
+};
+
+/* book out */
+/* review name: Book_Out_Request_<Location Code value> */
+const locDef=()=>S.defs.find(a=>/location[\s_-]*code/i.test(a.name));
+function reviewName(fs){
+  if(!fs.length)return {name:'',err:''};
+  if(!S.demo&&!locDef())return {name:'',err:'The attribute "Location Code" was not found in this project, so the review name cannot be set.'};
+  if(fs.some(f=>!f.bs||f.bs==='checking'))return {name:'',err:'Reading Location Codes…'};
+  const miss=fs.filter(f=>!f.lc);
+  if(miss.length)return {name:'',err:'No Location Code value on: '+miss.map(f=>f.name).join(', ')+'.'};
+  const codes=[...new Set(fs.map(f=>f.lc))];
+  if(codes.length>1)return {name:'',err:'The files have different Location Codes ('+codes.join(', ')+'). A review can only be for one Location Code, so book them out separately.'};
+  return {name:'Book_Out_Request_'+codes[0],err:''};
+}
+function updateName(){
+  const fs=[...S.basket.values()].flatMap(g=>g.files).filter(f=>f.on&&f.bs!=='booked');
+  const r=reviewName(fs);
+  $('#rname').value=r.name||'Book_Out_Request_';
+  $('#rnote').textContent=r.err;
+}
+/* booking status (attribute 001-BOOKING_STATUS) */
+const bookDef=()=>S.defs.find(a=>/booking[\s_-]*status/i.test(a.name));
+async function checkBooking(files){
+  if(S.demo){files.forEach(f=>{f.bs=/-GA-001/i.test(f.name)?'booked':'available';f.bsv=f.bs==='booked'?'Booked out':'Available';f.lc=f.name.split('-')[0]});return 'ok'}
+  const def=bookDef();
+  if(!def){files.forEach(f=>f.bs='noattr');return 'noattr'}
+  for(const f of files)if(!f.urn)f.urn=await tip(f);
+  const ld=locDef();
+  files.forEach(f=>{f.bs='unknown';f.bsv='';f.lc=''});
+  for(let i=0;i<files.length;i+=50){
+    const chunk=files.slice(i,i+50),by={};chunk.forEach(f=>by[f.urn]=f);
+    const r=await api(`/bim360/docs/v1/projects/${S.proj.pid}/versions:batch-get`,{method:'POST',json:{urns:chunk.map(f=>f.urn)}});
+    (r.results||[]).forEach((x,k)=>{
+      const f=by[x.urn]||chunk[k];if(!f)return;
+      const a=(x.customAttributes||[]).find(c=>String(c.id)===String(def.id)),v=String(a?.value??'').trim();
+      const l=ld&&(x.customAttributes||[]).find(c=>String(c.id)===String(ld.id));f.lc=String(l?.value??'').trim();
+      f.bsv=v;f.bs=v.toLowerCase()==='booked out'?'booked':v?'available':'blank';
+    });
+  }
+  return 'ok';
+}
+const badge=f=>{
+  const s=f.bs;
+  if(!s||s==='checking')return '<span class="bs mut">Checking…</span>';
+  if(s==='booked')return '<span class="bs bk">Booked out</span>';
+  if(s==='available')return `<span class="bs av">${esc(f.bsv||'Not booked out')}</span>`;
+  if(s==='blank')return '<span class="bs mut">No status</span>';
+  if(s==='noattr')return '<span class="bs mut">Status attribute not found</span>';
+  return '<span class="bs mut">Could not check</span>';
+};
+async function refreshBooking(){
+  const files=[...S.basket.values()].flatMap(g=>g.files).filter(f=>!f.bs);
+  if(!files.length)return;
+  files.forEach(f=>f.bs='checking');renderBasket();
+  try{await checkBooking(files)}catch(e){files.forEach(f=>{f.bs='error'})}
+  renderBasket();
+}
+function renderBasket(){
+  const rows=[...S.basket.entries()];
+  $('#bask').innerHTML=rows.length?rows.map(([k,g])=>`<div class="item"><div><b>${esc(g.base)}</b>${g.files.map(f=>`<div class="bf"><span class="chip ${f.kind} ${f.on?'':'off'}">${LBL[f.kind]} .${esc(f.ext||'?')}</span>${badge(f)}</div>`).join('')}</div><button class="ghost" data-k="${esc(k)}">Remove</button></div>`).join(''):'<p class="mut">Nothing yet. Add drawings from Find files.</p>';
+  $('#bt').innerHTML=`Book out${S.basket.size?' ('+S.basket.size+')':''}<small>Start a review</small>`;
+  updateName();
+  refreshBooking();
+}
+$('#bask').onclick=e=>{const k=e.target.dataset.k;if(k){S.basket.delete(k);renderBasket()}};
+async function loadWf(){
+  if(!S.proj&&!S.demo)return;
+  let list;
+  if(S.demo)list=DEMO_WF;
+  else{
+    const base=`/construction/reviews/v1/projects/${S.proj.pid}/workflows`;
+    const pick=d=>Array.isArray(d)?d:(d.results||d.data||d.workflows||d.items||[]);
+    let err='';list=[];
+    for(const q of ['?limit=200','','?limit=200&filter[initiator]=true']){
+      try{const d=await api(base+q);list=pick(d);if(list.length)break;err='The server returned 0 templates ('+(q||'no filter')+'). Response keys: '+Object.keys(d||{}).join(', ')}catch(e){err=e.message}
+    }
+    if(!list.length){
+      $('#wf').innerHTML='';$('#wfn').textContent='(none found)';
+      return $('#bmsg').innerHTML='<p class="bad">Could not load review templates. '+esc(err)+'</p><p class="mut">Check you are a member of the project, and that your APS app has the ACC Build / Docs API enabled for this account.</p>';
+    }
+    $('#bmsg').innerHTML='';
+    list=list.map(w=>({id:w.id||w.workflowId,name:w.name||w.title||w.id||'Unnamed template'}));
+  }
+  list=list.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  const prev=$('#wf').value,bo=list.find(w=>/book\s*-?\s*out/i.test(w.name));
+  $('#wf').innerHTML=list.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('');
+  $('#wf').value=list.some(w=>w.id===prev)?prev:(bo||list[0]||{}).id;
+  $('#wfn').textContent='('+list.length+' in this project)';
+}
+$('#mk').onclick=async()=>{
+  let files=[...S.basket.values()].flatMap(g=>g.files.filter(f=>f.on));
+  if(!files.length)return toast('Your basket is empty',1);
+  if(!$('#wf').value)return toast('Choose a review template',1);
+  $('#mk').disabled=true;$('#bmsg').innerHTML='<p class="mut">Checking booking status…</p>';
+  try{
+    /* re-check now so the status is current, then reject files already booked out */
+    const st=await checkBooking(files);
+    if(st==='noattr')throw new Error('The attribute 001-BOOKING_STATUS was not found in this project, so the booking status could not be checked. Nothing was booked out.');
+    const rejected=new Set(files.filter(f=>f.bs==='booked'));
+    const send=files.filter(f=>!rejected.has(f));
+    const warn=rejected.size?`<div class="done" style="border-color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent)"><b>Warning: already booked out, not included in this review (${rejected.size} file${rejected.size>1?'s':''})</b><br><span class="mut">${[...rejected].map(f=>esc(f.name)).join('<br>')}</span></div>`:'';
+    if(!send.length){$('#bmsg').innerHTML=warn+'<p class="bad">No review was created because every selected file is already booked out.</p>';$('#mk').disabled=false;return}
+    const rn=reviewName(send);
+    if(rn.err){$('#bmsg').innerHTML=warn+'<p class="bad">'+esc(rn.err)+' Nothing was booked out.</p>';$('#mk').disabled=false;renderBasket();return}
+    $('#rname').value=rn.name;
+    $('#bmsg').innerHTML=warn+'<p class="mut">Creating review…</p>';
+    let id;
+    if(S.demo){await sleep(700);id='RV-'+(1000+Math.floor(Math.random()*9000))}
+    else{
+      const fileVersions=send.map(f=>({urn:f.urn}));
+      const r=await api(`/construction/reviews/v1/projects/${S.proj.pid}/reviews`,{method:'POST',json:{name:rn.name,[WF_FIELD]:$('#wf').value,fileVersions}});
+      id=r.id||'created';
+    }
+    $('#bmsg').innerHTML=warn+`<div class="done"><b class="ok">Booked out ${send.length} file${send.length>1?'s':''}</b><br><span class="mut">Review ID: ${esc(id)}${S.demo?' (demo)':''}</span></div>`;
+    for(const [k,g] of [...S.basket.entries()]){const keep=g.files.filter(f=>rejected.has(f));if(keep.length)g.files=keep;else S.basket.delete(k)}
+    renderBasket();
+  }catch(e){$('#bmsg').innerHTML='<p class="bad">Book-out failed: '+esc(e.message)+'</p>'}
+  $('#mk').disabled=false;
+};
+
+/* wiring */
+document.querySelectorAll('.steps button').forEach(b=>b.onclick=()=>{
+  S.tab=b.dataset.t;
+  document.querySelectorAll('.steps button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#find').classList.toggle('hide',S.tab!=='find');$('#book').classList.toggle('hide',S.tab!=='book');
+  renderRes();if(S.tab==='book')loadWf();
+});
+$('#in').onclick=login;
+$('#demo').onclick=()=>{
+  S.demo=true;showApp();$('#out').textContent='Exit demo';
+  $('#hub').innerHTML='<option>Demo hub</option>';$('#proj').innerHTML='<option>Demo project</option>';
+  setFolder({id:'Project Files',name:'Project Files',path:'Project Files'});
+  setAttrs([{id:'loc',name:'Location',arrayValues:[{value:'Clapham Junction'},{value:'Croydon'},{value:'Victoria'}]},{id:'a',name:'Asset type',arrayValues:[{value:'Bridge'},{value:'Signalling'},{value:'Retaining wall'},{value:'Station'}]},{id:'disc',name:'Discipline',arrayValues:[{value:'Structural'},{value:'Signalling'},{value:'Architecture'}]},{id:'rev',name:'Revision'},{id:'bs',name:'001-BOOKING_STATUS',arrayValues:[{value:'Booked out'},{value:'Available'}]},{id:'stat',name:'Document status',arrayValues:[{value:'Approved'},{value:'For review'}]}]);
+  document.querySelector('.fv').value='Clapham';renderBasket();loadWf();
+};
+$('#out').onclick=()=>{CDETK.signOut();location=redirect};
+$('#hub').onchange=()=>!S.demo&&loadProjects();$('#proj').onchange=()=>!S.demo&&pickProject();
+$('#fchg').onclick=()=>{S.browse=[];$('#fpick').classList.remove('hide');renderPicker()};
+$('#fclose').onclick=()=>$('#fpick').classList.add('hide');
+$('#fcrumb').onclick=e=>{const b=e.target.closest('[data-b]');if(!b)return;S.browse=S.browse.slice(0,+b.dataset.b);renderPicker()};
+$('#flist').onclick=e=>{const r=e.target.closest('.fli');if(!r)return;S.browse.push(S.subs[+r.dataset.i]);renderPicker()};
+$('#fuse').onclick=()=>{const cur=S.browse[S.browse.length-1];if(!cur)return;setFolder(cur);$('#fpick').classList.add('hide');S.groups=[];S.sel.clear();renderRes();$('#fmsg').textContent='';if(!S.demo)loadAttrs()};
+$('#addf').onclick=()=>addFilter('','');
+$('#filters').onclick=e=>{if(e.target.classList.contains('fx'))e.target.closest('.frow').remove()};
+$('#filters').onchange=e=>{if(e.target.classList.contains('fa'))suggest(e.target.closest('.frow'))};
+$('#filters').onkeydown=e=>{if(e.key==='Enter')find()};
+$('#go').onclick=find;
+$('#q').onkeydown=e=>{if(e.key==='Enter')find()};
+renderBasket();init();
+</script>
+
+</body></html>

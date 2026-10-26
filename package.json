@@ -1,0 +1,10 @@
+{
+  "name": "cde-toolkit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Move, check, book out and rename files in Autodesk Construction Cloud.",
+  "author": "Bassem Assad",
+  "license": "UNLICENSED",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}

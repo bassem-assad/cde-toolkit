@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CDE Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/app.css">
+<script src="/assets/auth.js"></script>
+</head>
+<body>
+<script src="/assets/nav.js" data-page="home"></script>
+<main class="wrap">
+  <div style="display:grid;gap:6px">
+    <h1>CDE Toolkit</h1>
+    <p class="lead">Move, check, book out and rename files in Autodesk Construction Cloud, and see where reviews slow down. Everything runs in your browser: files go straight between your systems and ACC.</p>
+  </div>
+
+  <section class="panel" aria-labelledby="conn">
+    <h2 id="conn">Autodesk connection</h2>
+    <div class="row">
+      <label>APS Client ID<input type="text" id="cid" autocomplete="off" placeholder="Paste your Autodesk Platform Services Client ID"></label>
+      <button id="signin">Sign in with Autodesk</button>
+      <button id="signout" class="alt" hidden>Sign out</button>
+    </div>
+    <div class="copy"><span class="msg">Callback URL to register in your APS app:</span><code id="cb"></code><button class="alt" id="copycb" type="button">Copy</button></div>
+    <p id="status" class="msg"></p>
+  </section>
+
+  <section aria-labelledby="move">
+    <h2 id="move">Move and check files</h2>
+    <div class="grid">
+      <a class="tool" href="/modules/migrate.html">
+        <div class="top"><b>CDE Sync</b><span class="open">Open →</span></div>
+        <p>Move files into ACC from ProjectWise, SharePoint, InEight, another ACC project or your computer. Maps attributes and applies the folder's naming standard.</p>
+        <span class="tag live">Autodesk sign-in</span>
+      </a>
+      <a class="tool" href="/modules/validate.html">
+        <div class="top"><b>File validator</b><span class="open">Open →</span></div>
+        <p>Check an ACC Docs file-list export against your naming convention and confirm required attributes are filled in.</p>
+        <span class="tag export">Excel or CSV export</span>
+      </a>
+      <a class="tool" href="/modules/rename.html">
+        <div class="top"><b>Rename</b><span class="open">Open →</span></div>
+        <p>Add the upload date to a model's name in ACC, for example Model_20260915.rvt.</p>
+        <span class="tag live">Autodesk sign-in</span>
+      </a>
+    </div>
+  </section>
+
+  <section aria-labelledby="ctrl">
+    <h2 id="ctrl">Control and review</h2>
+    <div class="grid">
+      <a class="tool" href="/modules/book-out.html">
+        <div class="top"><b>File Book Out</b><span class="open">Open →</span></div>
+        <p>Find drawings by attribute, check their booking status and book them out through an ACC review.</p>
+        <span class="tag live">Autodesk sign-in</span>
+      </a>
+      <a class="tool" href="/modules/turnaround.html">
+        <div class="top"><b>Review turnaround</b><span class="open">Open →</span></div>
+        <p>See where ACC reviews slow down by step, reviewer and company, with late and overdue rates.</p>
+        <span class="tag export">CSV or JSON export</span>
+      </a>
+    </div>
+  </section>
+</main>
+<footer class="wrap">© 2026 Bassem Assad. All rights reserved.</footer>
+<script>
+const $ = s => document.querySelector(s);
+function paint(msg, bad) {
+  const on = CDETK.signedIn();
+  $('#signin').hidden = on; $('#signout').hidden = !on;
+  $('#status').className = 'msg ' + (bad ? 'bad' : on ? 'ok' : '');
+  $('#status').textContent = msg || (on ? 'Signed in to Autodesk. Open a module below.' : 'Not signed in. Modules that read from ACC need you to sign in first.');
+}
+$('#cid').value = CDETK.clientId();
+$('#cb').textContent = CDETK.redirect;
+$('#cid').addEventListener('change', e => CDETK.setClientId(e.target.value));
+$('#signin').onclick = async () => {
+  CDETK.setClientId($('#cid').value);
+  try { await CDETK.login('/'); } catch (e) { paint(e.message, true); }
+};
+$('#signout').onclick = () => { CDETK.signOut(); location.reload(); };
+$('#copycb').onclick = async e => {
+  try { await navigator.clipboard.writeText(CDETK.redirect); e.target.textContent = 'Copied'; }
+  catch (err) { getSelection().selectAllChildren($('#cb')); e.target.textContent = 'Press Ctrl+C'; }
+  setTimeout(() => e.target.textContent = 'Copy', 1800);
+};
+(async () => {
+  try {
+    const back = await CDETK.handleCallback();
+    if (back && back !== '/') return location.replace(back);
+    if (back) location.replace('/'); // reload so the top bar shows the new status
+  } catch (e) { return paint(e.message, true); }
+  paint();
+})();
+</script>
+</body>
+</html>

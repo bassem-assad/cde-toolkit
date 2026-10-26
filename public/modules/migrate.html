@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<script src="/assets/auth.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDE Sync · CDE Toolkit</title>
+<style>
+:root{--ink:#1b2340;--muted:#6b7596;--bg:#f2f4fb;--card:#fff;--line:#e2e6f3;--c1:#4f46e5;--c2:#06b6d4;--c3:#10b981;--c4:#f59e0b;--c5:#ef4444;--c6:#ec4899;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.45 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);padding-bottom:84px}
+button,select,input{font:inherit;color:inherit}
+header.top{background:linear-gradient(120deg,#3730a3,#4f46e5 35%,#06b6d4 75%,#10b981);color:#fff;padding:16px 28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.logo{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px}
+.brand h1{margin:0;font-size:20px;letter-spacing:.2px}.brand p{margin:0;opacity:.85;font-size:13px}
+.sp{flex:1}
+.chip-top{background:rgba(255,255,255,.18);border-radius:99px;padding:5px 12px;font-size:13px;display:inline-flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:#fca5a5}.dot.on{background:#86efac}
+.btn{border:0;border-radius:10px;padding:9px 16px;cursor:pointer;font-weight:600;background:var(--c1);color:#fff;transition:.15s}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;filter:none}
+.btn.ghost{background:#eef0fb;color:var(--c1)}.btn.white{background:rgba(255,255,255,.2);color:#fff}
+.btn.green{background:var(--c3)}.btn.red{background:var(--c5)}.btn.sm{padding:5px 10px;font-size:13px}
+nav#stepper{display:flex;gap:8px;padding:18px 28px 0;overflow:auto}
+.st{flex:1;min-width:112px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 12px;display:flex;gap:9px;align-items:center;font-weight:600;font-size:13px;color:var(--muted);cursor:default}
+.st i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#eceffa;font-style:normal;font-size:13px}
+.st.done{color:var(--ink);cursor:pointer}.st.done i{background:var(--c3);color:#fff}
+.st.now{color:#fff;border-color:transparent}.st.now i{background:rgba(255,255,255,.28);color:#fff}
+.st.now:nth-child(1){background:var(--c1)}.st.now:nth-child(2){background:#7c3aed}.st.now:nth-child(3){background:var(--c6)}.st.now:nth-child(4){background:var(--c4)}.st.now:nth-child(5){background:var(--c2)}.st.now:nth-child(6){background:#0ea5e9}.st.now:nth-child(7){background:var(--c3)}
+main{padding:22px 28px;max-width:1200px;margin:0 auto}
+h2{margin:0 0 4px;font-size:24px}.lead{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(40,50,110,.05)}
+.card h3{margin:0 0 12px;font-size:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}}
+label{display:block;font-weight:600;font-size:13px;color:var(--muted)}
+label>select,label>input[type=text],label>input[type=password]{display:block;width:100%;margin-top:5px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-weight:400}
+select,input[type=text],input[type=search],input[type=password]{border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:#fff}
+.seg{display:inline-flex;background:#e6e9f7;border-radius:12px;padding:4px;margin-bottom:16px}
+.seg button{border:0;background:transparent;padding:9px 18px;border-radius:9px;font-weight:600;cursor:pointer;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--c1);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.badge{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700;background:#eceffa;color:#4b557c;white-space:nowrap}
+.badge.ok{background:#d1fae5;color:#047857}.badge.warn{background:#fef3c7;color:#b45309}.badge.err{background:#fee2e2;color:#b91c1c}.badge.info{background:#dbeafe;color:#1d4ed8}.badge.pur{background:#ede9fe;color:#6d28d9}.badge.skip{background:#e5e7eb;color:#4b5563}
+.folderRow{display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.fchip{background:#eef0fb;color:var(--c1);padding:7px 12px;border-radius:10px;font-weight:600}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.bad td{background:#fff7f7}tr.warnrow td{background:#fffbeb}
+.sub{font-size:12px;color:var(--muted)}
+.note{border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:14px}
+.note.info{background:#e0f2fe;color:#075985}.note.warn{background:#fef3c7;color:#92400e}.note.err{background:#fee2e2;color:#991b1b}.note.ok{background:#d1fae5;color:#065f46}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 230px 12px 28px;display:flex;gap:12px;align-items:center;z-index:5}
+@media(max-width:700px){.bar{padding:12px 16px 56px 16px}}
+.bar #hint{flex:1;color:var(--muted);font-size:13px}
+.modal-bg{position:fixed;inset:0;background:rgba(20,25,60,.5);display:grid;place-items:center;z-index:20;padding:20px}
+.modal{background:#fff;border-radius:16px;max-width:620px;width:100%;max-height:86vh;overflow:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal h3{margin:0 0 12px}
+.li{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer;background:#fafbff}
+.li:hover{border-color:var(--c1);background:#f0f1ff}
+.crumbs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;font-size:13px}.crumbs a{color:var(--c1);cursor:pointer;font-weight:600}
+#toasts{position:fixed;top:14px;right:14px;z-index:40;display:flex;flex-direction:column;gap:8px}
+.toast{background:#1f2937;color:#fff;padding:11px 16px;border-radius:10px;max-width:420px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:14px}
+.toast.err{background:#b91c1c}.toast.warn{background:#b45309}.toast.ok{background:#047857}
+#busy{position:fixed;inset:0;background:rgba(255,255,255,.7);display:none;place-items:center;z-index:30}
+#busy.on{display:grid}.spin{width:46px;height:46px;border-radius:50%;border:5px solid #dfe3f7;border-top-color:var(--c1);animation:sp .8s linear infinite;margin:0 auto 10px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#6366f1,#06b6d4);color:#fff;padding:7px 12px;border-radius:10px;font-weight:700;cursor:grab;user-select:none;margin:2px}
+.chip small{background:rgba(255,255,255,.3);border-radius:6px;padding:0 6px;font-size:11px}
+.chip.used{opacity:.4}
+.field{display:grid;grid-template-columns:200px 1fr 170px 200px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.st.visit{color:var(--ink);cursor:pointer;border-color:#c7cdea}.st.visit:hover,.st.done:hover{border-color:var(--c1)}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:10px 24px 22px}
+@media(max-width:800px){.field{grid-template-columns:1fr}}
+.drop{min-height:46px;border:2px dashed #c7cdea;border-radius:12px;display:flex;align-items:center;flex-wrap:wrap;padding:5px 10px;background:#fafbff}
+.drop.over{border-color:var(--c2);background:#ecfeff}.drop .ph{color:#9aa3c7;font-size:13px}
+.ignore{border-color:#fbcfe8;background:#fff5fa}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:800px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{border-radius:14px;padding:16px;color:#fff}.kpi b{font-size:30px;display:block}
+.k0{background:linear-gradient(135deg,#6366f1,#4f46e5)}.k1{background:linear-gradient(135deg,#34d399,#059669)}.k2{background:linear-gradient(135deg,#fbbf24,#d97706)}.k3{background:linear-gradient(135deg,#f87171,#dc2626)}.k4{background:linear-gradient(135deg,#9ca3af,#6b7280)}
+.prog{height:14px;background:#e6e9f7;border-radius:99px;overflow:hidden}.prog>div{height:100%;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));transition:width .3s}
+.flex{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.filters button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 13px;cursor:pointer;font-weight:600}.filters button.on{background:var(--c1);color:#fff;border-color:var(--c1)}
+details summary{cursor:pointer;font-weight:700;color:var(--c1)}
+.mono{font-family:Consolas,Menlo,monospace;font-size:13px}
+</style>
+</head>
+<body><script src="/assets/nav.js" data-page="migrate"></script>
+<header class="top">
+  <div class="logo">⇄</div>
+  <div class="brand"><h1 id="brandName">CDE Sync</h1><p id="brandTag"></p></div>
+  <div class="sp"></div>
+  <span class="chip-top" id="authChip"></span>
+  <button class="btn white" data-act="toggleDemo" id="demoBtn">Try demo mode</button>
+  <button class="btn white" data-act="openSettings">⚙ Settings</button>
+  <button class="btn white" data-act="showHelp">? Help</button>
+</header>
+<nav id="stepper"></nav>
+<main id="view"></main>
+<footer class="foot">© <span id="yr">2026</span> Bassem Assad. All rights reserved.</footer>
+<div class="bar"><button class="btn ghost" id="back" data-act="back">← Back</button><span id="hint"></span><button class="btn" id="next" data-act="next">Next →</button></div>
+<div id="modal"></div><div id="toasts"></div><div id="busy"><div style="text-align:center"><div class="spin"></div><div id="busyMsg">Working…</div></div></div>
+
+<script>
+'use strict';
+/* ================= CONFIG (edit to rebrand) ================= */
+const BRAND={name:'CDE Sync',tag:'Move files into Autodesk Construction Cloud'};
+const APS='https://developer.api.autodesk.com';
+const SCOPES='data:read data:write data:create data:search account:read bucket:read';
+const GRAPH='https://graph.microsoft.com/v1.0';
+const MS_SCOPES='https://graph.microsoft.com/Files.Read.All https://graph.microsoft.com/Sites.Read.All offline_access';
+const REDIRECT=location.origin+location.pathname;
+const STEPS=['Source','Destination','Files','Attributes','Naming','Review','Results'];
+const L={text:'Text',droplist:'Droplist',date:'Date',number:'Number'};
+
+/* ================= helpers ================= */
+const $=(s,e=document)=>e.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const mk=st=>({get:k=>{try{return st.getItem(k)}catch(e){return null}},set:(k,v)=>{try{st.setItem(k,v)}catch(e){}},del:k=>{try{st.removeItem(k)}catch(e){}}});
+const ls=mk(window.localStorage),ss=mk(window.sessionStorage);
+const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const fmtSize=n=>n==null||n===''?'–':n>1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';
+const dk=(id,raw)=>id+'␟'+String(raw).trim().toLowerCase();
+function toast(m,k){const t=document.createElement('div');t.className='toast '+(k||'');t.textContent=m;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),k==='err'?9000:4500)}
+function busy(on,m){$('#busy').classList.toggle('on',!!on);if(m)$('#busyMsg').textContent=m}
+async function guard(fn,m){busy(true,m);try{return await fn()}catch(e){console.error(e);toast(e.message||String(e),'err')}finally{busy(false)}}
+function opts(list,sel,ph){return `<option value="">${esc(ph||'Select…')}</option>`+list.map(o=>`<option value="${esc(o.id)}" ${o.id===sel?'selected':''}>${esc(o.name)}</option>`).join('')}
+function splitName(n){const m=n.match(/\.[A-Za-z0-9]{1,8}$/);const ext=m?m[0]:'';return{stem:ext?n.slice(0,-ext.length):n,ext}}
+const normType=t=>{t=String(t||'').toLowerCase();if(['array','dropdown','list','droplist','select'].includes(t))return'droplist';if(t.startsWith('date'))return'date';if(['numeric','number','integer','float','double'].includes(t))return'number';return'text'};
+
+function toISO(s){
+  const ok=(y,m,d)=>{const dt=new Date(Date.UTC(y,m-1,d));return dt.getUTCFullYear()===y&&dt.getUTCMonth()===m-1&&dt.getUTCDate()===d?`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`:null};
+  let m=String(s).trim().match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return ok(+m[1],+m[2],+m[3]);
+  m=String(s).trim().match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/);if(m){let y=+m[3];if(y<100)y+=2000;return ok(y,+m[2],+m[1])}
+  return null;
+}
+function coerce(def,raw){
+  const s=String(raw).trim();
+  if(def.type==='droplist'){const hit=(def.values||[]).find(v=>String(v).toLowerCase()===s.toLowerCase());return hit!=null?{ok:true,value:hit}:{ok:false,kind:'droplist',msg:`“${s}” is not in the droplist`}}
+  if(def.type==='date'){const d=toISO(s);return d?{ok:true,value:d}:{ok:false,kind:'invalid',msg:`“${s}” is not a valid date`}}
+  if(def.type==='number'){const n=Number(s.replace(/,/g,''));return s!==''&&isFinite(n)?{ok:true,value:n}:{ok:false,kind:'invalid',msg:`“${s}” is not a number`}}
+  return{ok:true,value:s};
+}
+function inferDefs(files){
+  const keys={};files.forEach(f=>Object.entries(f.attrs||{}).forEach(([k,v])=>{if(v!=null&&String(v).trim()!==''){(keys[k]=keys[k]||[]).push(v)}}));
+  return Object.entries(keys).map(([k,vals])=>{
+    let type='text';
+    if(vals.every(v=>typeof v==='number'))type='number';
+    else if(vals.every(v=>toISO(v)))type='date';
+    return{key:k,name:k,type,values:null};
+  });
+}
+
+/* ================= state ================= */
+const S={step:0,maxStep:0,demo:false,
+  src:{type:'pw',pw:{base:ls.get('pwbase')||'',user:'',pass:'',repos:[],repo:'',connected:false},
+   sp:{url:ls.get('spurl')||'',site:'',siteName:'',drives:[],drive:''},
+   ie:{base:ls.get('iebase')||'',key:ss.get('iekey')||'',token:ss.get('ietoken')||'',projects:[],project:'',connected:false,
+     ep:JSON.parse(ls.get('ieep')||'null')||{projects:'/projects',folders:'/projects/{project}/folders?parentId={parent}',files:'/projects/{project}/folders/{parent}/documents',download:'/projects/{project}/documents/{id}/content'}},
+   local:{files:[],csv:null,csvName:''},
+   hub:'',project:'',folder:null,files:[],defs:[],loadedFor:''},
+  dst:{hub:'',project:'',folder:null,defs:[],std:null,loadedFor:''},
+  map:{},mapInit:false,decisions:{},excl:new Set(),
+  name:{map:{},extract:true,rename:true,sample:0,init:false,fixed:{},swap:{},over:{}},
+  opts:{existing:'version',nameFail:'skip'},
+  fileFilter:'',plan:[],run:null,resFilter:'all',resSearch:''};
+const C={hubs:[],projects:{}};
+const defOf=id=>S.dst.defs.find(d=>d.id===id);
+
+/* ================= auth (APS 3-legged, PKCE) ================= */
+/* Autodesk sign-in is shared across CDE Toolkit (assets/auth.js); Microsoft sign-in stays on this page */
+let TOK=CDETK.raw();
+const rand=n=>{const a=new Uint8Array(n);crypto.getRandomValues(a);return[...a].map(b=>('0'+b.toString(16)).slice(-2)).join('')};
+const b64u=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+async function tokenCall(p){
+  const r=await fetch(APS+'/authentication/v2/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded',Accept:'application/json'},body:new URLSearchParams({client_id:CDETK.clientId(),...p})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error('Sign-in failed: '+(j.developerMessage||j.error_description||j.error||r.status));
+  TOK={access:j.access_token,refresh:j.refresh_token,exp:Date.now()+(j.expires_in-90)*1000};CDETK.save(TOK);
+}
+async function login(){
+  if(!CDETK.clientId()){openSettings();toast('Enter your APS Client ID first','warn');return}
+  CDETK.login();
+}
+async function handleRedirect(){
+  const p=new URLSearchParams(location.search);
+  if(p.get('error')){toast('Autodesk sign-in: '+(p.get('error_description')||p.get('error')),'err');history.replaceState({},'',REDIRECT);return}
+  if(p.get('code')){
+    if(p.get('state')==='ms')await guard(()=>msTokenCall({grant_type:'authorization_code',code:p.get('code'),redirect_uri:REDIRECT,code_verifier:ss.get('mspkce')||''}),'Signing in to Microsoft…');
+    else await guard(()=>tokenCall({grant_type:'authorization_code',code:p.get('code'),redirect_uri:REDIRECT,code_verifier:ss.get('pkce')||''}),'Signing in…');
+    history.replaceState({},'',REDIRECT);
+  }
+}
+async function ensureToken(){
+  if(!TOK)throw new Error('Not signed in to Autodesk. Use “Sign in” first.');
+  if(Date.now()>TOK.exp){if(!TOK.refresh)throw new Error('Session expired. Please sign in again.');await tokenCall({grant_type:'refresh_token',refresh_token:TOK.refresh,scope:SCOPES})}
+}
+async function api(path,o={}){
+  await ensureToken();
+  const isBlob=o.body instanceof Blob;
+  const r=await fetch(path.startsWith('http')?path:APS+path,{method:o.method||'GET',headers:{Authorization:'Bearer '+TOK.access,...(o.body&&!isBlob?{'Content-Type':'application/json'}:{}),...(o.headers||{})},body:o.body?(isBlob?o.body:JSON.stringify(o.body)):undefined});
+  if(!r.ok){let t='';try{t=(await r.text()).slice(0,300)}catch(e){}throw new Error(`${r.status} ${r.statusText} ${t}`.trim())}
+  if(o.raw)return r;const t=await r.text();return t?JSON.parse(t):{};
+}
+async function paged(path,pick){
+  let out=[],url=path;
+  for(let i=0;i<60&&url;i++){const j=await api(url);out=out.concat(pick(j));url=(j.links&&j.links.next&&j.links.next.href)||(j.pagination&&j.pagination.nextUrl)||null}
+  return out;
+}
+const dpid=p=>String(p).replace(/^b\./,'');
+const VND={'Content-Type':'application/vnd.api+json'};
+
+/* ---- Microsoft (SharePoint via Microsoft Graph, PKCE) ---- */
+let MTOK=null;try{MTOK=JSON.parse(ss.get('mtok')||'null')}catch(e){}
+const msTenant=()=>ls.get('mstenant')||'organizations';
+async function msTokenCall(p){
+  const r=await fetch(`https://login.microsoftonline.com/${msTenant()}/oauth2/v2.0/token`,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:ls.get('mscid')||'',scope:MS_SCOPES,...p})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error('Microsoft sign-in failed: '+(j.error_description||j.error||r.status));
+  MTOK={access:j.access_token,refresh:j.refresh_token||(MTOK&&MTOK.refresh),exp:Date.now()+(j.expires_in-90)*1000};ss.set('mtok',JSON.stringify(MTOK));
+}
+async function msLogin(){
+  const cid=ls.get('mscid');if(!cid){openSettings();toast('Enter your Microsoft Entra Client ID in Settings first','warn');return}
+  const v=rand(48);ss.set('mspkce',v);
+  const ch=b64u(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)));
+  const u=new URL(`https://login.microsoftonline.com/${msTenant()}/oauth2/v2.0/authorize`);
+  u.search=new URLSearchParams({client_id:cid,response_type:'code',redirect_uri:REDIRECT,response_mode:'query',scope:MS_SCOPES,state:'ms',code_challenge:ch,code_challenge_method:'S256'}).toString();
+  location.href=u.toString();
+}
+async function ensureMs(){
+  if(!MTOK)throw new Error('Not signed in to Microsoft. Use “Sign in with Microsoft” first.');
+  if(Date.now()>MTOK.exp){if(!MTOK.refresh)throw new Error('Microsoft session expired. Please sign in again.');await msTokenCall({grant_type:'refresh_token',refresh_token:MTOK.refresh})}
+}
+async function gapi(path,o={}){
+  await ensureMs();
+  const r=await fetch(path.startsWith('http')?path:GRAPH+path,{headers:{Authorization:'Bearer '+MTOK.access,Accept:'application/json'}});
+  if(!r.ok){let t='';try{t=(await r.text()).slice(0,250)}catch(e){}throw new Error(`SharePoint/Graph ${r.status} ${r.statusText} ${t}`.trim())}
+  return o.raw?r:r.json();
+}
+async function gpaged(path){let out=[],url=path;for(let i=0;i<60&&url;i++){const j=await gapi(url);out=out.concat(j.value||[]);url=j['@odata.nextLink']||null}return out}
+const SP_SKIP=/^(@|id$|ContentType|_|Created|Modified|Author|Editor|App|Attachments|Edit$|LinkFilename|FileLeafRef|FileSizeDisplay|ItemChildCount|FolderChildCount|Compliance|DocIcon|ParentLeaf|ParentVersion|SM(Total|Last|Exclud)|FileType|GUID|CheckedOut|Version|OData|FSObjType)/i;
+function spAttrs(f){const o={};Object.entries(f||{}).forEach(([k,v])=>{if(SP_SKIP.test(k)||v==null||typeof v==='object'||v==='')return;o[k]=v});return o}
+function ieAttrs(x){
+  const o={},skip=/^(id|name|filename|size|url|links?|href|etag|.*id)$/i,put=(k,v)=>{if(v==null||v===''||typeof v==='object')return;o[k]=v};
+  Object.entries(x||{}).forEach(([k,v])=>{if(v&&typeof v==='object'&&!Array.isArray(v)&&/attr|meta|field|prop/i.test(k)){Object.entries(v).forEach(([a,b])=>put(a,b))}else if(!skip.test(k))put(k,v)});
+  return o;
+}
+function parseCsv(t){
+  const rows=[];let r=[],c='',q=false;
+  for(let i=0;i<t.length;i++){const ch=t[i];
+    if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}
+    else if(ch==='"')q=true;
+    else if(ch===','){r.push(c);c=''}
+    else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);c='';if(r.some(x=>x!==''))rows.push(r);r=[]}
+    else c+=ch}
+  r.push(c);if(r.some(x=>x!==''))rows.push(r);return rows;
+}
+
+/* ================= real services ================= */
+const REAL={
+ acc:{
+  async hubs(){const j=await api('/project/v1/hubs');return j.data.map(h=>({id:h.id,name:h.attributes.name}))},
+  async projects(hub){return paged(`/project/v1/hubs/${hub}/projects?page[limit]=200`,j=>j.data.map(p=>({id:p.id,name:p.attributes.name})))},
+  async folders(project,parent,hub){
+    if(!parent){const j=await api(`/project/v1/hubs/${hub}/projects/${project}/topFolders`);return j.data.filter(f=>f.type==='folders').map(f=>({id:f.id,name:f.attributes.displayName||f.attributes.name}))}
+    return paged(`/data/v1/projects/${project}/folders/${encodeURIComponent(parent)}/contents?filter[type]=folders&page[limit]=200`,j=>j.data.map(f=>({id:f.id,name:f.attributes.displayName||f.attributes.name})));
+  },
+  async files(project,folder){
+    let out=[],url=`/data/v1/projects/${project}/folders/${encodeURIComponent(folder)}/contents?filter[type]=items&page[limit]=200`;
+    for(let i=0;i<60&&url;i++){
+      const j=await api(url);
+      (j.data||[]).forEach(it=>{
+        const v=(j.included||[]).find(x=>x.type==='versions'&&x.relationships&&x.relationships.item&&x.relationships.item.data.id===it.id);
+        out.push({id:it.id,name:it.attributes.displayName,size:v&&v.attributes.storageSize,versionId:v&&v.id,storageId:v&&v.relationships&&v.relationships.storage&&v.relationships.storage.data&&v.relationships.storage.data.id,attrs:{}});
+      });
+      url=(j.links&&j.links.next&&j.links.next.href)||null;
+    }
+    return out;
+  },
+  async defs(project,folder){
+    // ACC returns attribute definitions per folder (including those inherited from parent folders)
+    const r=await paged(`/bim360/docs/v1/projects/${dpid(project)}/folders/${encodeURIComponent(folder)}/custom-attribute-definitions?limit=200`,j=>j.results||[]);
+    return r.map(d=>({id:String(d.id),key:String(d.id),name:d.name,type:normType(d.type),values:d.arrayValues||d.values||null}));
+  },
+  async fileAttrs(project,files){
+    for(let i=0;i<files.length;i+=50){
+      const chunk=files.slice(i,i+50).filter(f=>f.versionId);
+      if(!chunk.length)continue;
+      const j=await api(`/bim360/docs/v1/projects/${dpid(project)}/versions:batch-get`,{method:'POST',body:{urns:chunk.map(f=>f.versionId)}});
+      (j.results||[]).forEach(r=>{const f=chunk.find(c=>c.versionId===(r.id||r.urn));if(f)(r.customAttributes||[]).forEach(a=>{if(a.value!=null&&a.value!=='')f.attrs[String(a.id)]=a.value})});
+    }
+  },
+  async stdById(project,defs,sid){
+    const s=await api(`/bim360/docs/v1/projects/${dpid(project)}/naming-standards/${encodeURIComponent(sid)}`);
+    const def=s.definition||s;
+    const flds=(def.fields||[]).filter(f=>String(f.type||'').toUpperCase()!=='CLASSIFICATION');
+    if(!flds.length)throw new Error('Naming standard '+sid+' has no file-name fields. Response keys: '+Object.keys(s).join(', '));
+    const fields=flds.map(f=>{
+      const id=String(f.attributeId==null?'':f.attributeId),nm=f.name||'';
+      const d=defs.find(x=>x.id===id)||defs.find(x=>norm(x.name)===norm(nm));
+      const opts=Array.isArray(f.options)?f.options.map(o=>o.value).filter(v=>v!=null):null;
+      return{name:nm||(d&&d.name)||'Field',attr:d?d.id:null,type:f.type,optional:!!f.optional,minLength:f.minLength,maxLength:f.maxLength,defaultValue:f.defaultValue,options:opts};
+    });
+    return{source:'acc',id:sid,name:s.name,delim:def.delimiter||def.separator||s.delimiter||s.separator||'-',fields};
+  },
+  async std(project,defs,folderId){
+    // Folder carries extension.data.namingStandardIds (Data Management); walk up parents if this folder has none.
+    const trace=[];
+    try{
+      let fid=folderId,sid=null,hops=0;
+      while(fid&&hops++<12&&!sid){
+        const f=await api(`/data/v1/projects/${project}/folders/${encodeURIComponent(fid)}`);
+        const at=f.data&&f.data.attributes||{};const ext=at.extension&&at.extension.data;
+        trace.push('Folder "'+(at.displayName||at.name||fid)+'": '+(ext&&ext.namingStandardIds!=null?'namingStandardIds = '+JSON.stringify(ext.namingStandardIds):'no namingStandardIds'+(ext?' (extension keys: '+Object.keys(ext).join(', ')+')':' (no extension data)')));
+        const ids=ext&&ext.namingStandardIds;
+        if(Array.isArray(ids)&&ids.length)sid=ids[0];
+        else if(typeof ids==='string'&&ids)sid=ids;
+        else{const p=f.data&&f.data.relationships&&f.data.relationships.parent&&f.data.relationships.parent.data;fid=p&&p.id}
+      }
+      if(sid)return await REAL.acc.stdById(project,defs,sid);
+      trace.push('No naming standard is applied to this folder or its parents.');
+    }catch(e){trace.push('Error: '+(e.message||e))}
+    return{source:'manual',delim:'-',fields:[],error:trace.join(' | '),trace};
+  },
+  async stdScan(project,hub,onProgress){
+    // Search project folders for any folder that has a naming standard applied
+    const found=[];let level=[],count=0;
+    const top=await api(`/project/v1/hubs/${hub}/projects/${project}/topFolders`);
+    level=(top.data||[]).filter(f=>f.type==='folders').map(f=>({f,path:f.attributes.displayName||f.attributes.name}));
+    for(let depth=0;depth<5&&level.length&&count<200;depth++){
+      const next=[];
+      for(let i=0;i<level.length;i+=6){
+        await Promise.all(level.slice(i,i+6).map(async({f,path})=>{
+          count++;const ids=f.attributes&&f.attributes.extension&&f.attributes.extension.data&&f.attributes.extension.data.namingStandardIds;
+          if(Array.isArray(ids)&&ids.length)found.push({folder:path,id:ids[0]});
+          if(onProgress)onProgress(count);
+          try{const j=await api(`/data/v1/projects/${project}/folders/${encodeURIComponent(f.id)}/contents?filter[type]=folders&page[limit]=100`);
+            (j.data||[]).forEach(c=>next.push({f:c,path:path+' / '+(c.attributes.displayName||c.attributes.name)}))}catch(e){}
+        }));
+      }
+      level=next;
+    }
+    const seen={};return found.filter(x=>seen[x.id]?false:(seen[x.id]=true));
+  },
+  async download(project,file){
+    if(!file.storageId)throw new Error('No storage reference for this file');
+    const [bucket,obj]=file.storageId.split(':').pop().split('/');
+    const j=await api(`/oss/v2/buckets/${bucket}/objects/${encodeURIComponent(obj)}/signeds3download`);
+    const r=await fetch(j.url);if(!r.ok)throw new Error('Download failed '+r.status);return r.blob();
+  },
+  async upload(project,folderId,name,blob,mode){
+    const existing=(await REAL.acc.files(project,folderId)).find(f=>f.name.toLowerCase()===name.toLowerCase());
+    if(existing&&mode==='skip')return{skipped:true};
+    const st=await api(`/data/v1/projects/${project}/storage`,{method:'POST',headers:VND,body:{jsonapi:{version:'1.0'},data:{type:'objects',attributes:{name},relationships:{target:{data:{type:'folders',id:folderId}}}}}});
+    const oid=st.data.id;const [bucket,obj]=oid.split(':').pop().split('/');
+    const base=`/oss/v2/buckets/${bucket}/objects/${encodeURIComponent(obj)}/signeds3upload`;
+    const s=await api(base+'?minutesExpiration=30');
+    const put=await fetch(s.urls[0],{method:'PUT',body:blob});if(!put.ok)throw new Error('Storage upload failed '+put.status);
+    await api(base,{method:'POST',body:{uploadKey:s.uploadKey}});
+    const ext=t=>({type:t+':autodesk.bim360:File',version:'1.0'});
+    if(!existing){
+      const j=await api(`/data/v1/projects/${project}/items`,{method:'POST',headers:VND,body:{jsonapi:{version:'1.0'},data:{type:'items',attributes:{displayName:name,extension:ext('items')},relationships:{tip:{data:{type:'versions',id:'1'}},parent:{data:{type:'folders',id:folderId}}}},included:[{type:'versions',id:'1',attributes:{name,extension:ext('versions')},relationships:{storage:{data:{type:'objects',id:oid}}}}]}});
+      const v=(j.included||[]).find(x=>x.type==='versions');return{versionId:v&&v.id,newVersion:false};
+    }
+    const j=await api(`/data/v1/projects/${project}/versions`,{method:'POST',headers:VND,body:{jsonapi:{version:'1.0'},data:{type:'versions',attributes:{name,extension:ext('versions')},relationships:{item:{data:{type:'items',id:existing.id}},storage:{data:{type:'objects',id:oid}}}}}});
+    return{versionId:j.data.id,newVersion:true};
+  },
+  async setAttrs(project,versionId,pairs){
+    let err;
+    for(let i=0;i<5;i++){
+      try{return await api(`/bim360/docs/v1/projects/${dpid(project)}/versions/${encodeURIComponent(versionId)}/custom-attributes:batch-update`,{method:'POST',body:pairs})}
+      catch(e){err=e;await sleep(2500)}
+    }
+    throw err;
+  },
+  async addDrop(project,def,value){
+    const vals=(def.values||[]).concat([value]);
+    await api(`/bim360/docs/v1/projects/${dpid(project)}/custom-attribute-definitions/${def.id}`,{method:'PATCH',body:{arrayValues:vals}});
+    def.values=vals;
+  }
+ },
+ pw:{
+  hdr(){const c=S.src.pw;return{Authorization:'Basic '+btoa(unescape(encodeURIComponent(c.user+':'+c.pass))),Accept:'application/json'}},
+  async req(path,raw){
+    const base=S.src.pw.base.replace(/\/+$/,'');
+    const r=await fetch(base+path,{headers:REAL.pw.hdr()});
+    if(!r.ok)throw new Error(`ProjectWise ${r.status} ${r.statusText}`);
+    return raw?r:r.json();
+  },
+  async repos(){const j=await REAL.pw.req('/ws/v2.8/Repositories');return(j.instances||[]).map(i=>({id:i.instanceId,name:(i.properties&&(i.properties.Name||i.properties.Label))||i.instanceId}))},
+  async folders(repo,parent){
+    const q=parent?[`ParentGuid+eq+'${parent}'`]:['ParentGuid+eq+null',"ParentGuid+eq+''"];
+    let last;
+    for(const f of q){try{const j=await REAL.pw.req(`/ws/v2.8/Repositories/${repo}/PW_WSG/Project?$filter=${f}`);const l=(j.instances||[]);if(l.length||parent)return l.map(i=>({id:i.instanceId,name:i.properties.Name||i.instanceId}))}catch(e){last=e}}
+    if(last)throw last;return[];
+  },
+  async files(repo,folder){
+    const j=await REAL.pw.req(`/ws/v2.8/Repositories/${repo}/PW_WSG/Document?$filter=ParentGuid+eq+'${folder}'`);
+    const skip=/guid$|^itemid$/i;
+    return(j.instances||[]).map(i=>{const p=i.properties||{};const attrs={};Object.entries(p).forEach(([k,v])=>{if(v!=null&&typeof v!=='object'&&!skip.test(k))attrs[k]=v});return{id:i.instanceId,name:p.FileName||p.Name,size:p.FileSize,attrs}});
+  },
+  async download(repo,file){const r=await REAL.pw.req(`/ws/v2.8/Repositories/${repo}/PW_WSG/Document/${file.id}/$file`,true);return r.blob()}
+ },
+ sp:{
+  async site(url){const u=new URL(url);const path=u.pathname.replace(/\/+$/,'');const j=await gapi(`/sites/${u.hostname}:${path}`);return{id:j.id,name:j.displayName||j.name}},
+  async drives(siteId){const l=await gpaged(`/sites/${siteId}/drives`);return l.map(d=>({id:d.id,name:d.name}))},
+  async folders(drive,parent){const l=await gpaged((parent?`/drives/${drive}/items/${parent}/children`:`/drives/${drive}/root/children`)+'?$top=200');return l.filter(x=>x.folder).map(x=>({id:x.id,name:x.name}))},
+  async files(drive,folder){
+    const base=folder==='root'?`/drives/${drive}/root/children`:`/drives/${drive}/items/${folder}/children`;
+    const l=await gpaged(base+'?$top=200&$expand=listItem($expand=fields)');
+    return l.filter(x=>x.file).map(x=>({id:x.id,name:x.name,size:x.size,attrs:spAttrs(x.listItem&&x.listItem.fields)}));
+  },
+  async download(drive,file){
+    let r=null;
+    try{await ensureMs();r=await fetch(`${GRAPH}/drives/${drive}/items/${file.id}/content`,{headers:{Authorization:'Bearer '+MTOK.access}})}catch(e){r=null}
+    if(!r||!r.ok){
+      const m=await gapi(`/drives/${drive}/items/${file.id}?select=id,@microsoft.graph.downloadUrl`);
+      const u=m['@microsoft.graph.downloadUrl'];if(!u)throw new Error('No download link returned by SharePoint');
+      r=await fetch(u);
+    }
+    if(!r.ok)throw new Error('SharePoint download failed '+r.status);return r.blob();
+  }
+ },
+ ie:{
+  // InEight Document's API paths are not publicly documented: every path is a template you can edit in the Source step.
+  async req(path,raw){
+    const c=S.src.ie;if(!c.base)throw new Error('Enter the InEight API base URL');
+    const h={Accept:'application/json'};if(c.key)h['Ocp-Apim-Subscription-Key']=c.key;if(c.token)h.Authorization='Bearer '+c.token;
+    const r=await fetch(c.base.replace(/\/+$/,'')+path,{headers:h});
+    if(!r.ok)throw new Error(`InEight ${r.status} ${r.statusText}`);
+    return raw?r:r.json();
+  },
+  tpl(t,v){return t.replace(/\{(\w+)\}/g,(m,k)=>encodeURIComponent(v[k]==null?'':v[k]))},
+  list(j){return Array.isArray(j)?j:(j.data||j.items||j.value||j.results||j.documents||j.folders||j.projects||[])},
+  async projects(){const j=await REAL.ie.req(REAL.ie.tpl(S.src.ie.ep.projects,{}));return REAL.ie.list(j).map(x=>({id:String(x.id||x.projectId||x.code),name:x.name||x.title||x.projectName||String(x.id)}))},
+  async folders(project,parent){const j=await REAL.ie.req(REAL.ie.tpl(S.src.ie.ep.folders,{project,parent:parent&&parent!=='root'?parent:''}));return REAL.ie.list(j).map(x=>({id:String(x.id||x.folderId),name:x.name||x.title||x.folderName||String(x.id)}))},
+  async files(project,folder){const j=await REAL.ie.req(REAL.ie.tpl(S.src.ie.ep.files,{project,parent:folder&&folder!=='root'?folder:''}));return REAL.ie.list(j).map(x=>({id:String(x.id||x.documentId),name:x.fileName||x.name||x.title,size:x.size||x.fileSize,attrs:ieAttrs(x)}))},
+  async download(project,file){const r=await REAL.ie.req(REAL.ie.tpl(S.src.ie.ep.download,{project,id:file.id}),true);return r.blob()}
+ },
+ local:{
+  files(){
+    const L=S.src.local,rows=L.csv,idx={};
+    if(rows&&rows.length>1){const h=rows[0];let nc=h.findIndex(x=>['filename','name','file','documentname','documentnumber'].includes(norm(x)));if(nc<0)nc=0;
+      rows.slice(1).forEach(r=>{const a={};h.forEach((c,i)=>{if(i!==nc&&r[i]!=null&&r[i]!=='')a[c.trim()]=r[i]});idx[String(r[nc]).trim().toLowerCase()]=a})}
+    return L.files.map((f,i)=>({id:'L'+i,name:f.name,size:f.size,attrs:idx[f.name.toLowerCase()]||{},blob:f}));
+  },
+  async download(file){return file.blob}
+ }
+};
+
+/* ================= demo services ================= */
+const DD=[
+ {id:'d_proj',key:'d_proj',name:'Project Code',type:'droplist',values:['PRJ','XYZ']},
+ {id:'d_orig',key:'d_orig',name:'Originator',type:'droplist',values:['ABC','XYZ']},
+ {id:'d_disc',key:'d_disc',name:'Discipline',type:'droplist',values:['CIV','STR','ARC','MEP']},
+ {id:'d_type',key:'d_type',name:'Document Type',type:'droplist',values:['DRG','MOD','REP']},
+ {id:'d_num',key:'d_num',name:'Number',type:'text',values:null},
+ {id:'d_rev',key:'d_rev',name:'Revision',type:'text',values:null},
+ {id:'d_status',key:'d_status',name:'Status',type:'droplist',values:['WIP','Shared','Published']},
+ {id:'d_desc',key:'d_desc',name:'Description',type:'text',values:null},
+ {id:'d_date',key:'d_date',name:'Issue Date',type:'date',values:null}];
+const DEMO={
+ acc:{
+  async hubs(){await sleep(250);return[{id:'h1',name:'Demo Hub – Transport Projects'}]},
+  async projects(){await sleep(250);return[{id:'p1',name:'Rail Upgrade Stage 2'},{id:'p2',name:'Bridge Replacement – Package B'}]},
+  async folders(p,parent){await sleep(200);if(!parent)return[{id:'f-pf',name:'Project Files'},{id:'f-pl',name:'Plans'}];if(parent==='f-pf')return['01 WIP','02 Shared','03 Published'].map((n,i)=>({id:'f-'+i,name:n}));return[]},
+  async files(){await sleep(300);return[
+    {id:'a1',name:'PRJ-ABC-CIV-DRG-00201-P01.pdf',size:820000,attrs:{d_status:'WIP',d_desc:'Track alignment plan',d_date:'2026-08-14'}},
+    {id:'a2',name:'PRJ-ABC-STR-DRG-00202-P02.pdf',size:1250000,attrs:{d_status:'Shared',d_desc:'Bridge pier details',d_date:'2026-08-20'}},
+    {id:'a3',name:'PRJ-ABC-ARC-MOD-00203-C01.rvt',size:48000000,attrs:{d_status:'Published',d_desc:'Station building model'}}]},
+  async defs(){await sleep(150);return DD.map(d=>({...d,values:d.values&&[...d.values]}))},
+  async fileAttrs(){},
+  async std(){return{source:'acc',delim:'-',fields:[{name:'Project',attr:'d_proj'},{name:'Originator',attr:'d_orig'},{name:'Discipline',attr:'d_disc'},{name:'Type',attr:'d_type'},{name:'Number',attr:'d_num'},{name:'Revision',attr:'d_rev'}]}},
+  async download(){await sleep(350);return new Blob(['demo'])},
+  async upload(p,f,name,b,mode){await sleep(450);if(/MOD/.test(name))throw new Error('403 Forbidden – no upload permission on destination folder (demo)');if(/CIV/.test(name)&&mode==='skip')return{skipped:true};return{versionId:'urn:demo:'+name,newVersion:/CIV/.test(name)}},
+  async setAttrs(p,v){await sleep(250);if(/00105/.test(v))throw new Error('400 Bad Request – attribute value rejected (demo)')},
+  async addDrop(p,def,val){await sleep(250);def.values=(def.values||[]).concat([val])}
+ },
+ pw:{
+  async repos(){await sleep(300);return[{id:'r1',name:'DEMO_Datasource'}]},
+  async folders(r,parent){await sleep(200);if(!parent)return[{id:'g1',name:'Design'},{id:'g2',name:'Reports'}];if(parent==='g1')return[{id:'g3',name:'Civil'},{id:'g4',name:'Structures'}];return[]},
+  async files(){await sleep(350);return[
+    {id:'w1',name:'PRJ-ABC-CIV-DRG-00101-P02.pdf',size:910000,attrs:{Description:'General arrangement',Status:'WIP',Discipline:'Civil',Revision:'P02',IssueDate:'03/09/2026',Originator:'ABC'}},
+    {id:'w2',name:'PRJ-ABC-STR-DRG-00102-P01.pdf',size:1500000,attrs:{Description:'Pier P3 reinforcement',Status:'Issued for Review',Discipline:'Structural',Revision:'P01',IssueDate:'05/09/2026',Originator:'ABC'}},
+    {id:'w3',name:'PRJ-ABC-ARC-MOD-00103-C01.rvt',size:52000000,attrs:{Description:'Station model',Status:'Shared',Discipline:'Architecture',Revision:'C01',IssueDate:'not issued',Originator:'ABC'}},
+    {id:'w4',name:'PRJ-ABC-MEP-REP-00104.docx',size:240000,attrs:{Description:'Services report',Status:'Published',Discipline:'MEP',Originator:'ABC'}},
+    {id:'w5',name:'Bridge_Layout_final.pdf',size:700000,attrs:{Description:'Layout',Status:'WIP',Originator:'ABC'}},
+    {id:'w6',name:'PRJ-ABC-MEP-DRG-00105-P03-DRAFT.pdf',size:660000,attrs:{Description:'Services layout',Status:'WIP',Discipline:'MEP',Revision:'P03',IssueDate:'11/09/2026',Originator:'ABC'}}]},
+  async download(){await sleep(350);return new Blob(['demo'])}
+ },
+ sp:{
+  async site(url){await sleep(300);return{id:'s1',name:'Delivery Team (demo)'}},
+  async drives(){await sleep(200);return[{id:'dr1',name:'Documents'},{id:'dr2',name:'Design Reviews'}]},
+  async folders(d,parent){await sleep(200);if(!parent)return[{id:'sf1',name:'02-Delivery'},{id:'sf2',name:'Archive'}];if(parent==='sf1')return[{id:'sf3',name:'Drawing Outputs'}];return[]},
+  async files(){await sleep(300);return[
+    {id:'sp1',name:'PRJ-ABC-CIV-DRG-00301-P01.pdf',size:700000,attrs:{Title:'Station concept',Status:'WIP',Discipline:'Civil',Revision:'P01'}},
+    {id:'sp2',name:'PRJ-ABC-CIV-DRG-00302.pdf',size:810000,attrs:{Title:'Retaining wall',Status:'Shared',Discipline:'Civil'}},
+    {id:'sp3',name:'PRJ-ABC-STR-REP-00303-A-DRAFT.docx',size:230000,attrs:{Title:'Structural report',Status:'WIP',Discipline:'Structures',Revision:'A'}}]},
+  async download(){await sleep(350);return new Blob(['demo'])}
+ },
+ ie:{
+  async projects(){await sleep(300);return[{id:'ie1',name:'Level Crossing Removal – Doc Control (demo)'}]},
+  async folders(p,parent){await sleep(200);if(!parent||parent==='root')return[{id:'if1',name:'Design'},{id:'if2',name:'Correspondence'}];return[]},
+  async files(){await sleep(300);return[
+    {id:'ie-1',name:'PRJ-ABC-ARC-DRG-00401-P02.pdf',size:640000,attrs:{title:'Platform layout',revision:'P02',status:'Issued for Review',discipline:'Architecture'}},
+    {id:'ie-2',name:'PRJ-ABC-MEP-DRG-00402-P01.pdf',size:910000,attrs:{title:'Services plan',revision:'P01',status:'Shared',discipline:'MEP'}}]},
+  async download(){await sleep(350);return new Blob(['demo'])}
+ },
+ local:null
+};
+DEMO.local=REAL.local;
+let Svc=REAL;
+
+/* ================= loaders ================= */
+async function ensureHubs(){
+  if(!S.demo&&!TOK)return;
+  if(C.hubs.length)return;
+  C.hubs=await Svc.acc.hubs();
+}
+async function loadProjects(hub){if(hub&&!C.projects[hub])C.projects[hub]=await Svc.acc.projects(hub)}
+async function applyStd(id){
+  await guard(async()=>{const d=S.dst;d.std=await Svc.acc.stdById(d.project,d.defs,id);S.name.init=false;autoNameMap();render()},'Loading naming standard…');
+}
+async function loadDest(){
+  const d=S.dst,key=d.project+'|'+(d.folder&&d.folder.id);if(d.loadedFor===key)return;
+  d.defs=await Svc.acc.defs(d.project,d.folder.id);d.std=await Svc.acc.std(d.project,d.defs,d.folder.id);d.loadedFor=key;S.name.init=false;S.mapInit=false;
+}
+async function loadSrc(){
+  const s=S.src;
+  const scope=s.type==='pw'?s.pw.repo:s.type==='sp'?s.sp.drive:s.type==='ie'?s.ie.project:s.type==='local'?s.local.files.length+'|'+(s.local.csv?s.local.csv.length:0):s.project;
+  const key=s.type+'|'+scope+'|'+(s.folder&&s.folder.id);
+  if(s.loadedFor===key)return;
+  if(s.type==='pw'){s.files=await Svc.pw.files(s.pw.repo,s.folder.id);s.defs=inferDefs(s.files)}
+  else if(s.type==='sp'){s.files=await Svc.sp.files(s.sp.drive,s.folder.id);s.defs=inferDefs(s.files)}
+  else if(s.type==='ie'){s.files=await Svc.ie.files(s.ie.project,s.folder.id);s.defs=inferDefs(s.files)}
+  else if(s.type==='local'){s.files=Svc.local.files();s.defs=inferDefs(s.files)}
+  else{s.files=await Svc.acc.files(s.project,s.folder.id);s.defs=await Svc.acc.defs(s.project,s.folder.id);await Svc.acc.fileAttrs(s.project,s.files)}
+  s.files.forEach(f=>f.sel=true);s.loadedFor=key;S.mapInit=false;S.name.init=false;S.excl=new Set();
+}
+function autoMap(){
+  if(S.mapInit)return;S.map={};
+  S.dst.defs.forEach(d=>{const hit=S.src.defs.find(s=>norm(s.name)===norm(d.name))||(S.src.type==='acc'?S.src.defs.find(s=>s.id===d.id):null);if(hit)S.map[d.id]=hit.key});
+  S.mapInit=true;
+}
+function autoNameMap(){
+  if(S.name.init)return;const std=S.dst.std;if(!std)return;S.name.map={};
+  const f=S.src.files.find(x=>x.sel);const n=f?splitName(f.name).stem.split(std.delim||'-').length:0;
+  std.fields.forEach((fl,i)=>{if(i<n)S.name.map[i]=i});S.name.init=true;
+}
+
+/* ================= validation / plan ================= */
+function fieldOk(fl,val){
+  if(val==null||String(val).trim()==='')return false;
+  const d=defOf(fl.attr);if(!d)return true;
+  const c=coerce(d,val);if(c.ok)return true;
+  return c.kind==='droplist'&&S.decisions[dk(d.id,val)]==='add';
+}
+/* value of standard field i for a file: per-file override > fixed value > swapped part > file-name part */
+function fieldVal(f,parts,i){
+  const nm=S.name,ov=nm.over[f.id]&&nm.over[f.id][i];
+  if(ov!=null&&ov!=='')return{v:ov,src:'file'};
+  if(nm.fixed[i]!=null&&nm.fixed[i]!=='')return{v:nm.fixed[i],src:'fixed'};
+  const pi=nm.map[i];let v=pi==null||parts[pi]==null?null:parts[pi];
+  if(v!=null&&nm.swap[i]){const k=String(v).toLowerCase();if(nm.swap[i][k]!=null)return{v:nm.swap[i][k],src:'swap'}}
+  return{v,src:'part'};
+}
+function compute(){
+  const std=S.dst.std||{fields:[],delim:'-'},delim=std.delim||'-',nm=S.name;
+  S.plan=S.src.files.filter(f=>f.sel).map(f=>{
+    const {stem,ext}=splitName(f.name),parts=stem.split(delim);
+    const p={file:f,parts,ext,values:{},issues:[],msgs:[],why:[],nameState:'none',newName:f.name,finalName:f.name,action:'transfer',skipReason:''};
+    const cand={};
+    Object.entries(S.map).forEach(([dId,sKey])=>{if(!sKey)return;const v=f.attrs&&f.attrs[sKey];if(v==null||String(v).trim()==='')return;cand[dId]={raw:v,origin:'map'}});
+    if(std.fields.length){
+      p.fv=std.fields.map((fl,i)=>fieldVal(f,parts,i));
+      const mapped=p.fv.map(x=>x.v);
+      const exact=parts.length===std.fields.length&&std.fields.every((fl,i)=>fieldOk(fl,parts[i]));
+      const missing=std.fields.filter((fl,i)=>mapped[i]==null||mapped[i]==='').map(fl=>fl.name);
+      const bad=std.fields.filter((fl,i)=>mapped[i]!=null&&mapped[i]!==''&&!fieldOk(fl,mapped[i])).map(fl=>fl.name);
+      p.nameState=exact?'match':(!missing.length&&!bad.length?'fixable':'nomatch');
+      if(p.nameState!=='match'){
+        if(parts.length!==std.fields.length)p.why.push(`${parts.length} name part${parts.length===1?'':'s'}, standard has ${std.fields.length}`);
+        if(missing.length)p.why.push('No value for: '+missing.join(', '));
+        if(bad.length)p.why.push('Invalid value for: '+bad.join(', '));
+      }
+      if(nm.rename&&(p.nameState==='fixable'||p.nameState==='match')){
+        p.newName=mapped.map((v,i)=>{const d=defOf(std.fields[i].attr);if(d&&d.type==='droplist'){const c=coerce(d,v);if(c.ok)return c.value}return v}).join(delim)+ext;
+      }
+      if(nm.extract)std.fields.forEach((fl,i)=>{if(fl.attr&&mapped[i]!=null&&mapped[i]!=='')cand[fl.attr]={raw:mapped[i],origin:'name'}});
+    }
+    Object.entries(cand).forEach(([id,c])=>{
+      const d=defOf(id);if(!d)return;const r=coerce(d,c.raw);
+      if(r.ok){p.values[id]={value:r.value,origin:c.origin};return}
+      const key=dk(id,c.raw),dec=S.decisions[key],raw=String(c.raw).trim();
+      p.issues.push({key,id,def:d,raw,kind:r.kind,msg:r.msg,origin:c.origin,dec,file:f.name});
+      if(dec==='add')p.values[id]={value:raw,origin:c.origin,add:true};
+      else if(dec==='blank')p.msgs.push(`${d.name}: “${raw}” left blank`);
+      else if(dec==='skip'){p.action='skip';p.skipReason=`${d.name}: ${r.msg} (skipped by choice)`}
+    });
+    if(p.nameState==='nomatch'){
+      if(S.opts.nameFail==='skip'&&p.action!=='skip'){p.action='skip';p.skipReason='File name does not meet the naming standard ('+p.why.join('; ')+')'}
+      else if(S.opts.nameFail!=='skip')p.msgs.push('Name does not meet the standard – kept current name');
+    }
+    if(p.nameState==='fixable'&&!nm.rename)p.msgs.push('Name does not match the standard – kept as-is');
+    p.finalName=(nm.rename&&(p.nameState==='fixable'||p.nameState==='match'))?p.newName:f.name;
+    if(S.excl.has(f.id)){p.action='skip';p.skipReason='Excluded by user'}
+    return p;
+  });
+}
+function groupIssues(origin){
+  const g={};
+  S.plan.forEach(p=>p.issues.forEach(i=>{if(origin&&i.origin!==origin)return;const x=g[i.key]=g[i.key]||{...i,files:[]};x.files.push(i.file)}));
+  return Object.values(g);
+}
+const unresolved=()=>groupIssues().filter(x=>!x.dec);
+
+function compat(s,d){
+  if(!s)return null;
+  if(s.type===d.type){
+    if(s.type==='droplist'&&s.values&&d.values){const miss=s.values.filter(v=>!d.values.some(x=>String(x).toLowerCase()===String(v).toLowerCase()));if(miss.length)return{lvl:'warn',txt:`Both droplists, but ${miss.length} source value${miss.length>1?'s':''} not in destination list (${miss.slice(0,3).join(', ')}${miss.length>3?'…':''})`}}
+    return{lvl:'ok',txt:'Types match'};
+  }
+  if(d.type==='droplist')return{lvl:'warn',txt:`${L[s.type]} → Droplist: every value must exist in the destination list`};
+  if(s.type==='droplist')return{lvl:'info',txt:`Droplist → ${L[d.type]}: values copied as plain ${L[d.type].toLowerCase()}`};
+  return{lvl:'warn',txt:`${L[s.type]} → ${L[d.type]}: values converted; invalid ones flagged`};
+}
+
+/* ================= UI: shell ================= */
+function renderChrome(){
+  $('#brandName').textContent=BRAND.name;$('#brandTag').textContent=BRAND.tag;
+  const on=!!TOK||!!MTOK||S.demo;
+  $('#authChip').innerHTML=`<span class="dot ${on?'on':''}"></span>${S.demo?'Demo mode':[TOK?'Autodesk connected':'',MTOK?'Microsoft connected':''].filter(Boolean).join(' · ')||'Not signed in'}`;
+  $('#yr').textContent=new Date().getFullYear();
+  $('#demoBtn').textContent=S.demo?'Exit demo mode':'Try demo mode';
+  const running=S.run&&S.run.started&&!S.run.finished;
+  $('#stepper').innerHTML=STEPS.map((n,i)=>`<div class="st ${i<S.step?'done':''} ${i>S.step&&i<=S.maxStep?'visit':''} ${i===S.step?'now':''}" ${i!==S.step&&i<=S.maxStep&&!running?`data-act="goto" data-i="${i}" title="Open ${n}"`:''}><i>${i<S.step?'✓':i+1}</i>${n}</div>`).join('');
+  const b=$('#back'),n=$('#next');
+  b.style.visibility=S.step===0||running?'hidden':'visible';
+  n.textContent='Next →';n.dataset.act='next';n.className='btn';
+  if(S.step===5){n.textContent='▶ Start transfer';n.className='btn green';n.dataset.act='startRun'}
+  if(S.step===6){
+    if(running){n.textContent=S.run.stopping?'Stopping…':'■ Stop transfer';n.className='btn red';n.dataset.act='stopRun';n.disabled=!!S.run.stopping}
+    else{n.textContent='New transfer';n.dataset.act='newTransfer';n.disabled=false}
+  }
+  else n.disabled=!canNext();
+  $('#hint').textContent=hint();
+}
+function sameFolder(){const s=S.src,d=S.dst;return s.type==='acc'&&s.project&&s.project===d.project&&s.folder&&d.folder&&s.folder.id===d.folder.id}
+function canNext(){
+  const s=S.src,d=S.dst;
+  if(S.step===0)return !!s.folder&&(s.type!=='pw'||s.pw.connected);
+  if(S.step===1)return !!d.project&&!!d.folder&&!sameFolder();
+  if(S.step===2)return s.files.some(f=>f.sel);
+  if(S.step===5)return !unresolved().length&&S.plan.some(p=>p.action==='transfer');
+  return true;
+}
+function hint(){
+  switch(S.step){
+    case 0:return S.src.folder?'Source folder chosen – continue.':'Connect and choose the source folder.';
+    case 1:return sameFolder()?'Source and destination folder are the same.':'Choose the ACC destination folder.';
+    case 2:return S.src.files.filter(f=>f.sel).length+' of '+S.src.files.length+' files selected';
+    case 5:return unresolved().length?`${unresolved().length} value(s) still need a decision`:'Everything resolved – ready to transfer.';
+    default:return'';
+  }
+}
+function render(){
+  S.maxStep=Math.max(S.maxStep||0,S.step);
+  if(S.step>=2&&S.step<=5&&S.dst.defs.length)compute();
+  const fn=[stepSource,stepDest,stepFiles,stepAttrs,stepNaming,stepReview,stepResults][S.step];
+  $('#view').innerHTML=fn();
+  renderChrome();
+}
+async function go(i){
+  await guard(async()=>{
+    if(i>=2){await loadDest();await loadSrc();autoMap()}
+    if(i>=3)autoNameMap();
+    S.step=i;render();window.scrollTo({top:0});
+  },i>=2?'Loading attributes and files…':'Loading…');
+}
+
+/* ================= UI: steps ================= */
+function signInCard(){
+  return `<div class="note info"><b>Sign in to Autodesk Construction Cloud</b><br>Needed to browse hubs and projects.<div class="folderRow"><button class="btn" data-act="signIn">Sign in with Autodesk</button><button class="btn ghost" data-act="openSettings">Settings (Client ID)</button><button class="btn ghost" data-act="toggleDemo">Try demo mode instead</button></div></div>`;
+}
+function accPicker(side){
+  const o=S[side];
+  if(!TOK&&!S.demo)return signInCard();
+  return `<div class="grid2"><label>Hub<select data-bind="hub" data-side="${side}">${opts(C.hubs,o.hub,'Select a hub…')}</select></label>
+  <label>Project<select data-bind="project" data-side="${side}" ${o.hub?'':'disabled'}>${opts(C.projects[o.hub]||[],o.project,'Select a project…')}</select></label></div>
+  <div class="folderRow"><button class="btn ghost" data-act="pickFolder" data-side="${side}" ${o.project?'':'disabled'}>📁 Choose folder</button>${o.folder?`<span class="fchip">${esc(o.folder.path)}</span>`:'<span class="sub">No folder chosen</span>'}</div>`;
+}
+function srcSeg(){
+  const s=S.src,b=(k,l)=>`<button class="${s.type===k?'on':''}" data-act="srcType" data-v="${k}">${l}</button>`;
+  return `<div class="seg">${b('pw','ProjectWise')}${b('acc','Autodesk Construction Cloud')}${b('sp','SharePoint')}${b('ie','InEight Document')}${b('local','My computer')}</div>`;
+}
+const srcLabel=()=>({pw:'ProjectWise',acc:'source ACC',sp:'SharePoint',ie:'InEight Document',local:'the file export'})[S.src.type];
+function folderChip(){return S.src.folder?`<span class="fchip">${esc(S.src.folder.path)}</span>`:'<span class="sub">No folder chosen</span>'}
+function stepSource(){
+  const s=S.src;
+  if(s.type==='pw'||s.type==='acc')return stepSourceOld();
+  const head=`<h2>Where are the files coming from?</h2><p class="lead">Choose the system and the folder you want to transfer from.</p>${srcSeg()}`;
+  if(s.type==='sp'){
+    const sp=s.sp;
+    return head+`<div class="card"><h3>SharePoint</h3>
+    ${!MTOK&&!S.demo?`<div class="note info"><b>Sign in with Microsoft</b><br>Uses Microsoft Graph with your own SharePoint permissions. Needs a one-off Entra app registration (see Settings).<div class="folderRow"><button class="btn" data-act="msSignIn">Sign in with Microsoft</button><button class="btn ghost" data-act="openSettings">Settings</button><button class="btn ghost" data-act="toggleDemo">Try demo mode instead</button></div></div>`:`
+    <label>Site address<input type="text" data-bind="spUrl" value="${esc(sp.url)}" placeholder="https://yourtenant.sharepoint.com/sites/YourSite"></label>
+    <div class="folderRow"><button class="btn" data-act="spFind">Find site</button>${sp.site?`<span class="badge ok">${esc(sp.siteName)}</span>`:''}</div>
+    ${sp.drives.length?`<div class="grid2" style="margin-top:14px"><label>Document library<select data-bind="spDrive">${opts(sp.drives,sp.drive,'Select…')}</select></label></div>
+    <div class="folderRow"><button class="btn ghost" data-act="pickFolder" data-side="src" ${sp.drive?'':'disabled'}>📁 Choose folder</button>${folderChip()}</div>`:''}`}</div>
+    <div class="note info">Library columns (metadata) on each file become source attributes you can map in the next steps.</div>`;
+  }
+  if(s.type==='ie'){
+    const ie=s.ie,ep=ie.ep;
+    return head+`<div class="card"><h3>InEight Document</h3>
+    <div class="note warn"><b>Heads-up:</b> InEight Document’s API paths aren’t published openly. Enter your API base URL and credentials from your InEight APIM portal, and check the endpoint paths below against its API documentation (or ask your InEight representative). If the API isn’t available to you, use <b>My computer</b> with an InEight export instead.</div>
+    <div class="grid3"><label>API base URL<input type="text" data-bind="ie" data-k="base" value="${esc(ie.base)}" placeholder="https://…"></label>
+    <label>Subscription key (optional)<input type="password" data-bind="ie" data-k="key" value="${esc(ie.key)}" autocomplete="off"></label>
+    <label>Bearer token (optional)<input type="password" data-bind="ie" data-k="token" value="${esc(ie.token)}" autocomplete="off"></label></div>
+    <details style="margin-top:12px"><summary>Endpoint paths (edit to match your InEight API)</summary>
+     <p class="sub">Use {project}, {parent} and {id} as placeholders.</p>
+     <div class="grid2"><label>List projects<input type="text" data-bind="ieEp" data-k="projects" value="${esc(ep.projects)}"></label><label>List folders<input type="text" data-bind="ieEp" data-k="folders" value="${esc(ep.folders)}"></label>
+     <label>List documents in folder<input type="text" data-bind="ieEp" data-k="files" value="${esc(ep.files)}"></label><label>Download document<input type="text" data-bind="ieEp" data-k="download" value="${esc(ep.download)}"></label></div></details>
+    <div class="folderRow"><button class="btn" data-act="ieConnect">${ie.connected?'Reconnect':'Connect'}</button>${ie.connected?'<span class="badge ok">Connected</span>':''}</div>
+    ${ie.connected?`<div class="grid2" style="margin-top:14px"><label>Project<select data-bind="ieProject">${opts(ie.projects,ie.project,'Select…')}</select></label></div>
+    <div class="folderRow"><button class="btn ghost" data-act="pickFolder" data-side="src" ${ie.project?'':'disabled'}>📁 Choose folder</button>${folderChip()}</div>`:''}</div>`;
+  }
+  const L=s.local;
+  return head+`<div class="card"><h3>Files from your computer</h3>
+  <p class="sub">Use this for an InEight Document (or any other) export. Attributes can come from an optional CSV: first column = file name, other columns = attribute values.</p>
+  <div class="grid2"><label>Files<input type="file" data-bind="localFiles" multiple></label><label>Or a whole folder<input type="file" data-bind="localFiles" webkitdirectory multiple></label></div>
+  <div class="grid2" style="margin-top:14px"><label>Attribute export (CSV, optional)<input type="file" data-bind="localCsv" accept=".csv,text/csv"></label></div>
+  <div class="folderRow">${L.files.length?`<span class="badge ok">${L.files.length} file${L.files.length===1?'':'s'} selected</span>`:'<span class="sub">No files selected</span>'}${L.csv?`<span class="badge info">${esc(L.csvName)} · ${Math.max(0,L.csv.length-1)} rows</span>`:''}</div></div>`;
+}
+function stepSourceOld(){
+  const s=S.src,p=s.pw;
+  return `<h2>Where are the files coming from?</h2><p class="lead">Choose the system and the folder you want to transfer from.</p>
+  ${srcSeg()}
+  <div class="card">${s.type==='pw'?`
+    <h3>ProjectWise login</h3>
+    <div class="grid3"><label>Server URL (Web API)<input type="text" data-bind="pw" data-k="base" value="${esc(p.base)}" placeholder="https://pw-server.example.com"></label>
+    <label>Username<input type="text" data-bind="pw" data-k="user" value="${esc(p.user)}" autocomplete="off"></label>
+    <label>Password<input type="password" data-bind="pw" data-k="pass" value="${esc(p.pass)}" autocomplete="off"></label></div>
+    <div class="folderRow"><button class="btn" data-act="pwConnect">${p.connected?'Reconnect':'Connect'}</button>${p.connected?'<span class="badge ok">Connected</span>':''}</div>
+    ${p.connected?`<div class="grid2" style="margin-top:14px"><label>Datasource / repository<select data-bind="pwRepo">${opts(p.repos,p.repo,'Select…')}</select></label></div>
+    <div class="folderRow"><button class="btn ghost" data-act="pickFolder" data-side="src" ${p.repo?'':'disabled'}>📁 Choose folder</button>${s.folder?`<span class="fchip">${esc(s.folder.path)}</span>`:'<span class="sub">No folder chosen</span>'}</div>`:''}
+    `:`<h3>ACC source</h3>${accPicker('src')}`}</div>
+  ${s.type==='pw'&&!S.demo?'<div class="note warn"><b>Heads-up:</b> browsers can only reach ProjectWise if the server allows this page’s address (CORS). If Connect fails with a network error, ask your ProjectWise admin to allow it – or try demo mode to see the full flow.</div>':''}`;
+}
+function stepDest(){
+  const d=S.dst;
+  return `<h2>Where are the files going?</h2><p class="lead">Pick the destination ACC hub, project and folder.</p>
+  <div class="card"><h3>ACC destination</h3>${accPicker('dst')}</div>
+  ${sameFolder()?'<div class="note err">Source and destination are the same folder. Choose a different destination.</div>':''}`;
+}
+function stepFiles(){
+  const f=S.src.files,q=S.fileFilter.toLowerCase();
+  return `<h2>Select files to transfer</h2><p class="lead">Source: <b>${esc(S.src.folder.path)}</b> · ${f.length} file${f.length===1?'':'s'} found (this folder only).</p>
+  <div class="note ok">Destination loaded: <b>${S.dst.defs.length}</b> custom attributes · naming standard: <b>${S.dst.std.source==='acc'?S.dst.std.fields.length+' fields read from ACC':S.dst.std.source==='manual'?'not read from ACC'+(S.dst.std.error?' ('+esc(S.dst.std.error)+')':'')+' – define it in the Naming step':'demo standard'}</b>.</div>
+  <div class="card"><div class="flex" style="margin-bottom:12px"><input type="search" data-bind="fileFilter" placeholder="Filter by name…" value="${esc(S.fileFilter)}" style="min-width:260px"><button class="btn ghost sm" data-act="selAll">Select all</button><button class="btn ghost sm" data-act="selNone">Select none</button></div>
+  <table><thead><tr><th></th><th>File name</th><th>Size</th><th>Source attributes</th></tr></thead><tbody id="filesBody">${filesBody(q)}</tbody></table></div>`;
+}
+function filesBody(q){
+  return S.src.files.filter(f=>!q||f.name.toLowerCase().includes(q)).map(f=>`<tr><td><input type="checkbox" data-bind="fileSel" data-id="${esc(f.id)}" ${f.sel?'checked':''}></td><td>${esc(f.name)}</td><td>${fmtSize(f.size)}</td><td><span class="badge">${Object.keys(f.attrs||{}).length} values</span></td></tr>`).join('')||'<tr><td colspan="4" class="sub">No files in this folder.</td></tr>';
+}
+function missingPanel(origin){
+  const g=groupIssues(origin);
+  if(!g.length)return'';
+  return `<div class="card"><h3>⚠ Values that need a decision (${g.filter(x=>!x.dec).length} unresolved)</h3>
+  <p class="sub">These values can’t be written as-is. Choose what to do with each. “Add to droplist” updates the attribute in the destination ACC project.</p>
+  <div class="flex" style="margin-bottom:10px"><span class="sub">Apply to all unresolved:</span><button class="btn ghost sm" data-act="bulk" data-v="blank">Leave blank</button><button class="btn ghost sm" data-act="bulk" data-v="add">Add to droplist</button><button class="btn ghost sm" data-act="bulk" data-v="skip">Skip files</button></div>
+  <table><thead><tr><th>Attribute</th><th>Value</th><th>Files</th><th>Decision</th></tr></thead><tbody>${g.map(x=>`<tr class="${x.dec?'':'warnrow'}"><td><b>${esc(x.def.name)}</b><div class="sub">${L[x.def.type]}</div></td><td><b>${esc(x.raw)}</b><div class="sub">${esc(x.msg)}${x.origin==='name'?' · from file name':''}</div></td><td title="${esc(x.files.join(', '))}">${x.files.length}</td>
+  <td><select data-bind="decide" data-key="${esc(x.key)}"><option value="">Choose…</option><option value="blank" ${x.dec==='blank'?'selected':''}>Leave blank, still transfer file</option><option value="skip" ${x.dec==='skip'?'selected':''}>Skip files with this value</option>${x.kind==='droplist'?`<option value="add" ${x.dec==='add'?'selected':''}>Add to droplist and populate</option>`:''}</select></td></tr>`).join('')}</tbody></table></div>`;
+}
+function stepAttrs(){
+  const mapped=Object.values(S.map).filter(Boolean).length;
+  const rows=S.dst.defs.map(d=>{
+    const sk=S.map[d.id],s=S.src.defs.find(x=>x.key===sk),c=compat(s,d);
+    return `<tr><td><b>${esc(d.name)}</b></td><td><span class="badge pur">${L[d.type]}</span></td><td><select data-bind="mapSel" data-id="${esc(d.id)}"><option value="">— not mapped —</option>${S.src.defs.map(x=>`<option value="${esc(x.key)}" ${x.key===sk?'selected':''}>${esc(x.name)} (${L[x.type]})</option>`).join('')}</select></td>
+    <td>${s?`<span class="badge pur">${L[s.type]}</span>`:'<span class="sub">–</span>'}</td><td>${c?`<span class="badge ${c.lvl}">${c.lvl==='ok'?'✓':c.lvl==='warn'?'⚠':'ℹ'}</span> <span class="sub">${esc(c.txt)}</span>`:''}</td></tr>`}).join('');
+  return `<h2>Map attributes</h2><p class="lead">Choose which source attribute fills each ACC attribute. ${mapped} auto-matched by name. Type differences are highlighted.</p>
+  <div class="card"><table><thead><tr><th>ACC attribute</th><th>Type</th><th>Take value from (${srcLabel()})</th><th>Source type</th><th>Type check</th></tr></thead><tbody>${rows}</tbody></table></div>
+  ${missingPanel('map')}`;
+}
+function chipHtml(i,parts,used){return `<div class="chip ${used?'used':''}" draggable="true" data-part="${i}"><small>${i+1}</small>${esc(parts[i])}</div>`}
+function fixedCtl(i,d){
+  const cur=S.name.fixed[i]||'';
+  if(d&&d.type==='droplist')return `<select data-bind="nameFixed" data-i="${i}"><option value="">Or set value…</option>${(d.values||[]).map(v=>`<option value="${esc(v)}" ${String(v)===cur?'selected':''}>${esc(v)}</option>`).join('')}</select>`;
+  return `<input type="text" data-bind="nameFixedTxt" data-i="${i}" value="${esc(cur)}" placeholder="Or type a value">`;
+}
+function swapCard(){
+  const std=S.dst.std,files=S.src.files.filter(f=>f.sel),rows=[];
+  std.fields.forEach((fl,i)=>{
+    const d=defOf(fl.attr);if(!d||d.type!=='droplist'||!d.values)return;
+    const pi=S.name.map[i];if(pi==null||(S.name.fixed[i]!=null&&S.name.fixed[i]!==''))return;
+    const vals={};
+    files.forEach(f=>{const v=splitName(f.name).stem.split(std.delim||'-')[pi];if(v!=null&&v!=='')vals[v]=(vals[v]||0)+1});
+    Object.entries(vals).forEach(([v,n])=>{
+      const inList=d.values.some(x=>String(x).toLowerCase()===v.toLowerCase()),cur=(S.name.swap[i]||{})[v.toLowerCase()]||'';
+      rows.push(`<tr class="${inList||cur?'':'warnrow'}"><td>${esc(fl.name)}</td><td><b>${esc(v)}</b></td><td>${n}</td><td>${cur?'<span class="badge info">Swapped</span>':inList?'<span class="badge ok">In list</span>':'<span class="badge warn">Not in list</span>'}</td>
+      <td><select data-bind="nameSwap" data-i="${i}" data-v="${esc(v)}"><option value="">Keep as is</option>${d.values.map(x=>`<option value="${esc(x)}" ${String(x)===cur?'selected':''}>${esc(x)}</option>`).join('')}</select></td></tr>`);
+    });
+  });
+  if(!rows.length)return'';
+  return `<div class="card"><h3>Swap values with the ACC droplist</h3><p class="sub">Replace a value found in the file names with any value from that attribute’s ACC droplist. It is applied to every selected file that has that value.</p>
+  <table><thead><tr><th>Field</th><th>Value in file name</th><th>Files</th><th>Status</th><th>Replace with</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+function perFileCard(){
+  const std=S.dst.std;if(!S.plan.length||!S.plan[0].fv)return'';
+  const head=std.fields.map(f=>`<th>${esc(f.name)}</th>`).join('');
+  const rows=S.plan.map(p=>`<tr><td>${esc(p.file.name)}</td>${std.fields.map((fl,i)=>{
+    const x=p.fv[i],d=defOf(fl.attr),ov=(S.name.over[p.file.id]||{})[i],v=x.v==null?'':String(x.v);
+    if(d&&d.type==='droplist')return `<td><select data-bind="fileField" data-f="${esc(p.file.id)}" data-i="${i}"><option value="">${ov?'↺ Back to auto':v?'Auto: '+esc(v):'— none —'}</option>${(d.values||[]).map(z=>`<option value="${esc(z)}" ${ov!=null&&String(z)===String(ov)?'selected':''}>${esc(z)}</option>`).join('')}</select></td>`;
+    return `<td><input type="text" data-bind="fileField" data-f="${esc(p.file.id)}" data-i="${i}" value="${esc(v)}" style="width:110px"></td>`;
+  }).join('')}<td class="mono">${S.name.rename&&(p.nameState==='fixable'||p.nameState==='match')?esc(p.newName):'<span class="sub">unchanged</span>'}</td></tr>`).join('');
+  return `<div class="card"><details><summary>Edit individual file names (${S.plan.length})</summary><p class="sub">Change any field for a single file. Droplist fields offer the ACC droplist values. Leave “Auto” to keep the mapped value.</p>
+  <div style="overflow:auto"><table><thead><tr><th>Current name</th>${head}<th>New name</th></tr></thead><tbody>${rows}</tbody></table></div></details></div>`;
+}
+function stdFinder(){
+  const d=S.dst,std=d.std,tr=(std&&std.trace)||[];
+  const found=(d.stdFound||[]).map((x,i)=>`<div class="flex" style="margin-top:6px"><span class="fchip">${esc(x.folder)}</span><button class="btn green sm" data-act="stdUse" data-i="${i}">Use this standard</button></div>`).join('');
+  return `<div class="card"><h3>Find the ACC naming standard</h3>
+  <p class="sub">The tool looks for the standard applied to the destination folder (or its parents). Here is what ACC returned:</p>
+  <div class="mono sub" style="white-space:pre-wrap;background:#f6f7fc;padding:10px;border-radius:10px;margin:8px 0">${tr.length?esc(tr.join('\n')):esc((std&&std.error)||'Nothing returned.')}</div>
+  <div class="flex"><button class="btn ghost sm" data-act="stdRetry">↻ Retry</button><button class="btn ghost sm" data-act="stdScan" ${S.demo||!d.hub?'disabled':''}>🔍 Search all project folders</button></div>
+  ${d.stdScanDone?(found||'')+(d.stdFound&&d.stdFound.length?'':'<p class="sub" style="margin-top:8px">No folder in this project has a naming standard applied (searched up to 5 levels deep).</p>'):''}
+  <div class="flex" style="margin-top:12px"><label style="flex:1;min-width:240px">Or paste a naming standard ID<input type="text" data-bind="stdIdIn" value="${esc(d.stdIdIn||'')}" placeholder="e.g. 4c1a0f5e-…"></label><button class="btn" data-act="stdLoadId" style="align-self:flex-end">Load</button></div></div>`;
+}
+function stepNaming(){
+  const std=S.dst.std,files=S.src.files.filter(f=>f.sel);
+  const sample=files[Math.min(S.name.sample,files.length-1)];
+  const parts=splitName(sample.name).stem.split(std.delim||'-');
+  const assigned=new Set(Object.values(S.name.map).filter(v=>v!=null));
+  const stdEd=`<details ${std.source==='manual'&&!std.fields.length?'open':''}><summary>${std.source==='acc'?'Edit naming standard manually':'Define the naming standard'}</summary>
+    <p class="sub">${std.source==='manual'?'The naming standard couldn’t be read from ACC automatically, so define it here in order (left to right in the file name).':'Only change this if the standard read from ACC is wrong.'}</p>
+    <label style="max-width:160px">Delimiter<input type="text" data-bind="stdDelim" value="${esc(std.delim||'-')}" maxlength="2"></label>
+    ${std.fields.map((f,i)=>`<div class="flex" style="margin-top:8px"><b>${i+1}.</b><input type="text" data-bind="stdName" data-i="${i}" value="${esc(f.name)}" style="width:200px"><select data-bind="stdAttr" data-i="${i}"><option value="">(no ACC attribute)</option>${S.dst.defs.map(d=>`<option value="${esc(d.id)}" ${d.id===f.attr?'selected':''}>${esc(d.name)} (${L[d.type]})</option>`).join('')}</select><button class="btn ghost sm" data-act="stdUp" data-i="${i}">↑</button><button class="btn red sm" data-act="stdDel" data-i="${i}">✕</button></div>`).join('')}
+    <div style="margin-top:10px"><button class="btn ghost sm" data-act="stdAdd">+ Add field</button></div></details>`;
+  if(!std.fields.length)return `<h2>File naming</h2><p class="lead">No naming standard could be read for the destination folder.</p>${stdFinder()}<div class="card">${stdEd}</div><div class="note info">You can continue without a naming check, or define the standard above.</div>`;
+  const ignored=parts.map((p,i)=>i).filter(i=>!assigned.has(i));
+  const prev=S.plan.map(p=>`<tr><td>${esc(p.file.name)}</td><td>${p.nameState==='match'?'<span class="badge ok">Matches standard</span>':p.nameState==='fixable'?'<span class="badge info">Fixable by mapping</span>':'<span class="badge err">Does not match</span>'}${p.why.length?`<div class="sub">${esc(p.why.join(' · '))}</div>`:''}</td><td class="mono">${S.name.rename&&(p.nameState==='fixable'||p.nameState==='match')?esc(p.newName):'<span class="sub">unchanged</span>'}</td></tr>`).join('');
+  return `<h2>File naming standard</h2><p class="lead">Drag the parts of the file name onto the matching standard field (or use the dropdowns). Parts you leave out are ignored. If a file has too few parts, set a value on the field (“Or set value…” – it applies to every file; use the per-file editor for one-offs). Names are split on “${esc(std.delim||'-')}”. ${std.source==='acc'?'Standard read from ACC.':'Standard defined manually.'}</p>
+  <div class="card"><div class="flex" style="margin-bottom:10px"><label style="min-width:320px">Sample file<select data-bind="sampleSel">${files.map((f,i)=>`<option value="${i}" ${i===S.name.sample?'selected':''}>${esc(f.name)}</option>`).join('')}</select></label></div>
+  <h3>File name parts</h3><div class="chips" id="pool">${parts.map((p,i)=>chipHtml(i,parts,assigned.has(i))).join('')}</div></div>
+  <div class="card"><h3>Standard fields</h3>
+   ${std.fields.map((fl,i)=>{const pi=S.name.map[i],d=defOf(fl.attr);return `<div class="field"><div><b>${esc(fl.name)}</b> <span class="badge pur">${d?L[d.type]:'no attribute'}</span></div>
+    <div class="drop" data-drop="${i}">${pi!=null&&parts[pi]!=null?chipHtml(pi,parts,false):'<span class="ph">Drop a part here</span>'}</div>
+    <select data-bind="nameSel" data-i="${i}"><option value="">— none —</option>${parts.map((p,j)=>`<option value="${j}" ${pi===j?'selected':''}>${j+1}: ${esc(p)}</option>`).join('')}</select>${fixedCtl(i,d)}</div>`}).join('')}
+   <div class="field" style="border:0"><div><b>Not mapped</b> <span class="badge skip">ignored</span></div><div class="drop ignore" data-drop="ignore">${ignored.length?ignored.map(i=>chipHtml(i,parts,false)).join(''):'<span class="ph">Drop parts here to ignore them</span>'}</div><div class="sub">Parts here are not used</div></div></div>
+  <div class="card"><h3>Options</h3>
+   <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-bind="extract" ${S.name.extract?'checked':''}> Populate mapped ACC attributes from the file name (overrides the attribute mapping)</label>
+   <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" data-bind="rename" ${S.name.rename?'checked':''}> Rename files to match the standard (unticked = keep current names)</label></div>
+  <div class="card"><h3>Preview – ${S.plan.length} selected file${S.plan.length===1?'':'s'}</h3><table><thead><tr><th>Current name</th><th>Naming check</th><th>New name</th></tr></thead><tbody>${prev}</tbody></table></div>
+  ${swapCard()}${perFileCard()}
+  <div class="card">${stdEd}</div>${missingPanel('name')}`;
+}
+function stepReview(){
+  const todo=S.plan.filter(p=>p.action==='transfer').length;
+  const rows=S.plan.map(p=>{
+    const n=Object.keys(p.values).length;
+    const st=p.action==='skip'?'<span class="badge skip">Skip</span>':p.msgs.length?'<span class="badge warn">Warnings</span>':'<span class="badge ok">Ready</span>';
+    return `<tr class="${p.action==='skip'?'':p.msgs.length?'warnrow':''}"><td><input type="checkbox" data-bind="incl" data-id="${esc(p.file.id)}" ${S.excl.has(p.file.id)?'':'checked'}></td><td>${esc(p.file.name)}${p.finalName!==p.file.name?`<div class="sub">→ <b>${esc(p.finalName)}</b></div>`:''}</td><td>${st}${p.skipReason?`<div class="sub">${esc(p.skipReason)}</div>`:''}${p.msgs.map(m=>`<div class="sub">⚠ ${esc(m)}</div>`).join('')}</td><td>${n} attribute${n===1?'':'s'}</td></tr>`}).join('');
+  return `<h2>Review before transfer</h2><p class="lead">${todo} of ${S.plan.length} files will be transferred to <b>${esc(S.dst.folder.path)}</b>.</p>
+  ${missingPanel()}
+  <div class="card"><h3>Options</h3><div class="grid2">
+   <label>If a file with the same name already exists in the destination<select data-bind="existing"><option value="version" ${S.opts.existing==='version'?'selected':''}>Add as a new version and update its attributes</option><option value="skip" ${S.opts.existing==='skip'?'selected':''}>Skip the file</option></select></label>
+   <label>Files that can’t meet the naming standard<select data-bind="nameFail"><option value="skip" ${S.opts.nameFail==='skip'?'selected':''}>Skip them</option><option value="keep" ${S.opts.nameFail==='keep'?'selected':''}>Transfer with their current name (warning)</option></select></label></div></div>
+  <div class="card"><table><thead><tr><th>Include</th><th>File</th><th>Status</th><th>Attributes to set</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function donut(parts){
+  const tot=parts.reduce((a,p)=>a+p.n,0)||1,R=52,Cc=2*Math.PI*R;let off=0;
+  return `<svg viewBox="0 0 140 140" width="170" height="170"><circle cx="70" cy="70" r="${R}" fill="none" stroke="#eef0fb" stroke-width="20"/>${parts.map(p=>{const len=Cc*p.n/tot;const c=`<circle cx="70" cy="70" r="${R}" fill="none" stroke="${p.c}" stroke-width="20" stroke-dasharray="${len} ${Cc-len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;off+=len;return c}).join('')}<text x="70" y="66" text-anchor="middle" font-size="22" font-weight="800" fill="#1b2340">${Math.round(100*(parts[0].n+parts[1].n)/tot)}%</text><text x="70" y="84" text-anchor="middle" font-size="11" fill="#6b7596">transferred</text></svg>`;
+}
+function stepResults(){
+  const r=S.run;if(!r)return'';
+  const res=r.results,cnt=k=>res.filter(x=>x.status===k).length;
+  const pct=Math.round(100*res.length/Math.max(1,r.total));
+  const kp=`<div class="kpis"><div class="kpi k0"><b>${res.length}/${r.total}</b>Processed</div><div class="kpi k1"><b>${cnt('passed')}</b>Passed</div><div class="kpi k2"><b>${cnt('warning')}</b>Passed with warnings</div><div class="kpi k3"><b>${cnt('failed')}</b>Failed</div><div class="kpi k4"><b>${cnt('skipped')}</b>Skipped</div></div>`;
+  if(!r.finished)return `<h2>Transferring…</h2><p class="lead">Please keep this tab open. ${esc(r.current||'')}</p>${kp}<div class="folderRow" style="margin:0 0 14px"><button class="btn red" data-act="stopRun" ${r.stopping?'disabled':''}>${r.stopping?'Stopping after the current file…':'■ Stop transfer'}</button></div><div class="card"><div class="prog"><div style="width:${pct}%"></div></div><p class="sub">${pct}% complete</p></div>${r.notes.map(n=>`<div class="note warn">${esc(n)}</div>`).join('')}`;
+  const q=S.resSearch.toLowerCase();
+  const list=res.filter(x=>(S.resFilter==='all'||x.status===S.resFilter)&&(!q||(x.name+x.finalName+x.reasons.join(' ')).toLowerCase().includes(q)));
+  const B={passed:'ok',warning:'warn',failed:'err',skipped:'skip'},T={passed:'Passed',warning:'Warnings',failed:'Failed',skipped:'Skipped'};
+  return `<h2>Results dashboard</h2><p class="lead">Finished in ${Math.round((r.end-r.start)/1000)} s · destination: <b>${esc(S.dst.folder.path)}</b></p>${kp}
+  <div class="card flex" style="gap:30px">${donut([{n:cnt('passed'),c:'#10b981'},{n:cnt('warning'),c:'#f59e0b'},{n:cnt('failed'),c:'#ef4444'},{n:cnt('skipped'),c:'#9ca3af'}])}
+   <div>${[['passed','#10b981'],['warning','#f59e0b'],['failed','#ef4444'],['skipped','#9ca3af']].map(([k,c])=>`<div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${c};margin-right:8px"></span>${T[k]}: <b>${cnt(k)}</b></div>`).join('')}</div>
+   <div class="sp"></div><div><button class="btn" data-act="exportCsv">⬇ Export CSV</button></div></div>
+  ${r.notes.map(n=>`<div class="note warn">${esc(n)}</div>`).join('')}
+  <div class="card"><div class="flex" style="margin-bottom:12px"><div class="filters">${['all','passed','warning','failed','skipped'].map(k=>`<button class="${S.resFilter===k?'on':''}" data-act="resFilter" data-v="${k}">${k==='all'?'All':T[k]}</button>`).join('')}</div><input type="search" data-bind="resSearch" placeholder="Search…" value="${esc(S.resSearch)}"></div>
+  <table><thead><tr><th>File</th><th>Status</th><th>Details / reasons</th><th>Attributes</th></tr></thead><tbody>${list.map(x=>`<tr class="${x.status==='failed'?'bad':x.status==='warning'?'warnrow':''}"><td>${esc(x.name)}${x.finalName!==x.name?`<div class="sub">→ ${esc(x.finalName)}</div>`:''}</td><td><span class="badge ${B[x.status]}">${T[x.status]}</span></td><td>${x.reasons.map(m=>`<div class="sub">${esc(m)}</div>`).join('')||'<span class="sub">–</span>'}</td><td>${(x.status==='skipped'||!x.versionId)?'–':x.set+'/'+x.total}</td></tr>`).join('')||'<tr><td colspan="4" class="sub">Nothing matches the filter.</td></tr>'}</tbody></table></div>`;
+}
+
+/* ================= transfer ================= */
+function srcDownload(file){
+  const s=S.src;
+  if(s.type==='pw')return Svc.pw.download(s.pw.repo,file);
+  if(s.type==='sp')return Svc.sp.download(s.sp.drive,file);
+  if(s.type==='ie')return Svc.ie.download(s.ie.project,file);
+  if(s.type==='local')return Svc.local.download(file);
+  return Svc.acc.download(s.project,file);
+}
+async function startRun(){
+  compute();if(unresolved().length)return toast('Resolve the highlighted values first','warn');
+  const todo=S.plan.filter(p=>p.action==='transfer');
+  const R=S.run={started:true,finished:false,start:Date.now(),total:S.plan.length,results:[],notes:[],current:''};
+  S.step=6;render();window.scrollTo({top:0});
+  // 1) droplist additions
+  const adds=new Map();
+  todo.forEach(p=>Object.entries(p.values).forEach(([id,v])=>{if(v.add)adds.set(dk(id,v.value),{id,value:v.value})}));
+  const failedAdds=new Set();
+  for(const a of adds.values()){
+    const d=defOf(a.id);
+    try{await Svc.acc.addDrop(S.dst.project,d,a.value);R.notes.push(`Added “${a.value}” to droplist “${d.name}”.`)}
+    catch(e){failedAdds.add(dk(a.id,a.value));R.notes.push(`Could not add “${a.value}” to “${d.name}”: ${e.message}`)}
+  }
+  // 2) files
+  for(const p of S.plan){
+    if(R.stopping){R.stopped=true;R.results.push({name:p.file.name,finalName:p.finalName,status:'skipped',reasons:['Not transferred – stopped by user'],set:0,total:0,versionId:null});continue}
+    const r={name:p.file.name,finalName:p.finalName,status:'passed',reasons:[],set:0,total:0,versionId:null};
+    R.current='Current file: '+p.file.name;
+    if(p.action==='skip'){r.status='skipped';r.reasons.push(p.skipReason||'Skipped');R.results.push(r);updRun();continue}
+    try{
+      const blob=await srcDownload(p.file);
+      const up=await Svc.acc.upload(S.dst.project,S.dst.folder.id,p.finalName,blob,S.opts.existing);
+      if(up.skipped){r.status='skipped';r.reasons.push('File already exists in destination (set to skip)');R.results.push(r);updRun();continue}
+      r.versionId=up.versionId;r.reasons.push(up.newVersion?'Uploaded as a new version of the existing file':'Uploaded as a new file');
+    }catch(e){r.status='failed';r.reasons.push('Upload failed: '+e.message);R.results.push(r);updRun();continue}
+    const pairs=[];let notSet=0;
+    Object.entries(p.values).forEach(([id,v])=>{
+      if(v.add&&failedAdds.has(dk(id,v.value))){r.reasons.push(`${defOf(id).name}: “${v.value}” not set (could not be added to droplist)`);r.status='warning';notSet++;return}
+      const d=defOf(id);pairs.push({id:isNaN(id)?id:Number(id),value:d.type==='date'?v.value+'T00:00:00.000Z':v.value});
+    });
+    r.total=pairs.length+notSet;
+    if(pairs.length){
+      try{await Svc.acc.setAttrs(S.dst.project,r.versionId,pairs);r.set=pairs.length;r.reasons.push(`${pairs.length} attribute value${pairs.length===1?'':'s'} populated`)}
+      catch(e){r.status='warning';r.reasons.push('File uploaded but attributes failed: '+e.message)}
+    }
+    if(p.msgs.length){if(r.status==='passed')r.status='warning';p.msgs.forEach(m=>r.reasons.push(m))}
+    if(p.finalName!==p.file.name)r.reasons.push('Renamed to match naming standard');
+    R.results.push(r);updRun();
+  }
+  if(R.stopped)R.notes.unshift('Transfer stopped by user. Files already transferred were kept; the remaining files were not transferred.');
+  R.finished=true;R.end=Date.now();render();
+}
+function updRun(){if(S.step===6)$('#view').innerHTML=stepResults()}
+function exportCsv(){
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const lines=[['Original name','Final name','Status','Reasons','Attributes set','Attributes total'].map(q).join(',')];
+  S.run.results.forEach(r=>lines.push([r.name,r.finalName,r.status,r.reasons.join(' | '),r.set,r.total].map(q).join(',')));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv'}));a.download='transfer-results.csv';a.click();
+}
+
+/* ================= modals ================= */
+function modal(html){$('#modal').innerHTML=`<div class="modal-bg" data-act="mclose"><div class="modal">${html}</div></div>`}
+function closeModal(){$('#modal').innerHTML=''}
+function openSettings(){
+  modal(`<h3>⚙ Settings</h3>
+  <label>APS Client ID (public / PKCE app)<input type="text" id="setCid" value="${esc(CDETK.clientId())}" placeholder="Paste your Autodesk Platform Services Client ID"></label>
+  <p class="sub">Callback URL to register in your APS app:</p><div class="fchip mono" style="word-break:break-all">${esc(CDETK.redirect)}</div>
+  <label style="margin-top:14px">Microsoft Entra Client ID (for SharePoint)<input type="text" id="setMsCid" value="${esc(ls.get('mscid')||'')}" placeholder="Application (client) ID"></label>
+  <label style="margin-top:8px">Tenant ID, or leave blank for “organizations”<input type="text" id="setMsTen" value="${esc(ls.get('mstenant')||'')}" placeholder="organizations"></label>
+  <p class="sub">Register <span class="mono">${esc(REDIRECT)}</span> as a <b>Single-page application</b> redirect URI, with delegated Microsoft Graph permissions Files.Read.All and Sites.Read.All.</p>
+  <details style="margin-top:14px"><summary>Advanced: paste an access token instead</summary><p class="sub">For testing only. Paste a valid 3-legged token (scopes: data:read data:write data:create).</p><input type="text" id="setTok" style="width:100%" placeholder="Access token"></details>
+  <div class="folderRow" style="margin-top:18px"><button class="btn" data-act="saveSettings">Save</button>${TOK||MTOK?'<button class="btn ghost" data-act="signOut">Sign out</button>':''}<button class="btn ghost" data-act="mclose">Close</button></div>`);
+}
+function showHelp(){
+  modal(`<h3>How this works</h3><ol><li><b>Source</b> – ProjectWise login or an ACC folder.</li><li><b>Destination</b> – the ACC hub, project and folder.</li><li><b>Files</b> – tick what to move.</li><li><b>Attributes</b> – map source values to ACC attributes; type differences are flagged.</li><li><b>Naming</b> – drag file-name parts onto the ACC naming-standard fields, optionally populate attributes and rename.</li><li><b>Review</b> – resolve droplist problems, then transfer.</li><li><b>Results</b> – passed / failed / skipped with reasons; export to CSV.</li></ol>
+  <p class="sub">Nothing is stored on a server: your session stays in this browser tab. Use <b>demo mode</b> to try it with sample data.</p><button class="btn" data-act="mclose">Got it</button>`);
+}
+const BR={};
+async function openBrowser(side){
+  const o=S[side];
+  BR.side=side;BR.stack=[];
+  const t=side==='src'?o.type:'acc';
+  BR.prefix='';BR.allowRoot=false;
+  if(t==='pw')BR.load=p=>Svc.pw.folders(o.pw.repo,p);
+  else if(t==='sp'){const d=o.sp.drives.find(x=>x.id===o.sp.drive);BR.prefix=d?d.name:'';BR.allowRoot=true;BR.load=p=>Svc.sp.folders(o.sp.drive,p)}
+  else if(t==='ie'){const d=o.ie.projects.find(x=>x.id===o.ie.project);BR.prefix=d?d.name:'';BR.allowRoot=true;BR.load=p=>Svc.ie.folders(o.ie.project,p)}
+  else BR.load=p=>Svc.acc.folders(o.project,p,o.hub);
+  await brPaint(null);
+}
+async function brPaint(parent){
+  await guard(async()=>{
+    const items=await BR.load(parent);BR.items=items;
+    modal(`<h3>Choose a folder</h3><div class="crumbs"><a data-act="brTo" data-i="-1">Root</a>${BR.stack.map((n,i)=>`<span>/</span><a data-act="brTo" data-i="${i}">${esc(n.name)}</a>`).join('')}</div>
+    ${items.map((f,i)=>`<div class="li" data-act="brOpen" data-i="${i}">📁 ${esc(f.name)}</div>`).join('')||'<p class="sub">No sub-folders here.</p>'}
+    <div class="folderRow"><button class="btn green" data-act="brPick" ${BR.stack.length||BR.allowRoot?'':'disabled'}>Use this folder${BR.stack.length?': '+esc(BR.stack[BR.stack.length-1].name):BR.allowRoot?' (library root)':''}</button><button class="btn ghost" data-act="mclose">Cancel</button></div>`);
+  },'Loading folders…');
+}
+
+/* ================= events ================= */
+const ACT={
+ goto(a){if(S.run&&S.run.started&&!S.run.finished)return;go(+a.dataset.i)},
+ async next(){await go(S.step+1)},
+ back(){S.step=Math.max(0,S.step-1);render();window.scrollTo({top:0})},
+ startRun,
+ newTransfer(){S.run=null;S.step=0;S.maxStep=0;S.decisions={};S.excl=new Set();S.src.loadedFor='';S.name.init=false;render()},
+ toggleDemo(){
+  S.demo=!S.demo;Svc=S.demo?DEMO:REAL;C.hubs=[];C.projects={};
+  Object.assign(S.src,{hub:'',project:'',folder:null,files:[],defs:[],loadedFor:''});Object.assign(S.dst,{hub:'',project:'',folder:null,defs:[],std:null,loadedFor:''});
+  S.src.pw.connected=false;S.src.pw.repo='';S.step=0;S.maxStep=0;S.run=null;S.decisions={};closeModal();
+  Object.assign(S.src.sp,{site:'',siteName:'',drives:[],drive:''});Object.assign(S.src.ie,{projects:[],project:'',connected:false});
+  guard(async()=>{await ensureHubs();render()},'Loading…');
+ },
+ signIn:login,openSettings,showHelp,mclose:closeModal,
+ saveSettings(){CDETK.setClientId($('#setCid').value.trim());ls.set('mscid',$('#setMsCid').value.trim());ls.set('mstenant',$('#setMsTen').value.trim());const t=$('#setTok').value.trim();closeModal();if(t){TOK={access:t,exp:Date.now()+50*60e3};CDETK.save(TOK);guard(async()=>{await ensureHubs();render()},'Loading hubs…')}else render();toast('Settings saved','ok')},
+ signOut(){TOK=null;MTOK=null;CDETK.signOut();ss.del('mtok');C.hubs=[];closeModal();render()},
+ srcType(a){
+  S.src.type=a.dataset.v;S.src.loadedFor='';S.maxStep=Math.min(S.maxStep,S.step);
+  S.src.folder=S.src.type==='local'&&S.src.local.files.length?{id:'local',name:'Local files',path:'Files from your computer ('+S.src.local.files.length+')'}:null;
+  render();
+ },
+ msSignIn:msLogin,
+ stopRun(){
+  const R=S.run;if(!R||R.finished||R.stopping)return;
+  if(!confirm('Stop the transfer?\n\nThe file currently being transferred will finish. Remaining files will not be transferred.'))return;
+  R.stopping=true;const n=$('#next');n.disabled=true;n.textContent='Stopping…';updRun();
+ },
+ async spFind(){
+  const sp=S.src.sp;if(!sp.url)return toast('Enter the SharePoint site address','warn');
+  ls.set('spurl',sp.url);
+  await guard(async()=>{const site=await Svc.sp.site(sp.url);sp.site=site.id;sp.siteName=site.name;sp.drives=await Svc.sp.drives(site.id);sp.drive=sp.drives.length===1?sp.drives[0].id:'';S.src.folder=null;S.src.loadedFor='';S.maxStep=Math.min(S.maxStep,S.step);render()},'Finding SharePoint site…');
+ },
+ async ieConnect(){
+  const ie=S.src.ie;if(!ie.base)return toast('Enter the InEight API base URL','warn');
+  await guard(async()=>{ie.projects=await Svc.ie.projects();ie.connected=true;if(ie.projects.length===1)ie.project=ie.projects[0].id;render()},'Connecting to InEight Document…');
+ },
+ async pwConnect(){
+  const p=S.src.pw;if(!p.base||!p.user||!p.pass)return toast('Enter server URL, username and password','warn');
+  ls.set('pwbase',p.base);
+  await guard(async()=>{try{p.repos=await Svc.pw.repos()}catch(e){throw new Error(e.message+' – check URL/credentials, or ask your ProjectWise admin to allow this page (CORS).')}p.connected=true;if(p.repos.length===1)p.repo=p.repos[0].id;render()},'Connecting to ProjectWise…');
+ },
+ pickFolder(a){openBrowser(a.dataset.side)},
+ async stdRetry(){const d=S.dst;d.loadedFor='';d.stdFound=null;d.stdScanDone=false;await guard(async()=>{await loadDest();render()},'Reading naming standard…')},
+ async stdScan(){const d=S.dst;await guard(async()=>{d.stdFound=await Svc.acc.stdScan(d.project,d.hub);d.stdScanDone=true;render()},'Searching project folders for a naming standard…')},
+ async stdUse(a){await applyStd((S.dst.stdFound||[])[+a.dataset.i].id)},
+ async stdLoadId(){if(!S.dst.stdIdIn)return toast('Paste a naming standard ID first','err');await applyStd(S.dst.stdIdIn)},
+
+ async brOpen(a){const f=BR.items[+a.dataset.i];BR.stack.push(f);await brPaint(f.id)},
+ async brTo(a){const i=+a.dataset.i;BR.stack=BR.stack.slice(0,i+1);await brPaint(i<0?null:BR.stack[i].id)},
+ brPick(){
+  const f=BR.stack.length?BR.stack[BR.stack.length-1]:{id:'root',name:BR.prefix||'Root'};
+  const path=[BR.prefix].concat(BR.stack.map(n=>n.name)).filter(Boolean).join(' / ')||f.name;
+  S[BR.side].folder={id:f.id,name:f.name,path};S[BR.side].loadedFor='';S.maxStep=Math.min(S.maxStep,S.step);closeModal();render();
+ },
+ selAll(){S.src.files.forEach(f=>f.sel=true);render()},
+ selNone(){S.src.files.forEach(f=>f.sel=false);render()},
+ bulk(a){const v=a.dataset.v;groupIssues().filter(x=>!x.dec&&(v!=='add'||x.kind==='droplist')).forEach(x=>S.decisions[x.key]=v);render()},
+ stdAdd(){S.dst.std.fields.push({name:'New field',attr:null});render()},
+ stdDel(a){S.dst.std.fields.splice(+a.dataset.i,1);S.name.init=false;autoNameMap();render()},
+ stdUp(a){const i=+a.dataset.i;if(i>0){const f=S.dst.std.fields;[f[i-1],f[i]]=[f[i],f[i-1]];S.name.init=false;autoNameMap();render()}},
+ resFilter(a){S.resFilter=a.dataset.v;$('#view').innerHTML=stepResults()},
+ exportCsv
+};
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-act]');if(!a)return;
+  if(a.classList.contains('modal-bg')&&e.target!==a)return;
+  const f=ACT[a.dataset.act];if(f)f(a,e);
+});
+const BIND={
+ async pwRepo(el){S.src.pw.repo=el.value;S.src.folder=null;S.src.loadedFor='';render()},
+ async hub(el){const o=S[el.dataset.side];o.hub=el.value;o.project='';o.folder=null;o.loadedFor='';await guard(async()=>{await loadProjects(o.hub);render()},'Loading projects…')},
+ project(el){const o=S[el.dataset.side];o.project=el.value;o.folder=null;o.loadedFor='';render()},
+ fileSel(el){const f=S.src.files.find(x=>String(x.id)===el.dataset.id);if(f)f.sel=el.checked;renderChrome()},
+ mapSel(el){if(el.value)S.map[el.dataset.id]=el.value;else delete S.map[el.dataset.id];render()},
+ decide(el){if(el.value)S.decisions[el.dataset.key]=el.value;else delete S.decisions[el.dataset.key];render()},
+ sampleSel(el){S.name.sample=+el.value;render()},
+ nameSel(el){const i=+el.dataset.i;if(el.value==='')delete S.name.map[i];else{const j=+el.value;Object.keys(S.name.map).forEach(k=>{if(S.name.map[k]===j)delete S.name.map[k]});S.name.map[i]=j}render()},
+ extract(el){S.name.extract=el.checked;render()},
+ rename(el){S.name.rename=el.checked;render()},
+ existing(el){S.opts.existing=el.value;render()},
+ nameFail(el){S.opts.nameFail=el.value;render()},
+ incl(el){if(el.checked)S.excl.delete(el.dataset.id);else S.excl.add(el.dataset.id);render()},
+ stdAttr(el){S.dst.std.fields[+el.dataset.i].attr=el.value||null;render()},
+ stdIdIn(el){S.dst.stdIdIn=el.value.trim()},
+ stdDelim(el){S.dst.std.delim=el.value||'-';S.name.init=false;autoNameMap();render()},
+ spDrive(el){S.src.sp.drive=el.value;S.src.folder=null;S.src.loadedFor='';S.maxStep=Math.min(S.maxStep,S.step);render()},
+ ieProject(el){S.src.ie.project=el.value;S.src.folder=null;S.src.loadedFor='';S.maxStep=Math.min(S.maxStep,S.step);render()},
+ nameFixed(el){const i=+el.dataset.i;if(el.value)S.name.fixed[i]=el.value;else delete S.name.fixed[i];render()},
+ nameFixedTxt(el){const i=+el.dataset.i,v=el.value.trim();if(v)S.name.fixed[i]=v;else delete S.name.fixed[i];render()},
+ nameSwap(el){const i=+el.dataset.i,k=el.dataset.v.toLowerCase();S.name.swap[i]=S.name.swap[i]||{};if(el.value)S.name.swap[i][k]=el.value;else delete S.name.swap[i][k];render()},
+ fileField(el){const f=el.dataset.f,i=+el.dataset.i,v=el.value.trim();S.name.over[f]=S.name.over[f]||{};if(v)S.name.over[f][i]=v;else delete S.name.over[f][i];render()},
+ localFiles(el){
+  S.src.local.files=[...el.files];S.src.loadedFor='';S.maxStep=Math.min(S.maxStep,S.step);
+  S.src.folder=S.src.local.files.length?{id:'local',name:'Local files',path:'Files from your computer ('+S.src.local.files.length+')'}:null;render();
+ },
+ async localCsv(el){const f=el.files[0];if(!f)return;const t=await f.text();S.src.local.csv=parseCsv(t.replace(/^﻿/,''));S.src.local.csvName=f.name;S.src.loadedFor='';render()}
+};
+document.addEventListener('change',e=>{const el=e.target.closest('[data-bind]');if(el&&BIND[el.dataset.bind])BIND[el.dataset.bind](el)});
+document.addEventListener('input',e=>{
+  const el=e.target.closest('[data-bind]');if(!el)return;const b=el.dataset.bind;
+  if(b==='pw'){S.src.pw[el.dataset.k]=el.value}
+  else if(b==='spUrl'){S.src.sp.url=el.value}
+  else if(b==='ie'){const k=el.dataset.k;S.src.ie[k]=el.value;if(k==='base')ls.set('iebase',el.value);else ss.set('ie'+k,el.value)}
+  else if(b==='ieEp'){S.src.ie.ep[el.dataset.k]=el.value;ls.set('ieep',JSON.stringify(S.src.ie.ep))}
+  else if(b==='stdName'){S.dst.std.fields[+el.dataset.i].name=el.value}
+  else if(b==='fileFilter'){S.fileFilter=el.value;$('#filesBody').innerHTML=filesBody(el.value.toLowerCase())}
+  else if(b==='resSearch'){S.resSearch=el.value;const pos=el.selectionStart;$('#view').innerHTML=stepResults();const n=$('[data-bind="resSearch"]');if(n){n.focus();n.setSelectionRange(pos,pos)}}
+});
+/* drag & drop for naming */
+document.addEventListener('dragstart',e=>{const c=e.target.closest&&e.target.closest('.chip[data-part]');if(c){e.dataTransfer.setData('text/plain',c.dataset.part);e.dataTransfer.effectAllowed='move'}});
+document.addEventListener('dragover',e=>{const d=e.target.closest&&e.target.closest('[data-drop]');if(d){e.preventDefault();d.classList.add('over')}});
+document.addEventListener('dragleave',e=>{const d=e.target.closest&&e.target.closest('[data-drop]');if(d)d.classList.remove('over')});
+document.addEventListener('drop',e=>{
+  const d=e.target.closest&&e.target.closest('[data-drop]');if(!d)return;e.preventDefault();
+  const j=parseInt(e.dataTransfer.getData('text/plain'),10);if(isNaN(j))return;
+  Object.keys(S.name.map).forEach(k=>{if(S.name.map[k]===j)delete S.name.map[k]});
+  if(d.dataset.drop!=='ignore')S.name.map[+d.dataset.drop]=j;
+  render();
+});
+
+/* ================= init ================= */
+(async function init(){
+  await handleRedirect();
+  if(TOK)await guard(ensureHubs,'Loading hubs…');
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Review turnaround · CDE Toolkit</title>
+<style>
+:root{--bg:#f4f5f3;--fg:#1b2427;--mut:#667378;--card:#fff;--line:#d9dedc;--bar:#2b7a93;--late:#c2432f;--warn:#d9902b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a1c;--fg:#e6ecee;--mut:#8d9a9f;--card:#1c2427;--line:#2d393d;--bar:#4aa3bf;--late:#e8725e;--warn:#e8a94f}}
+:root[data-theme="dark"]{--bg:#141a1c;--fg:#e6ecee;--mut:#8d9a9f;--card:#1c2427;--line:#2d393d;--bar:#4aa3bf;--late:#e8725e;--warn:#e8a94f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:20px 16px 40px;max-width:720px;margin-inline:auto}
+h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:16px;margin:28px 0 8px}
+p{margin:0;color:var(--mut)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 6px}
+button,label.btn{font:inherit;padding:9px 14px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;cursor:pointer}
+button.pri,label.pri{background:var(--bar);border-color:var(--bar);color:#fff}
+button:focus-visible,label.btn:focus-within{outline:2px solid var(--bar);outline-offset:2px}
+input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
+.hint{font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px}
+.k b{display:block;font-size:24px;line-height:1.2;font-variant-numeric:tabular-nums}
+.k span{font-size:13px;color:var(--mut)}
+.row{padding:10px 0;border-bottom:1px solid var(--line)}
+.top{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.top em{font-style:normal;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+.track{height:8px;background:var(--line);border-radius:4px;margin:6px 0 3px;overflow:hidden}
+.fill{height:100%;background:var(--bar);border-radius:4px}
+.sub{font-size:12.5px;color:var(--mut)}
+.sub .l{color:var(--late);font-weight:600}
+.msg{margin-top:16px;color:var(--late)}
+.empty{margin-top:28px;padding:20px;border:1px dashed var(--line);border-radius:6px}
+</style>
+</head>
+<body><script src="/assets/nav.js" data-page="turnaround"></script>
+<h1>Review turnaround</h1>
+<p>Where ACC reviews slow down: by step, reviewer and company.</p>
+<div class="bar">
+<label class="btn pri">Upload review data<input id="f" type="file" accept=".csv,.json"></label>
+<button id="demo">Load sample data</button>
+</div>
+<p class="hint">CSV or JSON with one row per review task. Columns it looks for: review, step, reviewer, company, assigned, completed, due. Dates like 24/10/2026 are read as day/month. Your file stays in your browser.</p>
+<div id="msg" class="msg"></div>
+<div id="out"><div class="empty">Upload a review export, or load the sample data to see how it looks.</div></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function parseCSV(t){const o=[];let r=[],c='',q=false;for(let i=0;i<t.length;i++){const h=t[i];if(q){if(h=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=h}else if(h=='"')q=true;else if(h==','){r.push(c);c=''}else if(h=='\n'||h=='\r'){if(h=='\r'&&t[i+1]=='\n')i++;r.push(c);o.push(r);r=[];c=''}else c+=h}if(c||r.length){r.push(c);o.push(r)}return o.filter(x=>x.some(v=>v.trim()))}
+function pd(s){if(!s)return null;if(s instanceof Date)return s;s=String(s).trim();const m=s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);if(m)return new Date(+m[3],+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0));const d=new Date(s);return isNaN(d)?null:d}
+const PAT={review:/^review(?!er)|name|title|file/i,step:/step|stage|workflow/i,reviewer:/reviewer|assign(ed)?.?(to|user)|assignee|user/i,company:/company|org/i,assigned:/assigned.?(at|on|date)?$|start|received|sent|created/i,completed:/complet|submitted|finish|closed|end/i,due:/due|deadline/i};
+function load(objs){if(!objs.length)throw Error('No rows found in the file.');const keys=Object.keys(objs[0]),map={};
+for(const f of ['assigned','completed','due','reviewer','company','step','review']){const k=keys.find(k=>PAT[f].test(k)&&!Object.values(map).includes(k));if(k)map[f]=k}
+if(!map.reviewer||!map.assigned)throw Error('Needs at least a reviewer column and an assigned date column. Found: '+keys.join(', '));
+return objs.map(o=>({review:o[map.review]||'',step:o[map.step]||'',reviewer:o[map.reviewer]||'',company:o[map.company]||'',assigned:pd(o[map.assigned]),completed:pd(o[map.completed]),due:pd(o[map.due])}))}
+function sample(){let s=7;const R=()=>(s=s*16807%2147483647)/2147483647;
+const P=[['A. Nguyen','Harbour Engineering',.8],['B. Okafor','Harbour Engineering',1.1],['C. Lindqvist','Meridian Structures',2.4],['D. Patel','Meridian Structures',1.6],['E. Moreau','Southgate Services',3.1],['F. Kowalski','Southgate Services',1.2],['G. Tran','Client PMO',2.0],['H. Walsh','Client PMO',.9]];
+const S=[['Author check',.6,2],['Discipline review',1.2,4],['BIM check',.9,3],['Final approval',1.5,3]];
+const now=new Date(),out=[];
+for(let i=0;i<90;i++){const p=P[Math.floor(R()*P.length)],st=S[Math.floor(R()*S.length)];
+const a=new Date(now-(1+R()*60)*864e5),d=p[2]*st[1]*(.4+R()*2),due=new Date(+a+st[2]*864e5),c=new Date(+a+d*864e5);
+out.push({review:'REV-'+String(100+Math.floor(i/3)),step:st[0],reviewer:p[0],company:p[1],assigned:a,completed:(c<now&&R()>.1)?c:null,due})}
+return out}
+function group(rs,k){const m={};rs.forEach(r=>{const key=r[k]||'(blank)';const g=m[key]||(m[key]={key,n:0,done:0,sum:0,late:0,open:0});g.n++;if(r.open)g.open++;else{g.done++;g.sum+=r.days}if(r.late)g.late++});
+return Object.values(m).map(g=>({...g,avg:g.done?g.sum/g.done:0})).sort((a,b)=>b.avg-a.avg)}
+function block(title,gs){const mx=Math.max(...gs.map(g=>g.avg),.1);
+return '<h2>'+title+'</h2>'+gs.map(g=>{const lp=g.n?Math.round(g.late/g.n*100):0;
+return '<div class="row"><div class="top"><span>'+esc(g.key)+'</span><em>'+g.avg.toFixed(1)+' days avg</em></div><div class="track"><div class="fill" style="width:'+(g.avg/mx*100)+'%;background:'+(lp>=40?'var(--late)':lp>=20?'var(--warn)':'var(--bar)')+'"></div></div><div class="sub">'+g.n+' tasks, '+g.open+' still open, '+(lp>=20?'<span class="l">'+lp+'% late</span>':lp+'% late')+'</div></div>'}).join('')}
+function render(raw){const now=new Date();
+const rs=raw.filter(r=>r.assigned).map(r=>{const open=!r.completed,days=open?0:Math.max(0,(r.completed-r.assigned)/864e5),late=r.due?(open?now>r.due:r.completed>r.due):false;return{...r,open,days,late}});
+if(!rs.length){$('#out').innerHTML='<div class="empty">No rows with a readable assigned date.</div>';return}
+const done=rs.filter(r=>!r.open),avg=done.length?done.reduce((a,r)=>a+r.days,0)/done.length:0,late=rs.filter(r=>r.late).length;
+const steps=group(rs,'step').filter(g=>g.key!=='(blank)'),slow=steps[0];
+$('#out').innerHTML='<div class="kpis"><div class="k"><b>'+rs.length+'</b><span>review tasks</span></div><div class="k"><b>'+avg.toFixed(1)+' days</b><span>average turnaround</span></div><div class="k"><b>'+Math.round(late/rs.length*100)+'%</b><span>late or overdue</span></div><div class="k"><b>'+(slow?esc(slow.key):'n/a')+'</b><span>slowest step'+(slow?' ('+slow.avg.toFixed(1)+' days)':'')+'</span></div></div>'
++(steps.length?block('By step',steps):'')+block('By reviewer',group(rs,'reviewer'))+(rs.some(r=>r.company)?block('By company',group(rs,'company')):'')
++'<p class="hint" style="margin-top:18px">Turnaround is completed minus assigned. Open tasks count as late once past their due date but are left out of the averages.</p>'}
+$('#demo').onclick=()=>{$('#msg').textContent='';render(sample())};
+$('#f').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{$('#msg').textContent='';let t=r.result,objs;
+if(/\.json$/i.test(f.name)){let j=JSON.parse(t);if(!Array.isArray(j))j=j.results||j.data||j.reviews||[];objs=j}
+else{const p=parseCSV(t),h=p[0].map(x=>x.trim());objs=p.slice(1).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])))}
+render(load(objs))}catch(x){$('#msg').textContent=x.message}};r.readAsText(f)};
+</script>
+</body>
+</html>

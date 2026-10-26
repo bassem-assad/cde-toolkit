@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>File validator · CDE Toolkit</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f5f7;--panel:#fff;--ink:#14213d;--mute:#5b6676;--line:#d5dbe3;--brand:#0b2a4a;--accent:#00857c;--bad:#b3261e;--badbg:#fbe9e7;--ok:#1b7a3d;--okbg:#e4f4ea;--onbrand:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e141b;--panel:#17202b;--ink:#e6ebf2;--mute:#9aa6b6;--line:#2c3947;--brand:#1d4a7a;--accent:#2ec4b6;--bad:#ff8a80;--badbg:#3a1d1b;--ok:#6fd195;--okbg:#18301f}}
+:root[data-theme="dark"]{--bg:#0e141b;--panel:#17202b;--ink:#e6ebf2;--mute:#9aa6b6;--line:#2c3947;--brand:#1d4a7a;--accent:#2ec4b6;--bad:#ff8a80;--badbg:#3a1d1b;--ok:#6fd195;--okbg:#18301f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+header{background:var(--brand);color:var(--onbrand);padding:20px clamp(16px,4vw,48px);border-bottom:4px solid var(--accent)}
+header h1{margin:0;font-size:22px;font-weight:600}
+header p{margin:4px 0 0;opacity:.85;max-width:70ch}
+main{max-width:1100px;margin:0 auto;padding:20px clamp(16px,4vw,48px) 48px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px 20px;margin-bottom:16px}
+h2{font-size:17px;margin:0 0 4px}
+.hint{color:var(--mute);margin:0 0 12px;max-width:80ch}
+label{font-weight:600;font-size:13px;display:block;margin-bottom:4px}
+input[type=text],select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button{font:inherit;font-weight:600;padding:8px 16px;border-radius:4px;border:1px solid var(--brand);background:var(--brand);color:var(--onbrand);cursor:pointer}
+button.alt{background:transparent;color:var(--ink);border-color:var(--line)}
+button.sm{padding:4px 10px;font-size:13px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1 1 200px}
+.chk{display:flex;gap:8px;align-items:center;font-weight:400;font-size:14px;margin:0}
+.attrs{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:6px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--mute)}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}
+.stat{padding:10px 16px;border-radius:4px;border:1px solid var(--line);min-width:110px}
+.stat b{display:block;font-size:24px}
+.stat.ok{background:var(--okbg);color:var(--ok)}.stat.bad{background:var(--badbg);color:var(--bad)}
+.pill{padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.pill.ok{background:var(--okbg);color:var(--ok)}.pill.bad{background:var(--badbg);color:var(--bad)}
+.issues{margin:0;padding-left:16px}
+.drop{border:2px dashed var(--line);border-radius:6px;padding:22px;text-align:center;color:var(--mute)}
+#msg{margin-top:8px;color:var(--bad)}
+</style>
+</head>
+<body><script src="/assets/nav.js" data-page="validate"></script>
+<header>
+<h1>ACC file validator</h1>
+<p>Check files exported from ACC against your file naming convention and confirm required attributes are filled in. Everything runs in your browser; no files are uploaded anywhere.</p>
+</header>
+<main>
+<section>
+<h2>1. Load the ACC file list</h2>
+<p class="hint">Export the file list from ACC Docs (Excel or CSV) with the attribute columns included, then drop it here.</p>
+<div class="drop"><input type="file" id="file" accept=".xlsx,.xls,.csv"></div>
+<div id="msg" role="alert"></div>
+<div id="cols" hidden style="margin-top:14px">
+<div class="row">
+<div><label for="nameCol">Column holding the file name</label><select id="nameCol"></select></div>
+<div><label for="typeCol">Column that marks folders (optional)</label><select id="typeCol"></select></div>
+</div>
+<label style="margin-top:14px">Attributes that must be filled in</label>
+<div class="attrs" id="attrs"></div>
+</div>
+</section>
+
+<section>
+<h2>2. Naming convention</h2>
+<p class="hint">Each row is one part of the file name, in order. Leave "Allowed values" empty to accept any text, list codes separated by commas (e.g. ARC, STR, MEP), or enter a pattern between slashes (e.g. /^[0-9]{4}$/).</p>
+<div class="row" style="margin-bottom:12px">
+<div style="max-width:160px"><label for="delim">Separator</label><input type="text" id="delim" value="-" maxlength="3"></div>
+<div><label class="chk"><input type="checkbox" id="stripExt" checked> Ignore the file extension</label>
+<label class="chk"><input type="checkbox" id="noSpecial" checked> Flag spaces and special characters</label></div>
+</div>
+<div class="scroll"><table><thead><tr><th>Part</th><th>Allowed values</th><th></th></tr></thead><tbody id="segs"></tbody></table></div>
+<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="alt sm" id="addSeg">Add part</button><button class="alt sm" id="reset">Reset to example</button></div>
+</section>
+
+<section>
+<h2>3. Results</h2>
+<button id="run" disabled>Validate files</button>
+<div id="out" hidden>
+<div class="stats" id="stats"></div>
+<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+<label class="chk"><input type="checkbox" id="onlyFail" checked> Show failures only</label>
+<button class="alt sm" id="dl">Download report (CSV)</button>
+</div>
+<div class="scroll"><table><thead><tr><th>Status</th><th>File</th><th>Issues</th></tr></thead><tbody id="res"></tbody></table></div>
+</div>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const EXAMPLE=[["Project",""],["Originator",""],["Volume",""],["Level",""],["Type",""],["Role",""],["Number","/^[0-9]{4,6}$/"]];
+let rows=[],cols=[],results=[];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function renderSegs(list){
+  $("segs").innerHTML=list.map((s,i)=>`<tr><td><input type="text" value="${esc(s[0])}" aria-label="Part name" data-k="n"></td><td><input type="text" value="${esc(s[1])}" aria-label="Allowed values" data-k="v"></td><td><button class="alt sm" data-del="${i}">Remove</button></td></tr>`).join("");
+}
+function getSegs(){return [...$("segs").rows].map(r=>[r.querySelector('[data-k="n"]').value.trim(),r.querySelector('[data-k="v"]').value.trim()]);}
+function save(){try{localStorage.setItem("accval",JSON.stringify({s:getSegs(),d:$("delim").value,e:$("stripExt").checked,x:$("noSpecial").checked}))}catch(e){}}
+function load(){let p=null;try{p=JSON.parse(localStorage.getItem("accval"))}catch(e){}
+  if(p){renderSegs(p.s);$("delim").value=p.d;$("stripExt").checked=p.e;$("noSpecial").checked=p.x}else renderSegs(EXAMPLE);}
+$("segs").addEventListener("click",e=>{const i=e.target.dataset.del;if(i!==undefined){const l=getSegs();l.splice(+i,1);renderSegs(l);save()}});
+$("segs").addEventListener("input",save);
+["delim","stripExt","noSpecial"].forEach(id=>$(id).addEventListener("input",save));
+$("addSeg").onclick=()=>{const l=getSegs();l.push(["",""]);renderSegs(l);save()};
+$("reset").onclick=()=>{renderSegs(EXAMPLE);$("delim").value="-";save()};
+
+$("file").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;$("msg").textContent="";
+  const r=new FileReader();
+  r.onload=ev=>{try{
+    const wb=XLSX.read(ev.target.result,{type:"array"});
+    rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""});
+    if(!rows.length)throw new Error("The first sheet has no data rows.");
+    cols=Object.keys(rows[0]);setupCols();
+  }catch(err){$("msg").textContent="Could not read that file: "+err.message;}};
+  r.readAsArrayBuffer(f);
+};
+function setupCols(){
+  const opt=cols.map(c=>`<option>${esc(c)}</option>`).join("");
+  $("nameCol").innerHTML=opt;$("typeCol").innerHTML='<option value="">None</option>'+opt;
+  $("nameCol").value=cols.find(c=>/^(file\s*)?name$|file/i.test(c))||cols[0];
+  $("typeCol").value=cols.find(c=>/^type$/i.test(c))||"";
+  const skip=new RegExp("^("+[$("nameCol").value].map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")$");
+  $("attrs").innerHTML=cols.filter(c=>!skip.test(c)).map(c=>`<label class="chk"><input type="checkbox" value="${esc(c)}"> ${esc(c)}</label>`).join("");
+  $("cols").hidden=false;$("run").disabled=false;
+}
+function matcher(spec){
+  if(!spec)return null;
+  const m=spec.match(/^\/(.+)\/([a-z]*)$/);
+  if(m){try{const re=new RegExp(m[1],m[2]);return v=>re.test(v)}catch(e){return null}}
+  const set=spec.split(",").map(x=>x.trim()).filter(Boolean);return v=>set.includes(v);
+}
+$("run").onclick=()=>{
+  const nameCol=$("nameCol").value,typeCol=$("typeCol").value,delim=$("delim").value||"-";
+  const attrs=[...$("attrs").querySelectorAll("input:checked")].map(i=>i.value);
+  const segs=getSegs().filter(s=>s[0]||s[1]).map(s=>({n:s[0]||"Part",spec:s[1],test:matcher(s[1])}));
+  results=[];
+  rows.forEach(r=>{
+    if(typeCol&&/folder/i.test(String(r[typeCol])))return;
+    const full=String(r[nameCol]).trim();if(!full)return;
+    const base=$("stripExt").checked?full.replace(/\.[^.]+$/,""):full;
+    const issues=[];
+    if($("noSpecial").checked&&/[^A-Za-z0-9_.\-]/.test(base))issues.push("Name contains spaces or special characters");
+    const parts=base.split(delim);
+    if(segs.length){
+      if(parts.length!==segs.length)issues.push(`Expected ${segs.length} parts separated by "${delim}", found ${parts.length}`);
+      else segs.forEach((s,i)=>{
+        if(!parts[i])issues.push(`${s.n} is empty`);
+        else if(s.test&&!s.test(parts[i]))issues.push(`${s.n} "${parts[i]}" is not allowed (${s.spec})`);
+      });
+    }
+    attrs.forEach(a=>{if(String(r[a]).trim()==="")issues.push(`Attribute "${a}" is empty`)});
+    results.push({name:full,issues});
+  });
+  show();
+};
+function show(){
+  const bad=results.filter(r=>r.issues.length).length;
+  $("stats").innerHTML=`<div class="stat"><b>${results.length}</b>Files checked</div><div class="stat ok"><b>${results.length-bad}</b>Passed</div><div class="stat bad"><b>${bad}</b>Failed</div>`;
+  const list=$("onlyFail").checked?results.filter(r=>r.issues.length):results;
+  $("res").innerHTML=list.length?list.map(r=>`<tr><td><span class="pill ${r.issues.length?"bad":"ok"}">${r.issues.length?"Fail":"Pass"}</span></td><td>${esc(r.name)}</td><td>${r.issues.length?`<ul class="issues">${r.issues.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`:""}</td></tr>`).join(""):'<tr><td colspan="3">No failures found.</td></tr>';
+  $("out").hidden=false;
+}
+$("onlyFail").onchange=show;
+$("dl").onclick=()=>{
+  const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  const csv="\ufeff"+["Status,File,Issues"].concat(results.map(r=>[r.issues.length?"Fail":"Pass",q(r.name),q(r.issues.join("; "))].join(","))).join("\r\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="acc-validation-report.csv";a.click();
+};
+load();
+</script>
+</body>
+</html>

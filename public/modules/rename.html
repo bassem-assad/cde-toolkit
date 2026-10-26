@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rename · CDE Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/app.css">
+<style>
+.browser{border:1px solid var(--line);border-radius:6px;max-height:340px;overflow:auto}
+.it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.it:last-child{border-bottom:0}
+.it span{min-width:0;overflow-wrap:anywhere}
+.it.f span{cursor:pointer;font-weight:600}
+.crumbs{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:14px}
+.crumbs button{padding:3px 8px;font-weight:500}
+.names{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:baseline}
+.names dt{font-size:13px;color:var(--mut)}.names dd{margin:0;font-family:var(--mono);font-size:14px;overflow-wrap:anywhere}
+.names dd.new{color:var(--accent);font-weight:500}
+pre{margin:0;font-family:var(--mono);font-size:13px;white-space:pre-wrap;color:var(--mut)}
+</style>
+<script src="/assets/auth.js"></script>
+</head>
+<body>
+<script src="/assets/nav.js" data-page="rename"></script>
+<main class="wrap">
+  <div style="display:grid;gap:6px">
+    <h1>Rename</h1>
+    <p class="lead">Add the upload date of the current version to a file's name in ACC, for example <code>Model.rvt</code> becomes <code>Model_20260915.rvt</code>. The rename is made on the current version.</p>
+  </div>
+
+  <section class="panel" id="gate" hidden>
+    <p class="msg bad">You're not signed in to Autodesk.</p>
+    <p><a href="/">Go to the home page to sign in</a>, then come back here.</p>
+  </section>
+
+  <section class="panel" id="pick" hidden>
+    <h2>1. Find the file</h2>
+    <div class="row">
+      <label>Hub<select id="hub"></select></label>
+      <label>Project<select id="proj" disabled></select></label>
+    </div>
+    <div class="row" style="align-items:center;justify-content:space-between">
+      <div class="crumbs" id="crumbs"></div>
+      <label style="display:flex;flex:0 0 auto;align-items:center;gap:6px;font-weight:500"><input type="checkbox" id="rvtOnly" checked> Revit models only</label>
+    </div>
+    <div class="browser" id="list"><div class="it"><span class="msg">Choose a hub and project.</span></div></div>
+  </section>
+
+  <section class="panel" id="plan" hidden>
+    <h2>2. Check the new name</h2>
+    <dl class="names">
+      <dt>Current name</dt><dd id="oldName"></dd>
+      <dt>Uploaded</dt><dd id="uploaded"></dd>
+      <dt>New name</dt><dd id="newName" class="new"></dd>
+    </dl>
+    <div class="row">
+      <label style="flex:0 1 260px">Date in time zone<select id="tz">
+        <option>Australia/Melbourne</option><option>Australia/Sydney</option><option>Australia/Brisbane</option>
+        <option>Australia/Adelaide</option><option>Australia/Perth</option><option>Australia/Hobart</option><option>Australia/Darwin</option>
+      </select></label>
+      <button id="go">Rename file</button>
+    </div>
+    <p id="warn" class="msg bad"></p>
+    <pre id="log"></pre>
+    <p class="msg">Links to cloud models usually follow the model ID. Test on a copy first, then check Manage Links in a host model.</p>
+  </section>
+</main>
+<footer class="wrap">© 2026 Bassem Assad. All rights reserved.</footer>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const S = { stack: [], target: null, tip: null };
+
+async function api(method, path, body) {
+  const t = await CDETK.accessToken();
+  const r = await fetch(CDETK.APS + path, {
+    method, body: body && JSON.stringify(body),
+    headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/vnd.api+json' }
+  });
+  const txt = await r.text();
+  if (!r.ok) throw new Error(`${r.status} ${txt.slice(0, 300)}`);
+  return txt ? JSON.parse(txt) : {};
+}
+async function all(path) {
+  let out = [], url = path;
+  for (let i = 0; i < 30 && url; i++) {
+    const j = await api('GET', url.replace(CDETK.APS, ''));
+    out = out.concat(j.data || []);
+    url = j.links && j.links.next && j.links.next.href;
+  }
+  return out;
+}
+const nm = d => ({ id: d.id, type: d.type, name: d.attributes.displayName || d.attributes.name });
+const fill = (sel, items, ph) => { sel.innerHTML = `<option value="">${ph}</option>` + items.map(i => `<option value="${esc(i.id)}">${esc(i.name)}</option>`).join(''); };
+const hubId = () => $('#hub').value, projId = () => $('#proj').value;
+
+function stamp(iso) {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: $('#tz').value }).format(new Date(iso)).replace(/-/g, '');
+}
+function proposed() {
+  const name = S.target.name, m = name.match(/^(.*?)(\.[^.]+)?$/);
+  return `${m[1]}_${stamp(S.tip.attributes.createTime)}${m[2] || ''}`;
+}
+
+async function showList() {
+  $('#crumbs').innerHTML = ['Project'].concat(S.stack.map(f => f.name))
+    .map((n, i) => `<button class="alt" type="button" data-b="${i}">${esc(n)}</button>`).join(' › ');
+  $('#list').innerHTML = '<div class="it"><span class="msg">Loading…</span></div>';
+  try {
+    let items;
+    if (!S.stack.length) items = (await api('GET', `/project/v1/hubs/${hubId()}/projects/${projId()}/topFolders`)).data.map(nm);
+    else items = (await all(`/data/v1/projects/${projId()}/folders/${encodeURIComponent(S.stack.at(-1).id)}/contents`)).map(nm);
+    const rvt = $('#rvtOnly').checked;
+    items = items.filter(i => i.type === 'folders' || (i.type === 'items' && (!rvt || /\.rvt$/i.test(i.name))))
+      .sort((a, b) => (a.type === b.type ? a.name.localeCompare(b.name) : a.type === 'folders' ? -1 : 1));
+    S.items = items;
+    $('#list').innerHTML = items.length ? items.map((i, k) => i.type === 'folders'
+      ? `<div class="it f"><span data-open="${k}">📁 ${esc(i.name)}</span><span class="msg">Open ›</span></div>`
+      : `<div class="it"><span>${esc(i.name)}</span><button class="alt" type="button" data-pick="${k}">Rename this</button></div>`).join('')
+      : '<div class="it"><span class="msg">Nothing here.</span></div>';
+  } catch (e) { $('#list').innerHTML = `<div class="it"><span class="msg bad">Could not list this folder: ${esc(e.message)}</span></div>`; }
+}
+
+async function pick(item) {
+  S.target = item; $('#plan').hidden = false; $('#log').textContent = ''; $('#warn').textContent = '';
+  $('#oldName').textContent = item.name; $('#newName').textContent = 'Reading current version…'; $('#uploaded').textContent = '';
+  $('#go').disabled = true;
+  try {
+    S.tip = (await api('GET', `/data/v1/projects/${projId()}/items/${encodeURIComponent(item.id)}/tip`)).data;
+    paintPlan();
+  } catch (e) { $('#newName').textContent = ''; $('#warn').textContent = 'Could not read the current version: ' + e.message; }
+  $('#plan').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+}
+function paintPlan() {
+  if (!S.tip) return;
+  const created = new Date(S.tip.attributes.createTime);
+  $('#uploaded').textContent = created.toLocaleString('en-AU', { timeZone: $('#tz').value, dateStyle: 'medium', timeStyle: 'short' }) + ' (version ' + (S.tip.attributes.versionNumber || '?') + ')';
+  $('#newName').textContent = proposed();
+  const dated = /_\d{8}(\.[^.]+)?$/.test(S.target.name);
+  $('#warn').textContent = dated ? 'This name already ends with a date. Renaming will add a second one.' : '';
+  $('#go').disabled = false;
+}
+
+$('#hub').onchange = async () => {
+  $('#proj').disabled = true; $('#plan').hidden = true;
+  if (!hubId()) return fill($('#proj'), [], 'Select a project…');
+  try {
+    const ps = (await all(`/project/v1/hubs/${hubId()}/projects`)).map(nm).sort((a, b) => a.name.localeCompare(b.name));
+    fill($('#proj'), ps, 'Select a project…'); $('#proj').disabled = false;
+  } catch (e) { $('#list').innerHTML = `<div class="it"><span class="msg bad">${esc(e.message)}</span></div>`; }
+};
+$('#proj').onchange = () => { S.stack = []; $('#plan').hidden = true; if (projId()) showList(); };
+$('#rvtOnly').onchange = () => projId() && showList();
+$('#crumbs').onclick = e => { const b = e.target.closest('[data-b]'); if (b) { S.stack = S.stack.slice(0, +b.dataset.b); showList(); } };
+$('#list').onclick = e => {
+  const o = e.target.closest('[data-open]'), p = e.target.closest('[data-pick]');
+  if (o) { S.stack.push(S.items[+o.dataset.open]); showList(); }
+  if (p) pick(S.items[+p.dataset.pick]);
+};
+$('#tz').onchange = paintPlan;
+$('#go').onclick = async () => {
+  const newName = proposed();
+  $('#go').disabled = true; $('#log').textContent = 'Renaming…';
+  try {
+    await api('PATCH', `/data/v1/projects/${projId()}/versions/${encodeURIComponent(S.tip.id)}`, {
+      jsonapi: { version: '1.0' }, data: { type: 'versions', id: S.tip.id, attributes: { name: newName } }
+    });
+    $('#log').textContent = `Renamed: ${S.target.name} → ${newName}\nNow open a host model in Revit and check the link (Manage Links).`;
+    S.target.name = newName; $('#oldName').textContent = newName; $('#newName').textContent = '';
+    showList();
+  } catch (e) { $('#log').textContent = 'Rename failed: ' + e.message; $('#go').disabled = false; }
+};
+
+(async () => {
+  if (!CDETK.signedIn()) { $('#gate').hidden = false; return; }
+  $('#pick').hidden = false;
+  try {
+    const hubs = (await api('GET', '/project/v1/hubs')).data.map(h => ({ id: h.id, name: h.attributes.name }));
+    fill($('#hub'), hubs, 'Select a hub…');
+    if (hubs.length === 1) { $('#hub').value = hubs[0].id; $('#hub').onchange(); }
+  } catch (e) { $('#list').innerHTML = `<div class="it"><span class="msg bad">Could not load hubs: ${esc(e.message)}</span></div>`; }
+})();
+</script>
+</body>
+</html>
