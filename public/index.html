@@ -39,7 +39,9 @@ if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + locat
 .mark.ok{background:#1d5a3a;color:#9ff0c0}.mark.no{background:#5a2420;color:#ffb4ac}.mark.mv{background:#4a4012;color:#f0d77a}
 .checks code{font:400 13px var(--mono);color:#fff;overflow-wrap:anywhere}
 .checks small{display:block;color:var(--ondeep2);font-size:12.5px}
-.tools{margin-top:28px;border-top:1px solid var(--line)}
+.tools{margin-top:28px}
+.grp{font:500 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--mut);padding:30px 0 12px;border-bottom:1px solid var(--line)}
+.grp:first-child{padding-top:6px}
 .tool{display:grid;grid-template-columns:200px minmax(0,1fr) auto;gap:6px 28px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
 .tool h3{font-size:18px;font-weight:600}
 .tool p{color:var(--mut);max-width:64ch}
@@ -110,13 +112,16 @@ if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + locat
     <h2>Everything you do over and over in ACC, in one place.</h2>
     <p class="sub">Each tool works on its own. Sign in once with your Autodesk account and move between them from the top bar.</p>
     <div class="tools">
+      <h3 class="grp">Move, check and fix files</h3>
       <article class="tool"><h3>CDE Sync</h3><p>Move files into ACC from ProjectWise, SharePoint, InEight Document, another ACC project or a local folder. Maps attributes, reads the destination folder's naming standard, flags values that don't fit, and adds droplist values only when you choose.</p><span class="tag live">Autodesk sign-in</span></article>
       <article class="tool"><h3>File validator</h3><p>Check a file-list export from ACC Docs against your naming convention and confirm required attributes are filled in. Download the failures as a CSV report.</p><span class="tag exp">Excel or CSV export</span></article>
       <article class="tool"><h3>Rename</h3><p>Add the upload date of the current version to a Revit model's name, with a preview of the new name before anything changes.</p><span class="tag live">Autodesk sign-in</span></article>
+      <h3 class="grp">Coordinate models</h3>
+      <article class="tool"><h3>Federated views</h3><p>Choose a location code and create a Model Coordination view of every published model with that code, without opening ACC. Folder and attribute names are set to match your project conventions.</p><span class="tag live">Autodesk sign-in</span></article>
+      <article class="tool"><h3>GeoFed</h3><p>Federate ACC models on a map. View 3D and 2D side by side, take snapshots with markup and check model coverage by location.</p><span class="tag live">Autodesk sign-in</span></article>
+      <h3 class="grp">Control and report</h3>
       <article class="tool"><h3>File Book Out</h3><p>Find drawings by attribute, see their booking status and book them out through an ACC review. Files already booked out are left out of the review and listed.</p><span class="tag live">Autodesk sign-in</span></article>
       <article class="tool"><h3>Review turnaround</h3><p>See where reviews slow down by step, reviewer and company, with late and overdue rates, from a review export.</p><span class="tag exp">CSV or JSON export</span></article>
-      <article class="tool"><h3>GeoFed</h3><p>Federate ACC models on a map. View 3D and 2D side by side, take snapshots with markup and check model coverage by location.</p><span class="tag live">Autodesk sign-in</span></article>
-      <article class="tool"><h3>Federated views</h3><p>Choose a location code and create a Model Coordination view of every published model with that code, without opening ACC. Folder and attribute names are set to match your project conventions.</p><span class="tag live">Autodesk sign-in</span></article>
     </div>
   </div>
 </section>

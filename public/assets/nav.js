@@ -7,11 +7,11 @@
     ['home', '/app/', 'Home'],
     ['migrate', '/modules/migrate.html', 'CDE Sync'],
     ['validate', '/modules/validate.html', 'Validate'],
-    ['book-out', '/modules/book-out.html', 'Book out'],
     ['rename', '/modules/rename.html', 'Rename'],
-    ['turnaround', '/modules/turnaround.html', 'Review turnaround'],
+    ['federate', '/modules/federate.html', 'Federated views'],
     ['geofed', '/modules/geofed.html', 'GeoFed'],
-    ['federate', '/modules/federate.html', 'Federated views']
+    ['book-out', '/modules/book-out.html', 'Book out'],
+    ['turnaround', '/modules/turnaround.html', 'Review turnaround']
   ];
   let signed = false, demo = false;
   try { signed = !!sessionStorage.getItem('cdetk.tok'); demo = sessionStorage.getItem('cdetk.demo') === '1' || new URLSearchParams(location.search).has('demo'); } catch (e) { }
