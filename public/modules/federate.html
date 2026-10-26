@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en-AU" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Federated views · CDE Toolkit</title>
+<script src="/assets/auth.js"></script>
+<style>
+:root{
+  --bg:#f3f5fc; --card:#ffffff; --ink:#1b1f3b; --mute:#667085; --line:#e4e7f3;
+  --c1:#6366f1; --c2:#06b6d4; --c3:#ec4899; --c4:#f59e0b; --c5:#10b981; --c6:#8b5cf6; --c7:#ef4444; --c8:#0ea5e9;
+  --grad:linear-gradient(135deg,#6366f1 0%,#06b6d4 55%,#10b981 100%);
+  --shadow:0 12px 32px -14px rgba(79,70,229,.30);
+  --soft:#f7f8fe;
+}
+[data-theme="dark"]{
+  --bg:#0d1020; --card:#161a34; --ink:#eef0ff; --mute:#9aa2c8; --line:#272c57; --soft:#1b2040;
+  --shadow:0 12px 32px -14px rgba(0,0,0,.65);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.45;min-height:100vh}
+header.top{background:var(--grad);color:#fff;padding:18px 28px;display:flex;align-items:center;gap:16px;box-shadow:0 8px 30px -12px rgba(6,182,212,.6)}
+.logo{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:grid;place-items:center;backdrop-filter:blur(4px)}
+.logo svg{width:24px;height:24px}
+.top h1{font-size:20px;margin:0;letter-spacing:.2px}
+.top p{margin:0;font-size:12.5px;opacity:.9}
+.top .sp{flex:1}
+.pill{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer}
+.pill:hover{background:rgba(255,255,255,.3)}
+main{max-width:1120px;margin:0 auto;padding:26px 20px 60px}
+.steps{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.step{flex:1;min-width:170px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;color:var(--mute);font-weight:600;font-size:13.5px}
+.step b{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--soft);border:1px solid var(--line);font-size:12.5px}
+.step.active{color:var(--ink);border-color:var(--c1);box-shadow:var(--shadow)}
+.step.active b{background:var(--grad);color:#fff;border:0}
+.step.done{color:var(--ink)}
+.step.done b{background:var(--c5);color:#fff;border:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);margin-bottom:20px}
+.card h2{margin:0 0 4px;font-size:19px}
+.card .sub{color:var(--mute);margin:0 0 18px}
+.btn{border:0;border-radius:12px;padding:11px 20px;font-weight:650;font-size:14.5px;cursor:pointer;color:#fff;background:var(--grad);box-shadow:0 8px 20px -8px rgba(99,102,241,.7);transition:transform .08s,filter .15s}
+.btn:hover{filter:brightness(1.07)} .btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.btn.ghost{background:var(--soft);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.big{padding:15px 30px;font-size:16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.row.sp{justify-content:space-between}
+input[type=text],select{background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14.5px;min-width:220px;outline:none}
+input[type=text]:focus,select:focus{border-color:var(--c1);box-shadow:0 0 0 3px rgba(99,102,241,.2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.proj{display:flex;gap:12px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--soft);cursor:pointer;transition:transform .1s,box-shadow .15s,border-color .15s;text-align:left;color:var(--ink);font:inherit}
+.proj:hover{transform:translateY(-2px);border-color:var(--c1);box-shadow:var(--shadow)}
+.av{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.proj span{overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.stat{border-radius:14px;padding:14px 16px;color:#fff}
+.stat b{display:block;font-size:26px;line-height:1.1}
+.stat small{opacity:.92}
+.s1{background:linear-gradient(135deg,#6366f1,#8b5cf6)} .s2{background:linear-gradient(135deg,#06b6d4,#0ea5e9)} .s3{background:linear-gradient(135deg,#10b981,#06b6d4)} .s4{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:0;border-radius:999px;padding:9px 8px 9px 16px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:transform .1s,box-shadow .15s}
+.chip:hover{transform:translateY(-2px);box-shadow:0 10px 18px -10px rgba(0,0,0,.5)}
+.chip i{font-style:normal;background:rgba(255,255,255,.28);border-radius:999px;padding:2px 10px;font-size:12.5px}
+.g0{background:linear-gradient(135deg,#6366f1,#8b5cf6)}.g1{background:linear-gradient(135deg,#06b6d4,#0ea5e9)}.g2{background:linear-gradient(135deg,#ec4899,#f43f5e)}.g3{background:linear-gradient(135deg,#f59e0b,#f97316)}
+.g4{background:linear-gradient(135deg,#10b981,#14b8a6)}.g5{background:linear-gradient(135deg,#8b5cf6,#ec4899)}.g6{background:linear-gradient(135deg,#0ea5e9,#6366f1)}.g7{background:linear-gradient(135deg,#84cc16,#10b981)}
+.bar{height:12px;background:var(--soft);border:1px solid var(--line);border-radius:99px;overflow:hidden;margin:14px 0 8px}
+.bar i{display:block;height:100%;width:0;background:var(--grad);transition:width .25s}
+.alert{border-radius:12px;padding:12px 14px;margin:12px 0;border:1px solid;font-size:14px;white-space:pre-wrap}
+.alert.err{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.45)}
+.alert.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.55)}
+.alert.ok{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.5)}
+.alert.info{background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.4)}
+.tblwrap{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{position:sticky;top:0;background:var(--soft);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mute);z-index:1}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:hover td{background:var(--soft)}
+td.nm{font-weight:600;word-break:break-all}
+input[type=checkbox]{width:17px;height:17px;accent-color:#6366f1;cursor:pointer}
+.tag{display:inline-block;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:2px 8px;font-size:12.5px}
+.colchip{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer}
+.colchip.on{background:var(--c1);color:#fff;border-color:var(--c1)}
+.hero{text-align:center;padding:48px 24px}
+.hero h2{font-size:28px;margin:0 0 8px}
+.hero p{max-width:560px;margin:0 auto 22px;color:var(--mute)}
+code,.mono{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:2px 6px;word-break:break-all}
+details{margin-top:18px;color:var(--mute)}
+details pre{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:260px;overflow:auto;font-size:12px;white-space:pre-wrap;color:var(--ink)}
+.phase{display:flex;gap:10px;align-items:center;color:var(--mute);padding:4px 0}
+.phase.done{color:var(--ink)} .phase.done:before{content:"✓";color:var(--c5);font-weight:800}
+.phase.cur:before{content:"●";color:var(--c1)} .phase.todo:before{content:"○"}
+.hidden{display:none!important}
+.spin{width:16px;height:16px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;vertical-align:-3px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+footer{text-align:center;color:var(--mute);font-size:12.5px;padding:10px}
+</style>
+</head>
+<body>
+<script src="/assets/nav.js" data-page="federate"></script>
+<header class="top">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2 3 7l9 5 9-5-9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></div>
+  <div><h1>Federated View Builder</h1><p>Autodesk Construction Cloud · Model Coordination</p></div>
+  <div class="sp"></div>
+  <button class="pill" data-act="settings">Settings</button>
+  <button class="pill" id="themeBtn" data-act="theme">Dark mode</button>
+  <button class="pill hidden" id="outBtn" data-act="signout">Sign out</button>
+</header>
+
+<main>
+  <div class="steps" id="steps"></div>
+  <div id="alerts"></div>
+  <div id="view"></div>
+  <details><summary>Diagnostics (include this when reporting a problem)</summary><pre id="log"></pre></details>
+</main>
+<footer>Runs entirely in your browser. Your Autodesk sign-in stays in this browser tab.<br>© 2026 Bassem Assad. All rights reserved.</footer>
+
+<script>
+"use strict";
+/* ============================ SETTINGS ============================ */
+const CONFIG = {
+  CLIENT_ID: "",                              // Paste your APS Client ID here (or type it in on first run)
+  PUBLISHED_FOLDER_NAME: "03-Published (Booked In)",
+  ATTRIBUTE_NAME: "17-LOCATION_CODE",
+  VIEW_SUFFIX: "_FEDERATED",
+  SCOPES: "data:read data:write data:create",
+  REGION: "none"                              // "none" = let Autodesk route (recommended), "auto" = use hub region, or "AUS" / "US" / "EMEA"
+};
+/* Each company's folder and attribute names differ: saved values from the Settings panel override the defaults above. */
+const CFG_KEYS = ["PUBLISHED_FOLDER_NAME", "ATTRIBUTE_NAME", "VIEW_SUFFIX"];
+try { const saved = JSON.parse(localStorage.getItem("fvb_cfg") || "{}"); CFG_KEYS.forEach(k => { if (saved[k]) CONFIG[k] = saved[k]; }); } catch (_) { }
+/* ================================================================== */
+
+const API = "https://developer.api.autodesk.com";
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = s => String(s ?? "").trim().toLowerCase();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const state = { hubs: [], hub: null, projects: [], project: null, containerId: null, folder: null, modelSets: [], modelSet: null,
+  docs: [], attrNames: [], locations: new Map(), unassigned: 0, code: null, selected: new Set(), cols: new Set(), search: "", projSearch: "", locSearch: "", view: "signin", busy: false, log: [] };
+
+/* ---------- logging / alerts ---------- */
+function log(m) { state.log.push(new Date().toLocaleTimeString("en-AU") + "  " + m); $("#log").textContent = state.log.slice(-200).join("\n"); }
+function alertBox(type, msg) { const d = document.createElement("div"); d.className = "alert " + type; d.textContent = msg; $("#alerts").appendChild(d); return d; }
+function clearAlerts() { $("#alerts").innerHTML = ""; }
+function fail(e) { console.error(e); log("ERROR: " + (e.message || e)); clearAlerts(); alertBox("err", e.message || String(e)); }
+
+/* ---------- auth (PKCE, no secret) ---------- */
+let auth = CDETK.raw(); // shared CDE Toolkit sign-in (assets/auth.js)
+const redirectUri = () => CDETK.redirect;
+const clientId = () => CDETK.clientId() || CONFIG.CLIENT_ID || localStorage.getItem("aps_client_id") || "";
+const b64url = bytes => { let s = ""; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+const rand = n => { const a = new Uint8Array(n); crypto.getRandomValues(a); return b64url(a).slice(0, n); };
+async function challengeOf(v) { return b64url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)))); }
+
+async function login() {
+  if (!clientId()) { fail(new Error("Enter your APS Client ID first.")); return; }
+  CDETK.setClientId(clientId());
+  await CDETK.login(location.pathname); // the toolkit home page handles the callback, then returns here
+}
+async function tokenRequest(params) {
+  const res = await fetch(`${API}/authentication/v2/token`, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" }, body: new URLSearchParams({ client_id: clientId(), ...params }) });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error("Sign-in failed: " + (j.developerMessage || j.error_description || j.error || res.status));
+  auth = { access: j.access_token, refresh: j.refresh_token || (auth && auth.refresh), exp: Date.now() + (j.expires_in - 90) * 1000 };
+  CDETK.save(auth);
+}
+async function handleCallback() { } // handled by the toolkit home page
+async function ensureToken() {
+  if (!auth) throw new Error("Not signed in.");
+  if (Date.now() < auth.exp) return;
+  if (!auth.refresh) { signout(); throw new Error("Session expired. Please sign in again."); }
+  await tokenRequest({ grant_type: "refresh_token", refresh_token: auth.refresh, scope: CONFIG.SCOPES });
+}
+function signout() { CDETK.signOut(); auth = null; location.href = "/"; }
+
+/* ---------- API wrapper ---------- */
+async function api(path, { method = "GET", body, headers = {} } = {}) {
+  await ensureToken();
+  const url = path.startsWith("http") ? path : API + path;
+  const h = { Authorization: "Bearer " + auth.access, Accept: "application/json", ...headers };
+  if (body !== undefined) h["Content-Type"] = "application/json";
+  for (let attempt = 0; ; attempt++) {
+    let res;
+    try { res = await fetch(url, { method, headers: h, body: body !== undefined ? JSON.stringify(body) : undefined }); }
+    catch (e) { throw new Error(`Could not reach Autodesk (${method} ${path.split("?")[0]}). This can be a network block or a CORS restriction. ${e.message}`); }
+    if ((res.status === 429 || (res.status >= 502 && res.status <= 504)) && attempt < 4) { await sleep(800 * (attempt + 1)); continue; }
+    const text = await res.text(); let j = null; try { j = text ? JSON.parse(text) : null; } catch (_) { }
+    if (!res.ok) {
+      const d = j && (j.developerMessage || j.message || j.detail || (j.errors && j.errors[0] && (j.errors[0].detail || j.errors[0].title)) || (j.reason) || JSON.stringify(j));
+      const err = new Error(`${method} ${path.split("?")[0]} → ${res.status}: ${d || text || "no details"}`); err.status = res.status; throw err;
+    }
+    return j;
+  }
+}
+async function pagedDM(path) { // Data Management style paging
+  let out = [], next = path;
+  for (let i = 0; next && i < 100; i++) { const r = await api(next); out.push(...(r.data || [])); next = r.links && r.links.next && r.links.next.href || null; }
+  return out;
+}
+const regionHdr = () => { const r = CONFIG.REGION; if (r === "none") return {}; const v = r === "auto" ? (state.hub && state.hub.attributes && state.hub.attributes.region || "") : r; return v ? { "x-ads-region": v } : {}; };
+const mc = (path, o = {}) => api(`/bim360/modelset/v3/containers/${state.containerId}${path}`, { ...o, headers: { ...regionHdr(), ...(o.headers || {}) } });
+const tokOf = r => (r && ((r.pagination && (r.pagination.continuationToken || r.pagination.nextToken)) || r.continuationToken)) || null;
+async function mcPaged(path, key) {
+  let out = [], tok = null, last = null;
+  for (let i = 0; i < 200; i++) {
+    const sep = path.includes("?") ? "&" : "?";
+    const r = await mc(path + (tok ? `${sep}continuationToken=${encodeURIComponent(tok)}` : ""));
+    out.push(...(r[key] || [])); last = r; tok = tokOf(r);
+    if (!tok) break;
+  }
+  return { items: out, last };
+}
+
+/* ---------- navigation / rendering ---------- */
+const STEPS = ["Project", "Location code", "Select models", "Federate"];
+const VIEW_STEP = { signin: -1, projects: 0, scan: 0, locations: 1, models: 2, done: 3 };
+function go(v) { state.view = v; render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+function renderSteps() {
+  const cur = VIEW_STEP[state.view];
+  $("#steps").innerHTML = state.view === "signin" ? "" : STEPS.map((s, i) => `<div class="step ${i === cur ? "active" : i < cur ? "done" : ""}"><b>${i < cur ? "✓" : i + 1}</b>${s}</div>`).join("");
+}
+function render() {
+  renderSteps();
+  $("#outBtn").classList.toggle("hidden", !auth);
+  const v = $("#view");
+  ({ signin: renderSignIn, projects: renderProjects, scan: renderScan, locations: renderLocations, models: renderModels, done: renderDone })[state.view](v);
+}
+const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h % 8; };
+
+function renderSignIn(v) {
+  v.innerHTML = `<div class="card hero">
+    <h2>Federate your models in seconds</h2>
+    <p>Pick a project and a location code. This tool finds every published 3D model with that code and builds a Model Coordination view, without you opening ACC.</p>
+    ${clientId() ? "" : `<div class="row" style="justify-content:center;margin-bottom:16px"><input type="text" id="cid" placeholder="Paste your APS Client ID" style="min-width:340px"><button class="btn ghost" data-act="savecid">Save</button></div>
+    <div class="alert info" style="max-width:640px;margin:0 auto 16px;text-align:left">Register this Callback URL on your APS app (exactly as shown):<br><code>${esc(redirectUri())}</code></div>`}
+    <button class="btn big" data-act="login" ${clientId() ? "" : "disabled"}>Sign in with Autodesk</button>
+  </div>`;
+}
+function renderProjects(v) {
+  const q = norm(state.projSearch);
+  const list = state.projects.filter(p => !q || norm(p.attributes.name).includes(q));
+  v.innerHTML = `<div class="card"><h2>Choose a project</h2><p class="sub">${state.projects.length} project${state.projects.length === 1 ? "" : "s"} available to you.</p>
+    <div class="row" style="margin-bottom:16px">
+      ${state.hubs.length > 1 ? `<select data-bind="hub">${state.hubs.map(h => `<option value="${esc(h.id)}" ${state.hub && h.id === state.hub.id ? "selected" : ""}>${esc(h.attributes.name)}</option>`).join("")}</select>` : `<span class="tag">${esc(state.hub ? state.hub.attributes.name : "")}</span>`}
+      <input type="text" data-bind="projSearch" placeholder="Search projects…" value="${esc(state.projSearch)}" id="projSearch">
+    </div>
+    <div class="grid">${list.map(p => `<button class="proj" data-act="project" data-id="${esc(p.id)}"><div class="av g${hue(p.attributes.name)}">${esc((p.attributes.name || "?").trim().slice(0, 2).toUpperCase())}</div><span>${esc(p.attributes.name)}</span></button>`).join("") || "<p class='sub'>No projects match.</p>"}</div></div>`;
+}
+const PHASES = ["Finding the Published folder", "Finding the Model Coordination model set", "Reading the models in the model set", "Reading ACC attributes", "Building the location list"];
+function renderScan(v) {
+  v.innerHTML = `<div class="card"><h2>Scanning ${esc(state.project.attributes.name)}</h2><p class="sub" id="scanSub">This can take a minute on large projects.</p>
+    <div class="bar"><i id="pbar"></i></div>
+    <div id="phases">${PHASES.map((p, i) => `<div class="phase todo" id="ph${i}">${p}</div>`).join("")}</div>
+    <div id="msPick"></div></div>`;
+}
+function phase(i, pct, extra) {
+  PHASES.forEach((_, k) => { const e = $("#ph" + k); if (e) e.className = "phase " + (k < i ? "done" : k === i ? "cur" : "todo"); });
+  const b = $("#pbar"); if (b) b.style.width = pct + "%";
+  if (extra) { const s = $("#scanSub"); if (s) s.textContent = extra; }
+  log(`Phase ${i + 1}: ${PHASES[i]} ${extra ? "— " + extra : ""}`);
+}
+
+function sortedLocations() { return [...state.locations.entries()].sort((a, b) => a[0].localeCompare(b[0], undefined, { numeric: true })); }
+function renderLocations(v) {
+  const q = norm(state.locSearch);
+  const ents = sortedLocations().filter(([c]) => !q || norm(c).includes(q));
+  v.innerHTML = `<div class="stats">
+      <div class="stat s1"><b>${state.docs.length}</b><small>models in the model set</small></div>
+      <div class="stat s2"><b>${state.docs.length - state.unassigned}</b><small>with a ${esc(CONFIG.ATTRIBUTE_NAME)}</small></div>
+      <div class="stat s3"><b>${state.locations.size}</b><small>location codes</small></div>
+      <div class="stat s4"><b>${state.unassigned}</b><small>without a code (ignored)</small></div></div>
+    <div class="card"><div class="row sp"><div><h2>Choose a location code</h2><p class="sub" style="margin:0 0 14px">Project: ${esc(state.project.attributes.name)} · Model set: ${esc(state.modelSet.name)}</p></div>
+      <div class="row"><input type="text" data-bind="locSearch" id="locSearch" placeholder="Filter codes…" value="${esc(state.locSearch)}"><button class="btn ghost" data-act="back">Change project</button></div></div>
+      <div class="chips">${ents.map(([c, d]) => `<button class="chip g${hue(c)}" data-act="code" data-code="${esc(c)}">${esc(c)}<i>${d.length}</i></button>`).join("") || "<p class='sub'>No codes match.</p>"}</div></div>`;
+}
+
+function codeDocs() { return state.locations.get(state.code) || []; }
+function visibleDocs() {
+  const q = norm(state.search), cols = [...state.cols];
+  return codeDocs().filter(d => !q || norm(d.name).includes(q) || cols.some(c => norm(d.attrs[c]).includes(q)));
+}
+function renderModels(v) {
+  const all = codeDocs(), vis = visibleDocs(), selCount = all.filter(d => state.selected.has(d.lineageUrn)).length;
+  const name = state.code + CONFIG.VIEW_SUFFIX;
+  v.innerHTML = `<div class="card"><div class="row sp"><div><h2><span class="tag g${hue(state.code)}" style="color:#fff;border:0">${esc(state.code)}</span> &nbsp;${all.length} model${all.length === 1 ? "" : "s"} found</h2>
+      <p class="sub" style="margin:6px 0 14px">Tick or untick models, then create the view <code>${esc(name)}</code>.</p></div>
+      <div class="row"><button class="btn ghost" data-act="backcodes">Change code</button></div></div>
+    <div class="row" style="margin-bottom:12px"><input type="text" data-bind="search" id="mSearch" placeholder="Search file name or shown columns…" value="${esc(state.search)}" style="min-width:300px">
+      <button class="btn ghost" data-act="all">Select all</button><button class="btn ghost" data-act="none">Select none</button>
+      <span class="tag">${selCount} of ${all.length} selected</span></div>
+    <div class="row" style="margin-bottom:14px"><small style="color:var(--mute)">Columns:</small>${state.attrNames.map(a => `<button class="colchip ${state.cols.has(a) ? "on" : ""}" data-act="col" data-col="${esc(a)}">${esc(a)}</button>`).join("")}</div>
+    <div class="tblwrap"><table><thead><tr><th style="width:40px"></th><th>File</th><th>Version</th>${[...state.cols].map(c => `<th>${esc(c)}</th>`).join("")}</tr></thead>
+    <tbody>${vis.map(d => `<tr><td><input type="checkbox" data-urn="${esc(d.lineageUrn)}" ${state.selected.has(d.lineageUrn) ? "checked" : ""}></td><td class="nm">${esc(d.name)}</td><td>${esc(d.ver)}</td>${[...state.cols].map(c => `<td>${esc(d.attrs[c] || "")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+    <div class="row sp" style="margin-top:18px"><span style="color:var(--mute)">Model set: ${esc(state.modelSet.name)}</span>
+      <button class="btn big" id="fedBtn" data-act="federate" ${selCount ? "" : "disabled"}>Create federated view</button></div></div>`;
+}
+function renderDone(v) {
+  const r = state.result;
+  v.innerHTML = `<div class="card hero"><div style="font-size:54px">🎉</div><h2>${esc(r.name)} created</h2>
+    <p>${r.count} model${r.count === 1 ? "" : "s"} federated in the model set <b>${esc(state.modelSet.name)}</b>. The view follows the latest published versions automatically.${r.job ? "<br>Job status: <b>" + esc(r.job) + "</b>" : ""}</p>
+    <div class="row" style="justify-content:center"><a class="btn big" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="https://acc.autodesk.com/build/model-coordination/projects/${esc(state.containerId)}">Open Model Coordination</a>
+    <button class="btn ghost big" data-act="backcodes">Federate another code</button></div>
+    <p style="margin-top:18px;font-size:13px">Look for <code>${esc(r.name)}</code> under Views in the <b>${esc(state.modelSet.name)}</b> model set.</p></div>`;
+}
+
+/* ---------- data loading ---------- */
+async function loadHubs() {
+  const r = await api("/project/v1/hubs");
+  state.hubs = (r.data || []).filter(h => /bim360|autodesk/i.test(h.attributes && h.attributes.extension && h.attributes.extension.type || "bim360"));
+  if (!state.hubs.length) throw new Error("No ACC accounts found for your sign-in. Check the app has been added under Account Admin → Custom Integrations.");
+  state.hub = state.hubs[0];
+  await loadProjects();
+}
+async function loadProjects() {
+  const all = await pagedDM(`/project/v1/hubs/${encodeURIComponent(state.hub.id)}/projects?page[limit]=200`);
+  state.projects = all.filter(p => /bim360/i.test(p.attributes && p.attributes.extension && p.attributes.extension.type || "bim360")).sort((a, b) => a.attributes.name.localeCompare(b.attributes.name));
+  log(`Loaded ${state.projects.length} projects from hub "${state.hub.attributes.name}" (region: ${state.hub.attributes.region || "n/a"})`);
+}
+async function findFolder(projectId, name) {
+  const target = norm(name);
+  const top = (await api(`/project/v1/hubs/${encodeURIComponent(state.hub.id)}/projects/${encodeURIComponent(projectId)}/topFolders`)).data || [];
+  const q = top.map(f => ({ f, d: 0 })); let looked = 0;
+  while (q.length && looked < 600) {
+    const { f, d } = q.shift();
+    if (norm(f.attributes.displayName || f.attributes.name) === target) return f;
+    if (d >= 6) continue;
+    looked++;
+    const kids = await pagedDM(`/data/v1/projects/${encodeURIComponent(projectId)}/folders/${encodeURIComponent(f.id)}/contents?filter[type]=folders&page[limit]=200`);
+    kids.forEach(k => q.push({ f: k, d: d + 1 }));
+  }
+  return null;
+}
+function normDoc(dv) {
+  const lin = dv.documentLineage || {}, ver = dv.documentVersion || {};
+  return { lineageUrn: lin.lineageUrn || dv.lineageUrn, parentFolderUrn: lin.parentFolderUrn || dv.parentFolderUrn,
+    versionUrn: dv.versionUrn || ver.versionUrn || dv.documentVersionUrn || dv.urn || null, viewableName: dv.viewableName || ver.viewableName || null,
+    status: dv.documentStatus || null, name: null, ver: "", attrs: {} };
+}
+async function pool(items, n, fn) { let i = 0; await Promise.all(Array.from({ length: n }, async () => { while (i < items.length) { const k = i++; await fn(items[k], k); } })); }
+
+async function startScan(p) {
+  state.project = p; state.containerId = p.id.replace(/^b\./, ""); state.docs = []; state.locations = new Map(); state.modelSet = null;
+  clearAlerts(); go("scan");
+  try {
+    phase(0, 5, "Searching folders…");
+    state.folder = await findFolder(p.id, CONFIG.PUBLISHED_FOLDER_NAME);
+    log(state.folder ? `Found folder ${state.folder.id}` : `Folder "${CONFIG.PUBLISHED_FOLDER_NAME}" not found`);
+    phase(1, 15, "Listing model sets…");
+    const sets = await mcPaged("/modelsets", "modelSets");
+    state.modelSets = sets.items;
+    let ms = state.folder && sets.items.find(m => !m.isDisabled && (m.folders || []).some(f => f.folderUrn === state.folder.id));
+    if (!ms) {
+      const why = !sets.items.length ? "This project has no Model Coordination model sets." : (state.folder ? "No active model set is based on the Published folder." : `The folder "${CONFIG.PUBLISHED_FOLDER_NAME}" was not found.`);
+      showModelSetChoices(why);
+      phase(1, 20, "Waiting for your choice…"); return;
+    }
+    await continueScan(ms);
+  } catch (e) { scanFailed(e); }
+}
+function showModelSetChoices(msg) {
+  const pick = $("#msPick"); if (!pick) return;
+  let h = `<div class="alert warn">${esc(msg)}</div>`;
+  if (state.modelSets.length) h += `<div class="row" style="margin-bottom:16px"><select id="msSel">${state.modelSets.map(m => `<option value="${esc(m.modelSetId)}">${esc(m.name)}${m.isDisabled ? " (disabled)" : ""}</option>`).join("")}</select><button class="btn" data-act="usems">Use this model set</button></div>`;
+  if (state.folder) {
+    const fn = state.folder.attributes.displayName || state.folder.attributes.name || CONFIG.PUBLISHED_FOLDER_NAME;
+    h += `<div class="card" style="margin:0;box-shadow:none"><h2 style="font-size:16px">Create a new model set</h2><p class="sub" style="margin-bottom:12px">Builds a model set from the folder <code>${esc(fn)}</code>. Autodesk then processes it, which can take a few minutes on large folders.</p>
+      <div class="row"><input type="text" id="newMsName" value="${esc(fn)}" style="min-width:300px"><button class="btn" data-act="createms">Create model set</button></div></div>`;
+  } else h += `<div class="alert err">A new model set can't be created because the folder "${esc(CONFIG.PUBLISHED_FOLDER_NAME)}" was not found in this project. Check the folder name in Settings.</div>`;
+  pick.innerHTML = h;
+}
+/* Reads the newest model set version. Tries "latest" first; on 404 lists versions and opens the highest one. */
+async function loadModelSetDocs(ms) {
+  try { return await mcPaged(`/modelsets/${ms.modelSetId}/versions/latest`, "documentVersions"); }
+  catch (e) {
+    if (e.status !== 404) throw e;
+    log(`versions/latest gave 404 for "${ms.name}" (${e.message}). Listing versions instead.`);
+  }
+  let r;
+  try { r = await mc(`/modelsets/${ms.modelSetId}/versions`); }
+  catch (e) { throw new Error(`The model set "${ms.name}" has no readable versions (${e.message}).`); }
+  log("Versions list response: " + JSON.stringify(r).slice(0, 500));
+  const arr = Array.isArray(r) ? r : (Object.values(r || {}).find(Array.isArray) || []);
+  const nums = arr.map(v => Number(v.version)).filter(n => Number.isFinite(n));
+  if (!nums.length) throw new Error(`The model set "${ms.name}" has no versions yet. It may be disabled, still processing its first coordination, or contain no models Model Coordination can load. Try another model set below, or check it in ACC.`);
+  const n = Math.max(...nums);
+  log(`Opening model set version ${n}`);
+  return await mcPaged(`/modelsets/${ms.modelSetId}/versions/${n}`, "documentVersions");
+}
+function scanFailed(e) {
+  fail(e);
+  const s = $("#scanSub"); if (s) s.innerHTML = `<button class="btn ghost" data-act="back">Back to projects</button>`;
+  if (state.modelSets.length || state.folder) showModelSetChoices("Choose another model set, or create a new one.");
+}
+async function continueScan(ms) {
+  try {
+    state.modelSet = ms; $("#msPick").innerHTML = ""; log(`Using model set "${ms.name}" (${ms.modelSetId})`);
+    phase(2, 30, "Reading the latest model set version…");
+    const lat = await loadModelSetDocs(ms);
+    log(`Model set version ${lat.last && lat.last.version}, status ${lat.last && lat.last.status}, ${lat.items.length} documents`);
+    if (lat.items.length) log("Sample documentVersion: " + JSON.stringify(lat.items[0]).slice(0, 700));
+    let docs = lat.items.map(normDoc).filter(d => d.lineageUrn);
+    if (!docs.length) throw new Error("The model set has no loadable models yet (it may still be processing).");
+    const missing = docs.filter(d => !d.versionUrn);
+    if (missing.length) {
+      log(`${missing.length} documents had no version URN; looking up tip versions`);
+      await pool(missing, 6, async (d, k) => {
+        try { const r = await api(`/data/v1/projects/${encodeURIComponent(state.project.id)}/items/${encodeURIComponent(d.lineageUrn)}/tip`); d.versionUrn = r.data.id; d.name = r.data.attributes && r.data.attributes.displayName; } catch (e) { log("Tip lookup failed: " + e.message); }
+        phase(2, 30 + Math.round(15 * (k + 1) / missing.length), `Resolving versions ${k + 1} of ${missing.length}`);
+      });
+      docs = docs.filter(d => d.versionUrn);
+    }
+    phase(3, 45, `Reading attributes for ${docs.length} models…`);
+    const byUrn = new Map(docs.map(d => [d.versionUrn, d])), urns = docs.map(d => d.versionUrn), nameSet = new Set();
+    for (let i = 0; i < urns.length; i += 50) {
+      const chunk = urns.slice(i, i + 50);
+      const r = await api(`/bim360/docs/v1/projects/${encodeURIComponent(state.containerId)}/versions:batch-get`, { method: "POST", body: { urns: chunk } });
+      const rows = Array.isArray(r) ? r : (r.results || r.data || r.versions || []);
+      if (i === 0 && rows[0]) log("Sample batch-get row: " + JSON.stringify(rows[0]).slice(0, 700));
+      rows.forEach(x => {
+        const key = x.id || x.urn || x.versionUrn, d = byUrn.get(key) || byUrn.get(decodeURIComponent(String(key || "")));
+        if (!d) return;
+        d.name = x.name || x.title || d.name; d.rev = x.revision != null ? x.revision : x.revisionNumber;
+        (x.customAttributes || []).forEach(a => { const v = Array.isArray(a.value) ? a.value.join(", ") : (a.value == null ? "" : String(a.value)).trim(); d.attrs[a.name] = v; nameSet.add(a.name); });
+      });
+      phase(3, 45 + Math.round(45 * Math.min(i + 50, urns.length) / urns.length), `Attributes read for ${Math.min(i + 50, urns.length)} of ${urns.length} models`);
+    }
+    phase(4, 95, "Grouping by location code…");
+    let attr = [...nameSet].find(n => norm(n) === norm(CONFIG.ATTRIBUTE_NAME)) || [...nameSet].find(n => norm(n).includes("location_code") || norm(n).includes("location code"));
+    if (!attr) throw new Error(`No attribute called "${CONFIG.ATTRIBUTE_NAME}" was found on these models.\nAttributes seen: ${[...nameSet].join(", ") || "none"}\nCheck the exact attribute name in Settings.`);
+    log(`Using attribute "${attr}"`);
+    docs.forEach(d => { d.name = d.name || d.lineageUrn.split(":").pop(); const m = /version=(\d+)/.exec(d.versionUrn); d.ver = m ? "v" + m[1] : ""; d.code = d.attrs[attr] || ""; });
+    state.docs = docs; state.attrNames = [...nameSet].filter(n => n !== attr).sort(); state.locations = new Map(); state.unassigned = 0;
+    docs.forEach(d => { if (!d.code) { state.unassigned++; return; } if (!state.locations.has(d.code)) state.locations.set(d.code, []); state.locations.get(d.code).push(d); });
+    state.locations.forEach(a => a.sort((x, y) => x.name.localeCompare(y.name)));
+    state.cols = new Set(state.attrNames.filter(n => /discipline|originator|type|status|revision/i.test(n)).slice(0, 4));
+    if (!state.locations.size) throw new Error(`None of the ${docs.length} models has a value for "${attr}".`);
+    phase(4, 100); await sleep(250); go("locations");
+  } catch (e) { scanFailed(e); }
+}
+
+/* ---------- federate ---------- */
+async function federate() {
+  const btn = $("#fedBtn"); const name = state.code + CONFIG.VIEW_SUFFIX;
+  const chosen = codeDocs().filter(d => state.selected.has(d.lineageUrn));
+  if (!chosen.length) return;
+  clearAlerts(); btn.disabled = true; btn.innerHTML = `<span class="spin"></span>Creating view…`;
+  try {
+    const views = await mcPaged(`/modelsets/${state.modelSet.modelSetId}/views?pageLimit=200`, "modelSetViews");
+    if (views.items.some(v => norm(v.name) === norm(name))) {
+      alertBox("warn", `A view named "${name}" already exists in the model set "${state.modelSet.name}". Nothing was created.\nRename or delete the existing view in Model Coordination, then try again.`);
+      btn.disabled = false; btn.textContent = "Create federated view"; return;
+    }
+    const body = { name, description: `Auto-created by Federated View Builder: ${chosen.length} models where ${CONFIG.ATTRIBUTE_NAME} = ${state.code}`, isPrivate: false,
+      definition: chosen.map(d => d.viewableName ? { lineageUrn: d.lineageUrn, viewableName: d.viewableName } : { lineageUrn: d.lineageUrn }) };
+    log("Creating view: " + JSON.stringify(body).slice(0, 600));
+    const res = await mc(`/modelsets/${state.modelSet.modelSetId}/views`, { method: "POST", body });
+    log("Create view response: " + JSON.stringify(res).slice(0, 500));
+    const viewId = res && (res.viewId || res.modelSetViewId), jobId = res && res.jobId, ms = state.modelSet.modelSetId;
+    let job = "Submitted";
+    if (viewId && jobId) {
+      for (let i = 0; i < 40; i++) {
+        await sleep(1500);
+        try { const j = await mc(`/modelsets/${ms}/views/${viewId}/jobs/${jobId}`); job = j.status || job; log("Job status: " + job); if (/success|fail|error/i.test(job)) break; } catch (e) { log("Job poll failed: " + e.message); break; }
+      }
+    }
+    if (/fail|error/i.test(job)) throw new Error("Autodesk accepted the request but the job reported: " + job);
+    state.result = { name, count: chosen.length, job }; go("done");
+  } catch (e) { fail(e); btn.disabled = false; btn.textContent = "Create federated view"; }
+}
+
+/* ---------- events ---------- */
+const actions = {
+  theme() { const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = t; localStorage.setItem("fvb_theme", t); $("#themeBtn").textContent = t === "dark" ? "Light mode" : "Dark mode"; },
+  signout, login,
+  savecid() { const v = ($("#cid").value || "").trim(); if (v) { CDETK.setClientId(v); render(); } },
+  settings() {
+    clearAlerts();
+    const d = document.createElement("div"); d.className = "card"; d.id = "cfgCard";
+    d.innerHTML = `<h2>Settings</h2><p class="sub">Match these to your company's ACC conventions. Saved in this browser.</p>
+      <div class="row" style="align-items:flex-end">
+        <label>Published folder name<br><input type="text" id="cfgFolder" value="${esc(CONFIG.PUBLISHED_FOLDER_NAME)}"></label>
+        <label>Location attribute name<br><input type="text" id="cfgAttr" value="${esc(CONFIG.ATTRIBUTE_NAME)}"></label>
+        <label>View name suffix<br><input type="text" id="cfgSuffix" value="${esc(CONFIG.VIEW_SUFFIX)}"></label>
+      </div>
+      <div class="row" style="margin-top:14px"><button class="btn" data-act="savecfg">Save</button><button class="btn ghost" data-act="closecfg">Close</button></div>`;
+    $("#alerts").appendChild(d);
+  },
+  savecfg() {
+    const v = { PUBLISHED_FOLDER_NAME: $("#cfgFolder").value.trim(), ATTRIBUTE_NAME: $("#cfgAttr").value.trim(), VIEW_SUFFIX: $("#cfgSuffix").value.trim() };
+    CFG_KEYS.forEach(k => { if (v[k]) CONFIG[k] = v[k]; });
+    try { localStorage.setItem("fvb_cfg", JSON.stringify(v)); } catch (_) { }
+    clearAlerts(); alertBox("ok", "Settings saved. Choose the project again to rescan with them."); render();
+  },
+  closecfg() { clearAlerts(); },
+  project(d) { startScan(state.projects.find(p => p.id === d.id)); },
+  async createms() {
+    const name = ($("#newMsName").value || "").trim(); if (!name || !state.folder) return;
+    $("#msPick").innerHTML = `<div class="alert info">Creating model set "${esc(name)}"…</div>`; clearAlerts();
+    try {
+      const res = await mc(`/modelsets`, { method: "POST", body: { name, description: "Created by Federated View Builder", isDisabled: false, folders: [{ folderUrn: state.folder.id }] } });
+      log("Create model set response: " + JSON.stringify(res).slice(0, 500));
+      const id = res && res.modelSetId; if (!id) throw new Error("Autodesk did not return a model set ID.");
+      let job = "Submitted";
+      if (res.jobId) {
+        for (let i = 0; i < 45; i++) {
+          await sleep(2000);
+          try { const j = await mc(`/modelsets/${id}/jobs/${res.jobId}`); job = j.status || job; log("Model set job: " + job); if (/success|fail|error/i.test(job)) break; } catch (e) { log("Job poll failed: " + e.message); break; }
+        }
+      }
+      if (/fail|error/i.test(job)) throw new Error("Autodesk accepted the request but the model set job reported: " + job);
+      const ms = { modelSetId: id, name, isDisabled: false, folders: [{ folderUrn: state.folder.id }] };
+      state.modelSets.push(ms);
+      await continueScan(ms);
+    } catch (e) { scanFailed(e); }
+  },
+  usems() { const id = $("#msSel").value; continueScan(state.modelSets.find(m => m.modelSetId === id)); },
+  back() { clearAlerts(); go("projects"); },
+  backcodes() { clearAlerts(); go("locations"); },
+  code(d) { state.code = d.code; state.search = ""; state.selected = new Set(codeDocs().map(x => x.lineageUrn)); go("models"); },
+  all() { visibleDocs().forEach(d => state.selected.add(d.lineageUrn)); render(); },
+  none() { visibleDocs().forEach(d => state.selected.delete(d.lineageUrn)); render(); },
+  col(d) { state.cols.has(d.col) ? state.cols.delete(d.col) : state.cols.add(d.col); render(); },
+  federate
+};
+document.addEventListener("click", e => { const t = e.target.closest("[data-act]"); if (t && actions[t.dataset.act]) actions[t.dataset.act](t.dataset, t, e); });
+document.addEventListener("change", async e => {
+  const t = e.target;
+  if (t.dataset.urn) { t.checked ? state.selected.add(t.dataset.urn) : state.selected.delete(t.dataset.urn); render(); }
+  if (t.dataset.bind === "hub") { state.hub = state.hubs.find(h => h.id === t.value); try { await loadProjects(); render(); } catch (err) { fail(err); } }
+});
+document.addEventListener("input", e => {
+  const b = e.target.dataset.bind; if (!b || b === "hub") return;
+  state[b] = e.target.value; const pos = e.target.selectionStart; render(); const n = document.getElementById(e.target.id); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (_) { } }
+});
+
+/* ---------- start ---------- */
+(async function init() {
+  const t = localStorage.getItem("fvb_theme"); if (t) { document.documentElement.dataset.theme = t; $("#themeBtn").textContent = t === "dark" ? "Light mode" : "Dark mode"; }
+  try { await handleCallback(); } catch (e) { fail(e); }
+  if (auth) { try { await loadHubs(); go("projects"); } catch (e) { fail(e); state.view = "signin"; render(); } } else render();
+})();
+</script>
+</body>
+</html>

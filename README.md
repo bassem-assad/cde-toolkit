@@ -10,6 +10,7 @@ Browser-based tools for Autodesk Construction Cloud (ACC), behind one Autodesk s
 | File Book Out | Find drawings by attribute and book them out through an ACC review. | Autodesk sign-in |
 | Review turnaround | See where reviews slow down by step, reviewer and company. | CSV or JSON export |
 | GeoFed | Federate ACC models on a map, with 3D/2D views, snapshots and markup. | Autodesk sign-in |
+| Federated views | Create a Model Coordination view of every published model with a chosen location code. Folder and attribute names are set in Settings. | Autodesk sign-in |
 
 Everything runs in the browser. Files go directly between the source system and ACC; the
 local server only serves the pages.
