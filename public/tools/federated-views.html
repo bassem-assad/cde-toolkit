@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Federated views | CDE Toolkit</title>
+<meta name="description" content="Build a Model Coordination view for each location without clicking through ACC.">
+<meta property="og:title" content="Federated views | CDE Toolkit">
+<meta property="og:description" content="Build a Model Coordination view for each location without clicking through ACC.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<!--site-header-->
+<header class="deep">
+  <div class="wrap">
+    <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
+    <nav aria-label="Main"><a href="/#tools" aria-current="page">Tools</a><a href="/#how">How it works</a><a href="/admin-guide.html">Admin guide</a><a href="/#faq">FAQ</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+    <a class="btn pri" href="/app/">Open the app</a>
+  </div>
+</header>
+<!--/site-header-->
+
+<section class="deep thero" style="padding:0">
+  <div class="wrap">
+    <p class="crumb"><a href="/#tools">Tools</a> › Coordinate models</p>
+    <h1>Federated views</h1>
+    <p class="lead">Build a Model Coordination view for each location without clicking through ACC.</p>
+    <div class="cta">
+      <a class="btn pri" href="/modules/federate.html?demo=1">Try the demo</a>
+      <a class="btn sec" href="/contact.html">Request a pilot</a>
+      <span class="tag">Autodesk sign-in</span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap figs"><figure class="fig"><img src="/assets/shots/federated-views.jpg" alt="Federated views listing five models for location code STN-A with discipline, originator, revision and status columns, ready to create the view STN-A_FEDERATED" width="1280" height="800"><figcaption>Models for one location code, ready to be created as a view in the model set. <em>Sample data.</em></figcaption></figure></div>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div><h2>Who it's for</h2><ul class="tick"><li>BIM coordinators and model managers who federate models by location or zone.</li><li>Project teams that put a location code on every published model.</li></ul></div>
+    <div><h2>Why it helps your company</h2><ul class="benefit"><li><b>Repeatable for every zone</b><span>The same few clicks and the same naming for each location.</span></li><li><b>Fewer mistakes</b><span>Models are selected from your own attributes, not picked by hand from a long list.</span></li><li><b>Follows your metadata</b><span>If a model has the right location code, it appears in the right view.</span></li></ul></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>What it does</h2>
+    
+    <ul class="tick"><li>Finds the project's Published folder and the Model Coordination model set built on it.</li><li>Reads the latest version of the model set and each model's attributes, then groups the models by location code.</li><li>Lets you pick a code, then tick or untick models, search, and choose which attribute columns to show.</li><li>Creates a view named after the code (for example STN-A_FEDERATED) in the model set, and stops if a view with that name already exists.</li><li>Can create the model set from the folder if there isn't one, and shows the job status and a link to Model Coordination.</li></ul>
+    <div class="scenario"><span class="eyebrow">Example scenario</span><p>A station project has dozens of zones, each with a location code on every published model. Instead of building each view by hand in Model Coordination, the coordinator picks a code, checks the list and creates the view. The next zone is the same few clicks.</p></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div><h2>What you need</h2><ul class="tick"><li>An Autodesk sign-in and a hub with Model Coordination available (your admin can confirm).</li><li>A model set based on your Published folder, and a location code attribute on the models.</li><li>Permission to create views. You set the Published folder name, the location attribute name and the view suffix in Settings to match your project.</li></ul>
+      <p class="sub" style="margin-top:14px">See the <a href="/#requirements">requirements</a> for hub plans, and the <a href="/admin-guide.html">admin guide</a> for the one-off setup.</p></div>
+    <div><h2>Good to know</h2><ul class="dash"><li>It never overwrites an existing view: it stops and tells you.</li><li>The results depend on the model set being up to date.</li></ul></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>Related tools</h2>
+    <div class="related"><a href="/tools/geofed.html"><b>GeoFed</b><span>See your federated models on a map, check what&#x27;s missing, and share snapshots.</span></a><a href="/tools/file-book-out.html"><b>File Book Out</b><span>Control who is working on a drawing, with a book-out request in a few clicks.</span></a></div>
+  </div>
+</section>
+
+<section class="band" id="pilot">
+  <div class="wrap">
+    <div>
+      <h2 style="color:#fff">See Federated views on sample data.</h2>
+      <p>The demo needs no sign-in and sends nothing to Autodesk. When you're ready, ask for a pilot on a non-critical project.</p>
+    </div>
+    <div class="cta">
+      <a class="btn pri" href="/modules/federate.html?demo=1">Try the demo</a>
+      <a class="btn sec" href="/contact.html">Request a pilot</a>
+    </div>
+  </div>
+</section>
+<!--site-footer-->
+<footer>
+  <div class="wrap">
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/#tools">Tools</a><a href="/admin-guide.html">Admin guide</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <p>© 2026 Bassem Assad. All rights reserved.</p>
+    <p>Autodesk, Autodesk Construction Cloud, Forma and Revit are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
+  </div>
+</footer>
+<!--/site-footer-->
+</body>
+</html>

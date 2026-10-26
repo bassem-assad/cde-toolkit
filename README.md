@@ -102,6 +102,13 @@ publishing your email address (free plan: 250 messages a month at the time of wr
 Until step 2 is done the form shows "This form isn't connected yet" and cannot be submitted.
 Another form service works too: set `contactEndpoint` to its URL and leave the key empty.
 
+### Editing the website text
+
+The landing page, the seven tool pages and the admin guide are generated from
+`scripts/site_data.py`. After editing it, run `python3 scripts/build_site.py` (needs Python 3
+and `pip install pillow`) and commit the changed files in `public/`. The About and Contact
+pages are plain HTML; the script only refreshes their shared header and footer.
+
 `public/_headers` adds security headers on Cloudflare. `public/terms.html` and
 `public/privacy.html` are draft templates: have them reviewed before charging anyone.
 
@@ -120,6 +127,10 @@ Another form service works too: set `contactEndpoint` to its URL and leave the k
 server.js               local web server (no dependencies)
 public/index.html       product website (landing page); forwards the Autodesk sign-in return to /app/
 public/app/index.html   app home: Autodesk sign-in, demo mode and the tool list
+public/tools/*.html     one page per tool (who it's for, what it does, what it needs)
+public/admin-guide.html steps for an ACC hub admin, permissions requested, data flow
+public/assets/shots/    demo-mode screenshots used on the website
+scripts/                site_data.py (website text) and build_site.py (rebuilds the pages)
 public/about.html, contact.html   About page and Contact page (form)
 public/assets/site.css  styles shared by the website pages
 public/terms.html       draft Terms of Use      public/privacy.html   draft Privacy page

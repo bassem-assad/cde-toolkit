@@ -5,77 +5,31 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>CDE Toolkit | Tools for Autodesk Construction Cloud</title>
 <meta name="description" content="Move, check, book out and rename files in Autodesk Construction Cloud, and build federated model views, from one browser tab. Your files go straight between your systems and ACC.">
-<meta property="og:title" content="CDE Toolkit">
-<meta property="og:description" content="Tools for BIM and information managers working in Autodesk Construction Cloud.">
+<meta property="og:title" content="CDE Toolkit | Tools for Autodesk Construction Cloud">
+<meta property="og:description" content="Move, check, book out and rename files in Autodesk Construction Cloud, and build federated model views, from one browser tab. Your files go straight between your systems and ACC.">
 <meta property="og:type" content="website">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
 <script>
 /* Autodesk sends the browser back to this address after sign-in. The app finishes the sign-in. */
 if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + location.search);
 </script>
-<link rel="stylesheet" href="/assets/site.css">
-<style>
-/* Landing page only: hero with a file-name anatomy, tool list, steps, requirements */
-.hero{border-bottom:3px solid var(--glow)}
-.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px 56px;padding-block:44px 56px;align-items:center}
-.hero p.lead{margin-top:18px;font-size:18px;color:var(--ondeep2);max-width:52ch}
-.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-.hero .note{margin-top:16px;font-size:13px;color:var(--ondeep2)}
-@media(max-width:860px){.hero .wrap{grid-template-columns:1fr}}
-.anat{background:var(--deep2);border:1px solid rgba(229,236,234,.16);border-radius:10px;padding:20px 20px 18px;min-width:0}
-.anat .eyebrow{color:var(--ondeep2)}
-.fname{display:flex;flex-wrap:wrap;gap:6px 0;margin-top:14px;font:500 15px/1.2 var(--mono);color:#fff}
-.seg{display:flex;flex-direction:column;align-items:center;gap:6px}
-.seg b{font-weight:500;padding:5px 7px;border-bottom:2px solid var(--glow)}
-.seg i{font:400 10px/1 var(--sans);font-style:normal;color:var(--ondeep2);text-transform:uppercase;letter-spacing:.06em}
-.sep{padding:5px 1px;color:var(--ondeep2)}
-.ext{padding:5px 0 5px 2px;color:var(--ondeep2)}
-.checks{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:9px;font-size:14px}
-.checks li{display:flex;gap:10px;align-items:baseline}
-.mark{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;transform:translateY(2px)}
-.mark.ok{background:#1d5a3a;color:#9ff0c0}.mark.no{background:#5a2420;color:#ffb4ac}.mark.mv{background:#4a4012;color:#f0d77a}
-.checks code{font:400 13px var(--mono);color:#fff;overflow-wrap:anywhere}
-.checks small{display:block;color:var(--ondeep2);font-size:12.5px}
-.tools{margin-top:28px}
-.grp{font:500 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--mut);padding:30px 0 12px;border-bottom:1px solid var(--line)}
-.grp:first-child{padding-top:6px}
-.tool{display:grid;grid-template-columns:200px minmax(0,1fr) auto;gap:6px 28px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
-.tool h3{font-size:18px;font-weight:600}
-.tool p{color:var(--mut);max-width:64ch}
-.tag{font:500 12px/1 var(--mono);padding:5px 8px;border:1px solid currentColor;border-radius:4px;white-space:nowrap;align-self:start}
-.tag.live{color:#1d5fbf}.tag.exp{color:#7a5a0d}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.live{color:#7fb0ff}:root:not([data-theme="light"]) .tag.exp{color:#e2bb5c}}
-@media(max-width:760px){.tool{grid-template-columns:1fr;gap:8px}}
-.steps{list-style:none;padding:0;margin:28px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;counter-reset:s}
-.steps li{border-top:2px solid var(--accent);padding-top:14px;counter-increment:s}
-.steps li:before{content:"Step " counter(s);display:block;font:500 12px/1 var(--mono);color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-.steps b{display:block;font-size:17px;margin-bottom:6px}
-.steps p{color:var(--mut);font-size:15px}
-@media(max-width:860px){.steps{grid-template-columns:1fr}}
-.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;margin-top:26px}
-@media(max-width:860px){.two{grid-template-columns:1fr}}
-.two h3{font-size:16px;margin-bottom:10px}
-.two ul{padding-left:20px;display:grid;gap:8px;color:var(--ink)}
-.two li::marker{color:var(--accent)}
-.callout{margin-top:26px;border:1px solid var(--line);border-left:4px solid var(--warn);background:var(--warnbg);border-radius:6px;padding:14px 16px;max-width:76ch}
-.callout b{display:block;margin-bottom:4px}
-</style>
 </head>
 <body>
+<!--site-header-->
 <header class="deep">
   <div class="wrap">
     <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
-    <nav aria-label="Main">
-      <a href="/#tools">Tools</a><a href="/#how">How it works</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html">Contact</a>
-    </nav>
+    <nav aria-label="Main"><a href="/#tools">Tools</a><a href="/#how">How it works</a><a href="/admin-guide.html">Admin guide</a><a href="/#faq">FAQ</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
     <a class="btn pri" href="/app/">Open the app</a>
   </div>
 </header>
+<!--/site-header-->
 
-<section class="deep hero" style="padding:0;border-bottom:3px solid var(--glow)">
+<section class="deep hero" style="padding:0">
   <div class="wrap">
     <div>
       <p class="eyebrow" style="color:var(--ondeep2)">For BIM, digital engineering and information managers</p>
@@ -106,22 +60,31 @@ if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + locat
   </div>
 </section>
 
+<section id="why">
+  <div class="wrap">
+    <span class="eyebrow">What it gives your team</span>
+    <h2>Less rework in your CDE, and a clearer view of where it stands.</h2>
+    <ul class="outcomes"><li><b>A cleaner CDE from the start</b><p>Check names and attributes before files go in, and correct them on the way in. CDE Sync and the File validator work from your own naming standard.</p></li><li><b>Less manual coordination</b><p>Build a Model Coordination view for each location, and see on a map which locations are missing a discipline.</p></li><li><b>Controlled change</b><p>Book drawings out through your review workflow, with files that are already booked out caught before they cause a conflict.</p></li><li><b>Evidence, not opinions</b><p>Download failure reports to send to suppliers, and see which review step, reviewer or company is running late.</p></li><li><b>Lower risk</b><p>Preview before anything changes, act only with the signed-in person&#x27;s own permissions, and try every tool on sample data first.</p></li><li><b>Nothing to install or host</b><p>It&#x27;s a website. There&#x27;s no server or add-in to roll out, and an update reaches everyone at once.</p></li></ul>
+    <ul class="pills" aria-label="Who it is for"><li>BIM managers</li><li>Information managers</li><li>Document controllers</li><li>BIM coordinators</li><li>Project directors</li><li>Consultants</li><li>Contractors</li></ul>
+  </div>
+</section>
+
 <section id="tools">
   <div class="wrap">
     <span class="eyebrow">Seven tools, one sign-in</span>
     <h2>Everything you do over and over in ACC, in one place.</h2>
-    <p class="sub">Each tool works on its own. Sign in once with your Autodesk account and move between them from the top bar.</p>
+    <p class="sub">Each tool works on its own. Sign in once with your Autodesk account and move between them from the top bar. Open any tool to see who it's for, what it does and what it needs.</p>
     <div class="tools">
       <h3 class="grp">Move, check and fix files</h3>
-      <article class="tool"><h3>CDE Sync</h3><p>Move files into ACC from ProjectWise, SharePoint, InEight Document, another ACC project or a local folder. Maps attributes, reads the destination folder's naming standard, flags values that don't fit, and adds droplist values only when you choose.</p><span class="tag live">Autodesk sign-in</span></article>
-      <article class="tool"><h3>File validator</h3><p>Check a file-list export from ACC Docs against your naming convention and confirm required attributes are filled in. Download the failures as a CSV report.</p><span class="tag exp">Excel or CSV export</span></article>
-      <article class="tool"><h3>Rename</h3><p>Add the upload date of the current version to a Revit model's name, with a preview of the new name before anything changes.</p><span class="tag live">Autodesk sign-in</span></article>
+      <article class="tool"><h3><a href="/tools/cde-sync.html">CDE Sync</a></h3><div><p>Move files into ACC from ProjectWise, SharePoint, InEight Document, another ACC project or a local folder. Maps attributes, reads the destination folder's naming standard, flags values that don't fit, and adds droplist values only when you choose.</p><div class="meta"><span class="tag live">Autodesk sign-in</span><a class="more" href="/tools/cde-sync.html">Who it's for and what it needs</a></div></div><a class="thumb" href="/tools/cde-sync.html" tabindex="-1" aria-hidden="true"><img src="/assets/shots/cde-sync-results.jpg" alt="CDE Sync results dashboard showing 6 files processed: 2 passed, 1 passed with warnings, 1 failed and 2 skipped, with a donut chart and a CSV export button" width="1280" height="860" loading="lazy" decoding="async"></a></article>
+      <article class="tool"><h3><a href="/tools/file-validator.html">File validator</a></h3><div><p>Check a file-list export from ACC Docs against your naming convention and confirm required attributes are filled in. Download the failures as a CSV report.</p><div class="meta"><span class="tag exp">Excel or CSV export</span><a class="more" href="/tools/file-validator.html">Who it's for and what it needs</a></div></div><a class="thumb" href="/tools/file-validator.html" tabindex="-1" aria-hidden="true"><img src="/assets/shots/file-validator.jpg" alt="File validator results: 10 files checked, 6 passed and 4 failed, with the reason for each failure listed beside the file name" width="1280" height="800" loading="lazy" decoding="async"></a></article>
+      <article class="tool"><h3><a href="/tools/rename.html">Rename</a></h3><div><p>Add the upload date of the current version to a Revit model's name in ACC, with a preview of the new name before anything changes.</p><div class="meta"><span class="tag live">Autodesk sign-in</span><a class="more" href="/tools/rename.html">Who it's for and what it needs</a></div></div><a class="thumb" href="/tools/rename.html" tabindex="-1" aria-hidden="true"><img src="/assets/shots/rename.jpg" alt="Rename tool showing a Revit model in a project folder with its upload date and the proposed new name with the date added" width="1280" height="940" loading="lazy" decoding="async"></a></article>
       <h3 class="grp">Coordinate models</h3>
-      <article class="tool"><h3>Federated views</h3><p>Choose a location code and create a Model Coordination view of every published model with that code, without opening ACC. Folder and attribute names are set to match your project conventions.</p><span class="tag live">Autodesk sign-in</span></article>
-      <article class="tool"><h3>GeoFed</h3><p>Federate ACC models on a map. View 3D and 2D side by side, take snapshots with markup and check model coverage by location.</p><span class="tag live">Autodesk sign-in</span></article>
+      <article class="tool"><h3><a href="/tools/federated-views.html">Federated views</a></h3><div><p>Choose a location code and create a Model Coordination view of every published model with that code, without opening ACC. Folder and attribute names are set to match your project conventions.</p><div class="meta"><span class="tag live">Autodesk sign-in</span><a class="more" href="/tools/federated-views.html">Who it's for and what it needs</a></div></div><a class="thumb" href="/tools/federated-views.html" tabindex="-1" aria-hidden="true"><img src="/assets/shots/federated-views.jpg" alt="Federated views listing five models for location code STN-A with discipline, originator, revision and status columns, ready to create the view STN-A_FEDERATED" width="1280" height="800" loading="lazy" decoding="async"></a></article>
+      <article class="tool"><h3><a href="/tools/geofed.html">GeoFed</a></h3><div><p>Federate ACC models on a map. View 3D and 2D side by side, take snapshots with markup and check model coverage by location.</p><div class="meta"><span class="tag live">Autodesk sign-in</span><a class="more" href="/tools/geofed.html">Who it's for and what it needs</a></div></div><a class="thumb" href="/tools/geofed.html" tabindex="-1" aria-hidden="true"><img src="/assets/shots/geofed.jpg" alt="GeoFed&#x27;s Coverage matrix of locations against disciplines with gaps hatched, beside its QA checks listing files with a missing location or discipline code" width="1280" height="915" loading="lazy" decoding="async"></a></article>
       <h3 class="grp">Control and report</h3>
-      <article class="tool"><h3>File Book Out</h3><p>Find drawings by attribute, see their booking status and book them out through an ACC review. Files already booked out are left out of the review and listed.</p><span class="tag live">Autodesk sign-in</span></article>
-      <article class="tool"><h3>Review turnaround</h3><p>See where reviews slow down by step, reviewer and company, with late and overdue rates, from a review export.</p><span class="tag exp">CSV or JSON export</span></article>
+      <article class="tool"><h3><a href="/tools/file-book-out.html">File Book Out</a></h3><div><p>Find drawings by attribute, see their booking status and book them out through an ACC review. Files already booked out are left out of the review and listed.</p><div class="meta"><span class="tag live">Autodesk sign-in</span><a class="more" href="/tools/file-book-out.html">Who it's for and what it needs</a></div></div><a class="thumb" href="/tools/file-book-out.html" tabindex="-1" aria-hidden="true"><img src="/assets/shots/file-book-out.jpg" alt="File Book Out search results grouped by drawing, with PDF and DWG chips for each drawing and two drawings selected to add to a book-out" width="1280" height="800" loading="lazy" decoding="async"></a></article>
+      <article class="tool"><h3><a href="/tools/review-turnaround.html">Review turnaround</a></h3><div><p>See where reviews slow down by step, reviewer and company, with late and overdue rates, from a review export.</p><div class="meta"><span class="tag exp">CSV or JSON export</span><a class="more" href="/tools/review-turnaround.html">Who it's for and what it needs</a></div></div><a class="thumb" href="/tools/review-turnaround.html" tabindex="-1" aria-hidden="true"><img src="/assets/shots/review-turnaround.jpg" alt="Review turnaround dashboard: 90 review tasks, 2.4 days average turnaround, 33 percent late or overdue, and Final approval as the slowest step, with a bar for each step" width="1280" height="800" loading="lazy" decoding="async"></a></article>
     </div>
   </div>
 </section>
@@ -131,7 +94,7 @@ if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + locat
     <span class="eyebrow">How it works</span>
     <h2>One setup step for the ACC admin, then nothing to install.</h2>
     <ol class="steps">
-      <li><b>Admin adds the app</b><p>Your ACC hub admin adds the CDE Toolkit Client ID under Hub Admin, Custom Integrations. It's a one-off step, and it's also your organisation's approval.</p></li>
+      <li><b>Admin adds the app</b><p>Your ACC hub admin adds the CDE Toolkit Client ID under Hub Admin, Custom Integrations. It's a one-off step, and it's also your organisation's approval. The <a href="/admin-guide.html">admin guide</a> has the steps.</p></li>
       <li><b>People sign in as themselves</b><p>Each person signs in with their own Autodesk account. The toolkit can only do what that person's ACC permissions already allow.</p></li>
       <li><b>Work in the browser</b><p>Files go directly between the source system and ACC. Nothing is uploaded to or stored on our servers.</p></li>
     </ol>
@@ -178,9 +141,18 @@ if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + locat
       <ul>
         <li>There are no advertising or analytics scripts on this site or in the app.</li>
         <li>Tools that change data (CDE Sync, Rename, File Book Out, Federated views) show what will happen before they do it. Test on non-critical projects first and keep your own backups.</li>
-        <li>Read the <a href="/terms.html">Terms of Use</a> and <a href="/privacy.html">Privacy</a> pages.</li>
+        <li>See the <a href="/admin-guide.html">admin guide</a> for the permissions requested and a data-flow summary, and the <a href="/terms.html">Terms of Use</a> and <a href="/privacy.html">Privacy</a> pages.</li>
       </ul>
     </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <span class="eyebrow">Questions</span>
+    <h2>What teams and IT ask first.</h2>
+    <div class="faq"><details><summary>Do you store or see our files?</summary><p>No. CDE Toolkit runs in your browser. Files travel between your systems and Autodesk, and our servers only deliver the web pages. The only data we receive is a message you choose to send through the Contact page.</p></details><details><summary>How does sign-in work?</summary><p>Each person signs in with their own Autodesk account using Autodesk's standard OAuth 2.0 with PKCE. There is no shared password and no client secret. The sign-in token stays in your browser tab and is cleared when you sign out or close the tab.</p></details><details><summary>What can it do in our ACC projects?</summary><p>Only what the signed-in person is already allowed to do in ACC. Tools that change data (CDE Sync, Rename, File Book Out and Federated views) show what will happen before they do it. Test on a non-critical project first and keep your own backups.</p></details><details><summary>Which ACC plans does it work with?</summary><p>It needs a hub where your admin can add a Custom Integration. Autodesk Support notes that the Custom Integrations tab is hidden on trial hubs and on Essentials subscriptions, so those hubs can't use it. Full subscriptions such as Forma Data Management, Forma Build and Forma Design Collaboration show the tab. Federated views also needs Model Coordination.</p></details><details><summary>What does our ACC admin need to do?</summary><p>Add the CDE Toolkit Client ID under Hub Admin, Custom Integrations. It is a one-off step. The <a href="/admin-guide.html">admin guide</a> has the steps, the permissions requested and a data-flow summary for your IT team.</p></details><details><summary>Can we try it without any risk?</summary><p>Yes. Demo mode runs every tool on built-in sample data, with no sign-in, and nothing is sent to Autodesk. For a real pilot, use a non-critical project.</p></details><details><summary>Does it work with ProjectWise, SharePoint and InEight?</summary><p>CDE Sync can read from all three. Your ProjectWise and InEight servers must allow the toolkit's web address (CORS), SharePoint needs a one-off Microsoft Entra app registration, and InEight's API paths aren't published openly so the tool lets you edit them. If an API isn't available, load an export from your computer instead.</p></details><details><summary>What happens when Autodesk changes its APIs?</summary><p>CDE Toolkit depends on Autodesk Platform Services, so Autodesk changes can need updates here. Because it is a website, a fix reaches every user at once, with nothing to reinstall.</p></details><details><summary>Is there a price?</summary><p>Pricing is being finalised. If you'd like to try CDE Toolkit on a non-critical project, send a message on the <a href="/contact.html">Contact page</a>.</p></details><details><summary>Is it affiliated with Autodesk?</summary><p>No. CDE Toolkit is an independent product and is not affiliated with or endorsed by Autodesk, Bentley Systems, Microsoft or InEight.</p></details><details><summary>Which browsers does it support?</summary><p>A current version of Chrome or Edge.</p></details></div>
+    <p class="sub">Something else? <a href="/contact.html">Send a message</a>.</p>
   </div>
 </section>
 
@@ -196,14 +168,14 @@ if (/[?&]state=aps(&|$)/.test(location.search)) location.replace('/app/' + locat
     </div>
   </div>
 </section>
-
+<!--site-footer-->
 <footer>
   <div class="wrap">
-    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/#tools">Tools</a><a href="/admin-guide.html">Admin guide</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
     <p>© 2026 Bassem Assad. All rights reserved.</p>
-    <p>Autodesk, Autodesk Construction Cloud, Forma, Revit and Navisworks are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
+    <p>Autodesk, Autodesk Construction Cloud, Forma and Revit are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
   </div>
 </footer>
-
+<!--/site-footer-->
 </body>
 </html>

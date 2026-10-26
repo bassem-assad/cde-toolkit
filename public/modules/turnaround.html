@@ -12,7 +12,8 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 :root[data-theme="dark"]{--bg:#141a1c;--fg:#e6ecee;--mut:#8d9a9f;--card:#1c2427;--line:#2d393d;--bar:#4aa3bf;--late:#e8725e;--warn:#e8a94f}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:20px 16px 40px;max-width:720px;margin-inline:auto}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:720px;margin-inline:auto;padding:20px 16px 40px}
 h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}
 h2{font-size:16px;margin:28px 0 8px}
 p{margin:0;color:var(--mut)}
@@ -38,6 +39,7 @@ input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
 </style>
 </head>
 <body><script src="/assets/nav.js" data-page="turnaround"></script>
+<main>
 <h1>Review turnaround</h1>
 <p>Where ACC reviews slow down: by step, reviewer and company.</p>
 <div class="bar">
@@ -47,6 +49,7 @@ input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
 <p class="hint">CSV or JSON with one row per review task. Columns it looks for: review, step, reviewer, company, assigned, completed, due. Dates like 24/10/2026 are read as day/month. Your file stays in your browser.</p>
 <div id="msg" class="msg"></div>
 <div id="out"><div class="empty">Upload a review export, or load the sample data to see how it looks.</div></div>
+</main>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

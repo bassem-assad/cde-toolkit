@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CDE Sync | CDE Toolkit</title>
+<meta name="description" content="Move files into ACC from your other systems, named and tagged to your standard.">
+<meta property="og:title" content="CDE Sync | CDE Toolkit">
+<meta property="og:description" content="Move files into ACC from your other systems, named and tagged to your standard.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<!--site-header-->
+<header class="deep">
+  <div class="wrap">
+    <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
+    <nav aria-label="Main"><a href="/#tools" aria-current="page">Tools</a><a href="/#how">How it works</a><a href="/admin-guide.html">Admin guide</a><a href="/#faq">FAQ</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+    <a class="btn pri" href="/app/">Open the app</a>
+  </div>
+</header>
+<!--/site-header-->
+
+<section class="deep thero" style="padding:0">
+  <div class="wrap">
+    <p class="crumb"><a href="/#tools">Tools</a> › Move, check and fix files</p>
+    <h1>CDE Sync</h1>
+    <p class="lead">Move files into ACC from your other systems, named and tagged to your standard.</p>
+    <div class="cta">
+      <a class="btn pri" href="/modules/migrate.html?demo=1">Try the demo</a>
+      <a class="btn sec" href="/contact.html">Request a pilot</a>
+      <span class="tag">Autodesk sign-in</span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap figs two-up"><figure class="fig"><img src="/assets/shots/cde-sync-results.jpg" alt="CDE Sync results dashboard showing 6 files processed: 2 passed, 1 passed with warnings, 1 failed and 2 skipped, with a donut chart and a CSV export button" width="1280" height="860"><figcaption>The results dashboard after a transfer: what passed, what needs attention and why. <em>Sample data.</em></figcaption></figure><figure class="fig"><img src="/assets/shots/cde-sync-naming.jpg" alt="CDE Sync naming step with the parts of a file name dragged onto the fields of the destination naming standard" width="1280" height="860" loading="lazy" decoding="async"><figcaption>The naming step: file name parts are matched to the fields of the folder&#x27;s naming standard. <em>Sample data.</em></figcaption></figure></div>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div><h2>Who it's for</h2><ul class="tick"><li>BIM and information managers moving a project into ACC from ProjectWise, SharePoint, InEight Document or another ACC project.</li><li>Document controllers who want files to arrive with the right name and metadata, not fixed afterwards.</li><li>Consultants and contractors bringing a project's files into their own ACC hub.</li></ul></div>
+    <div><h2>Why it helps your company</h2><ul class="benefit"><li><b>Files arrive conforming</b><span>Names and attributes are checked and corrected on the way in, so there is less clean-up after migration.</span></li><li><b>No silent surprises</b><span>Every skipped or flagged file has a stated reason, and you decide what happens to values that don&#x27;t fit.</span></li><li><b>A record you can share</b><span>The results CSV lists each file, its final name and what happened to it.</span></li><li><b>No migration server to host</b><span>It runs in the browser, so there is nothing to install or maintain on your side.</span></li></ul></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>What it does</h2>
+    <h3 style="margin-bottom:10px;font-size:16px">The steps</h3><ol class="stepstrip"><li>Source</li><li>Destination</li><li>Files</li><li>Attributes</li><li>Naming</li><li>Review</li><li>Results</li></ol><p class="sub" style="margin-bottom:22px">Nothing is sent until you press Start transfer on the Review step.</p>
+    <ul class="tick"><li>Reads files from ProjectWise, SharePoint, InEight Document, another ACC project, or a folder on your computer.</li><li>Reads the naming standard applied to the destination ACC folder (or lets you define one), then shows which files match, which can be fixed by mapping, and which cannot.</li><li>Lets you drag the parts of a file name onto the standard's fields, set fixed values, swap a value for one from the ACC droplist, and correct individual files.</li><li>Maps source attributes to ACC attributes and flags type differences (text, droplist, date, number) before anything is sent.</li><li>Renames files to the standard and fills ACC attributes from the file name, if you choose.</li><li>Asks what to do with values that don't fit: leave blank, skip the file, or add the value to the droplist.</li><li>Uploads each file as new or as a new version of an existing file, then shows a results dashboard (passed, warnings, failed, skipped) with a CSV export.</li></ul>
+    <div class="scenario"><span class="eyebrow">Example scenario</span><p>A team moves 400 drawings from ProjectWise into a new ACC project. The destination folder has a six-field naming standard and droplists for discipline and status. CDE Sync flags the files whose names don&#x27;t have six parts, lets the team map the rest, and adds one agreed status value to the droplist. The results CSV goes to the document controller.</p></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div><h2>What you need</h2><ul class="tick"><li>An Autodesk sign-in, a hub on a full Forma plan, and permission to upload to the destination folder.</li><li>ProjectWise: the Web API address and a login. Your ProjectWise server must allow the toolkit's web address (CORS).</li><li>SharePoint: a one-off Microsoft Entra app registration with read permission for files and sites.</li><li>InEight Document: the API base URL and a key or token. InEight's API paths are not published openly, so the tool lets you edit them; an export loaded from your computer works too.</li><li>A naming standard on the destination folder helps, but you can define one inside the tool.</li></ul>
+      <p class="sub" style="margin-top:14px">See the <a href="/#requirements">requirements</a> for hub plans, and the <a href="/admin-guide.html">admin guide</a> for the one-off setup.</p></div>
+    <div><h2>Good to know</h2><ul class="dash"><li>It transfers one folder at a time.</li><li>Files pass through your browser (downloaded, then uploaded), so keep the tab open and allow time for large files.</li><li>Try it on a test folder first.</li></ul></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>Related tools</h2>
+    <div class="related"><a href="/tools/file-validator.html"><b>File validator</b><span>Check a file list against your naming convention and required attributes before it becomes a problem.</span></a><a href="/tools/rename.html"><b>Rename</b><span>Add the upload date to a Revit model&#x27;s name, consistently, with a preview first.</span></a></div>
+  </div>
+</section>
+
+<section class="band" id="pilot">
+  <div class="wrap">
+    <div>
+      <h2 style="color:#fff">See CDE Sync on sample data.</h2>
+      <p>The demo needs no sign-in and sends nothing to Autodesk. When you're ready, ask for a pilot on a non-critical project.</p>
+    </div>
+    <div class="cta">
+      <a class="btn pri" href="/modules/migrate.html?demo=1">Try the demo</a>
+      <a class="btn sec" href="/contact.html">Request a pilot</a>
+    </div>
+  </div>
+</section>
+<!--site-footer-->
+<footer>
+  <div class="wrap">
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/#tools">Tools</a><a href="/admin-guide.html">Admin guide</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <p>© 2026 Bassem Assad. All rights reserved.</p>
+    <p>Autodesk, Autodesk Construction Cloud, Forma and Revit are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
+  </div>
+</footer>
+<!--/site-footer-->
+</body>
+</html>

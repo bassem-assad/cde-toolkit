@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GeoFed | CDE Toolkit</title>
+<meta name="description" content="See your federated models on a map, check what&#x27;s missing, and share snapshots.">
+<meta property="og:title" content="GeoFed | CDE Toolkit">
+<meta property="og:description" content="See your federated models on a map, check what&#x27;s missing, and share snapshots.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<!--site-header-->
+<header class="deep">
+  <div class="wrap">
+    <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
+    <nav aria-label="Main"><a href="/#tools" aria-current="page">Tools</a><a href="/#how">How it works</a><a href="/admin-guide.html">Admin guide</a><a href="/#faq">FAQ</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+    <a class="btn pri" href="/app/">Open the app</a>
+  </div>
+</header>
+<!--/site-header-->
+
+<section class="deep thero" style="padding:0">
+  <div class="wrap">
+    <p class="crumb"><a href="/#tools">Tools</a> › Coordinate models</p>
+    <h1>GeoFed</h1>
+    <p class="lead">See your federated models on a map, check what&#x27;s missing, and share snapshots.</p>
+    <div class="cta">
+      <a class="btn pri" href="/modules/geofed.html?demo=1">Try the demo</a>
+      <a class="btn sec" href="/contact.html">Request a pilot</a>
+      <span class="tag">Autodesk sign-in</span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap figs"><figure class="fig"><img src="/assets/shots/geofed.jpg" alt="GeoFed&#x27;s Coverage matrix of locations against disciplines with gaps hatched, beside its QA checks listing files with a missing location or discipline code" width="1280" height="915"><figcaption>Coverage and QA checks on sample data: gaps and metadata problems at a glance. <em>Sample data.</em></figcaption></figure></div>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div><h2>Who it's for</h2><ul class="tick"><li>BIM managers who want to see model coverage by location and discipline.</li><li>Project directors and asset owners who think in places, not folders.</li><li>Coordinators checking that models are viewable and placed correctly before a milestone.</li></ul></div>
+    <div><h2>Why it helps your company</h2><ul class="benefit"><li><b>Gaps visible early</b><span>See which locations lack a discipline before the coordination meeting, not during it.</span></li><li><b>Fix the metadata that blocks federation</b><span>QA lists the files with missing codes or models that won&#x27;t open.</span></li><li><b>A common picture</b><span>Place and discipline are easier for non-BIM stakeholders to read than folder trees.</span></li><li><b>A shareable list</b><span>Export the QA report to the people who need to fix things.</span></li></ul></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>What it does</h2>
+    
+    <ul class="tick"><li>Browse your hub, project and folders, tick the folders to federate, and choose which file types count as models or drawings.</li><li>Groups models by location and discipline and shows them on a map with open basemaps (streets, aerial, topographic and more).</li><li>Shows 3D and 2D views beside the map, with Map, Split and 3D layouts, plus Properties, Drawings and Issues panels.</li><li>Coverage matrix: what exists for each location and discipline, with gaps hatched. Click a cell to filter.</li><li>QA checks: missing location code, missing discipline code, models not viewable, loaded models without map coordinates, georeference ignored, and latest version rejected in review. Export the QA report as CSV.</li><li>Saved views, and snapshots with markup.</li></ul>
+    <div class="scenario"><span class="eyebrow">Example scenario</span><p>Before a coordination milestone, the BIM manager opens Coverage and sees that one location has no civil or landscape model. The QA list shows four files with no discipline code. Both lists go to the discipline leads the same day.</p></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div><h2>What you need</h2><ul class="tick"><li>An Autodesk sign-in and models stored in ACC.</li><li>Location and discipline attributes on your files (you choose which attributes to use).</li><li>Models are translated by Autodesk's viewing service so they can be displayed.</li><li>Internet access to the map tile providers.</li></ul>
+      <p class="sub" style="margin-top:14px">See the <a href="/#requirements">requirements</a> for hub plans, and the <a href="/admin-guide.html">admin guide</a> for the one-off setup.</p></div>
+    <div><h2>Good to know</h2><ul class="dash"><li>The demo shows the layout and the Coverage and QA panels with sample data. The 3D viewer needs a real sign-in.</li><li>Models are placed using their georeference where available, or the locations you set.</li></ul></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>Related tools</h2>
+    <div class="related"><a href="/tools/federated-views.html"><b>Federated views</b><span>Build a Model Coordination view for each location without clicking through ACC.</span></a><a href="/tools/file-validator.html"><b>File validator</b><span>Check a file list against your naming convention and required attributes before it becomes a problem.</span></a></div>
+  </div>
+</section>
+
+<section class="band" id="pilot">
+  <div class="wrap">
+    <div>
+      <h2 style="color:#fff">See GeoFed on sample data.</h2>
+      <p>The demo needs no sign-in and sends nothing to Autodesk. When you're ready, ask for a pilot on a non-critical project.</p>
+    </div>
+    <div class="cta">
+      <a class="btn pri" href="/modules/geofed.html?demo=1">Try the demo</a>
+      <a class="btn sec" href="/contact.html">Request a pilot</a>
+    </div>
+  </div>
+</section>
+<!--site-footer-->
+<footer>
+  <div class="wrap">
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/#tools">Tools</a><a href="/admin-guide.html">Admin guide</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <p>© 2026 Bassem Assad. All rights reserved.</p>
+    <p>Autodesk, Autodesk Construction Cloud, Forma and Revit are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
+  </div>
+</footer>
+<!--/site-footer-->
+</body>
+</html>

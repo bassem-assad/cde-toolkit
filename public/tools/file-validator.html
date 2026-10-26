@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>File validator | CDE Toolkit</title>
+<meta name="description" content="Check a file list against your naming convention and required attributes before it becomes a problem.">
+<meta property="og:title" content="File validator | CDE Toolkit">
+<meta property="og:description" content="Check a file list against your naming convention and required attributes before it becomes a problem.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<!--site-header-->
+<header class="deep">
+  <div class="wrap">
+    <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
+    <nav aria-label="Main"><a href="/#tools" aria-current="page">Tools</a><a href="/#how">How it works</a><a href="/admin-guide.html">Admin guide</a><a href="/#faq">FAQ</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+    <a class="btn pri" href="/app/">Open the app</a>
+  </div>
+</header>
+<!--/site-header-->
+
+<section class="deep thero" style="padding:0">
+  <div class="wrap">
+    <p class="crumb"><a href="/#tools">Tools</a> › Move, check and fix files</p>
+    <h1>File validator</h1>
+    <p class="lead">Check a file list against your naming convention and required attributes before it becomes a problem.</p>
+    <div class="cta">
+      <a class="btn pri" href="/modules/validate.html?demo=1">Try the demo</a>
+      <a class="btn sec" href="/contact.html">Request a pilot</a>
+      <span class="tag">Excel or CSV export</span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap figs"><figure class="fig"><img src="/assets/shots/file-validator.jpg" alt="File validator results: 10 files checked, 6 passed and 4 failed, with the reason for each failure listed beside the file name" width="1280" height="800"><figcaption>Results for a sample file list: each failure comes with its reason. <em>Sample data.</em></figcaption></figure></div>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div><h2>Who it's for</h2><ul class="tick"><li>Information managers preparing a project for handover or audit.</li><li>BIM coordinators checking that suppliers' deliveries follow the BIM execution plan.</li><li>Document controllers who want a repeatable naming check.</li><li>Anyone with an export of a file list, including people who don't have ACC access.</li></ul></div>
+    <div><h2>Why it helps your company</h2><ul class="benefit"><li><b>Catch problems early</b><span>Find mis-named or untagged files before handover, audit or a supplier delivery is accepted.</span></li><li><b>Consistent checks</b><span>The same rules are applied to every file, every time.</span></li><li><b>Evidence to send back</b><span>The CSV report tells each supplier exactly which files to fix and why.</span></li><li><b>Open to your whole team</b><span>No sign-in or ACC access is needed, only an export.</span></li></ul></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>What it does</h2>
+    
+    <ul class="tick"><li>Reads an Excel or CSV file list exported from ACC Docs, including its attribute columns.</li><li>You describe the naming convention part by part: the separator, then for each part either a list of allowed codes or a pattern.</li><li>Flags a wrong number of parts, codes that aren't allowed, empty parts, and spaces or special characters.</li><li>Checks that the attributes you mark as required are filled in.</li><li>Shows pass and fail counts with the reason for every failure, and downloads a CSV report.</li><li>Remembers your convention in your browser. It starts from a common ISO 19650-style example (project, originator, volume, level, type, role, number).</li></ul>
+    <div class="scenario"><span class="eyebrow">Example scenario</span><p>Before handover, an information manager exports the file list for the Published folder and checks it against the project&#x27;s naming convention. The report lists every file with a problem and the reason, and the manager sends it to the discipline leads to fix.</p></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div><h2>What you need</h2><ul class="tick"><li>An Excel or CSV export of the file list from ACC Docs, with the attribute columns you want checked.</li><li>No sign-in. The file is read in your browser and is not uploaded anywhere.</li></ul>
+      <p class="sub" style="margin-top:14px">See the <a href="/#requirements">requirements</a> for hub plans, and the <a href="/admin-guide.html">admin guide</a> for the one-off setup.</p></div>
+    <div><h2>Good to know</h2><ul class="dash"><li>It checks file names and attribute completeness, not file contents.</li><li>It checks one convention at a time.</li></ul></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>Related tools</h2>
+    <div class="related"><a href="/tools/cde-sync.html"><b>CDE Sync</b><span>Move files into ACC from your other systems, named and tagged to your standard.</span></a><a href="/tools/rename.html"><b>Rename</b><span>Add the upload date to a Revit model&#x27;s name, consistently, with a preview first.</span></a></div>
+  </div>
+</section>
+
+<section class="band" id="pilot">
+  <div class="wrap">
+    <div>
+      <h2 style="color:#fff">See File validator on sample data.</h2>
+      <p>The demo needs no sign-in and sends nothing to Autodesk. When you're ready, ask for a pilot on a non-critical project.</p>
+    </div>
+    <div class="cta">
+      <a class="btn pri" href="/modules/validate.html?demo=1">Try the demo</a>
+      <a class="btn sec" href="/contact.html">Request a pilot</a>
+    </div>
+  </div>
+</section>
+<!--site-footer-->
+<footer>
+  <div class="wrap">
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/#tools">Tools</a><a href="/admin-guide.html">Admin guide</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <p>© 2026 Bassem Assad. All rights reserved.</p>
+    <p>Autodesk, Autodesk Construction Cloud, Forma and Revit are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
+  </div>
+</footer>
+<!--/site-footer-->
+</body>
+</html>

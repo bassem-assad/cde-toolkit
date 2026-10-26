@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Admin guide | CDE Toolkit</title>
+<meta name="description" content="How an ACC hub admin adds CDE Toolkit as a Custom Integration, the permissions it asks for, and where data goes.">
+<meta property="og:title" content="Admin guide | CDE Toolkit">
+<meta property="og:description" content="How an ACC hub admin adds CDE Toolkit as a Custom Integration, the permissions it asks for, and where data goes.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<!--site-header-->
+<header class="deep">
+  <div class="wrap">
+    <a class="logo" href="/">CDE<span>·</span>Toolkit</a>
+    <nav aria-label="Main"><a href="/#tools">Tools</a><a href="/#how">How it works</a><a href="/admin-guide.html" aria-current="page">Admin guide</a><a href="/#faq">FAQ</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+    <a class="btn pri" href="/app/">Open the app</a>
+  </div>
+</header>
+<!--/site-header-->
+
+<section class="deep thero" style="padding:0">
+  <div class="wrap">
+    <p class="crumb"><a href="/">CDE Toolkit</a> › Admin guide</p>
+    <h1>Add CDE Toolkit to your ACC hub.</h1>
+    <p class="lead">A one-off setup for your hub admin, about five minutes. This guide covers the steps, the permissions requested and where your data goes, so your IT team can review it.</p>
+    <div class="cta">
+      <a class="btn pri" href="/contact.html">Request a pilot</a>
+      <a class="btn sec" href="/app/?demo=1">Try the demo first</a>
+    </div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>Before you start</h2>
+    <ul class="tick">
+      <li>You are an admin of the ACC (Autodesk Forma) hub.</li>
+      <li>Hub Admin shows a <b>Custom Integrations</b> tab. Autodesk Support notes that this tab is hidden for trial hubs and for hubs on Essentials subscriptions. If you can't see it, the hub can't add integrations.</li>
+      <li>You have the CDE Toolkit Client ID (shown below).</li>
+      <li>You have picked a non-critical project and a few test users for the pilot.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>Add the integration</h2>
+    <ol class="adm-steps">
+      <li><b>Open Hub Admin</b><span>Sign in to ACC at acc.autodesk.com with your admin account and open Hub Admin.</span></li>
+      <li><b>Open Custom Integrations</b><span>Select the Custom Integrations tab, then Add custom integration.</span></li>
+      <li><b>Enter the details</b><span>Paste the Client ID below and name the integration, for example CDE Toolkit. Complete any other fields Autodesk shows. Autodesk renames screens from time to time, so labels may differ slightly.</span></li>
+      <li><b>Save</b><span>The integration now appears in the list. Remove it there at any time to cut off access.</span></li>
+      <li><b>Tell your users where to go</b><span>Send people to <code id="appUrl">/app/</code>. Each person signs in with their own Autodesk account.</span></li>
+    </ol>
+    <p class="sub" style="margin-top:22px">CDE Toolkit Client ID</p>
+    <div class="clientid"><code id="cid">Your contact will provide the Client ID.</code><button class="btn line" id="copyCid" type="button" hidden>Copy</button></div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>What permissions does it ask for?</h2>
+    <p class="sub" style="margin:0 0 16px">The toolkit asks for one set of permissions at sign-in, shared by all tools.</p>
+    <div class="tablewrap"><table class="scopes"><thead><tr><th>Permission</th><th>Used for</th></tr></thead><tbody><tr><td><code>data:read</code></td><td>Read hubs, projects, folders and files, and their attributes.</td></tr><tr><td><code>data:write</code></td><td>Change files and their metadata, for example when renaming a file or setting attributes.</td></tr><tr><td><code>data:create</code></td><td>Create files, new versions, reviews and Model Coordination views.</td></tr><tr><td><code>data:search</code></td><td>Search for files within folders.</td></tr><tr><td><code>account:read</code></td><td>List the hubs (ACC accounts) the signed-in person belongs to.</td></tr><tr><td><code>bucket:read</code></td><td>Read file content from Autodesk storage, so files can be transferred or displayed.</td></tr><tr><td><code>user-profile:read</code></td><td>Read the signed-in person&#x27;s name, shown in GeoFed.</td></tr></tbody></table></div>
+    <ul class="tick" style="margin-top:20px">
+      <li>The toolkit acts as the signed-in person. It can only see and change what that person can already see and change in ACC.</li>
+      <li>For a project to appear in the hub list, the person needs access to the project's Docs files.</li>
+      <li>Tools that change data (CDE Sync, Rename, File Book Out, Federated views) show what will happen before they do it.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>Where does the data go?</h2>
+    <div class="flow" role="img" aria-label="CDE Toolkit's website delivers web pages to your browser. Your browser talks directly to Autodesk, and optionally to ProjectWise, SharePoint or InEight.">
+      <div class="fbox"><b>CDE Toolkit website</b><span>Delivers the web pages and scripts. Receives no ACC data.</span></div>
+      <div class="farrow"><i>→</i>web pages only</div>
+      <div class="fbox mid"><b>Your browser</b><span>The tools run here, signed in as the user.</span></div>
+      <div class="farrow"><i>⇄</i>files, attributes, reviews, sign-in</div>
+      <div class="fstack">
+        <div class="fbox"><b>Autodesk (ACC)</b><span>Where your project data lives.</span></div>
+        <div class="fbox"><b>Optional sources</b><span>ProjectWise, SharePoint or InEight, for CDE Sync only.</span></div>
+      </div>
+    </div>
+    <ul class="tick" style="margin-top:22px">
+      <li>Sign-in uses OAuth 2.0 with PKCE. There is no client secret. The sign-in token lives in the browser tab's session storage and is cleared when the tab closes or the user signs out.</li>
+      <li>There are no advertising or analytics scripts. The only message we receive is one a person chooses to send through the Contact page, handled by a form service (see <a href="/privacy.html">Privacy</a>).</li>
+      <li>Your browser also fetches some third-party resources: Google Fonts, library files from cdnjs, and in GeoFed, map tiles from OpenStreetMap and Esri.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap cols">
+    <div>
+      <h2>Optional sources for CDE Sync</h2>
+      <ul class="dash" style="color:var(--ink)">
+        <li><b>ProjectWise.</b> Your server must allow the toolkit's web address (CORS), and users need a Web API address and login.</li>
+        <li><b>SharePoint.</b> A Microsoft Entra app registration with read permission for files and sites. Your Microsoft 365 admin may need to approve it.</li>
+        <li><b>InEight Document.</b> An API base URL and a key or token. API paths aren't published openly, so they can be edited in the tool.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Rolling it out</h2>
+      <ul class="dash" style="color:var(--ink)">
+        <li>Start with a non-critical project and a few people. Use demo mode for training.</li>
+        <li>Test tools that change data on copies first, and keep your own backups.</li>
+        <li>To end a pilot, remove the integration from Custom Integrations.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="tsec">
+  <div class="wrap">
+    <h2>Troubleshooting</h2>
+    <ul class="benefit">
+      <li><b>The hub or project doesn't appear after sign-in.</b><span>Check the integration was added in this hub, and that the person has access to the project's Docs files. Autodesk lists a project only when the user can see at least one file in it.</span></li>
+      <li><b>There's no Custom Integrations tab.</b><span>See Before you start. Trial and Essentials hubs hide it. Ask Autodesk or your reseller about moving the hub to a full subscription.</span></li>
+      <li><b>Federated views can't find a model set.</b><span>It needs Model Coordination in your hub and a model set based on your Published folder. The tool can create the model set if you have permission.</span></li>
+      <li><b>Autodesk shows a sign-in error page.</b><span>The web address the tool runs at must match the one registered in the APS app. Contact us and we'll check it.</span></li>
+    </ul>
+    <p class="sub" style="margin-top:20px">Still stuck? <a href="/contact.html">Send a message</a>.</p>
+  </div>
+</section>
+<!--site-footer-->
+<footer>
+  <div class="wrap">
+    <nav aria-label="Footer"><a href="/app/">Open the app</a><a href="/#tools">Tools</a><a href="/admin-guide.html">Admin guide</a><a href="/#requirements">Requirements</a><a href="/#security">Security</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms of Use</a><a href="/privacy.html">Privacy</a></nav>
+    <p>© 2026 Bassem Assad. All rights reserved.</p>
+    <p>Autodesk, Autodesk Construction Cloud, Forma and Revit are registered trademarks or trademarks of Autodesk, Inc. ProjectWise is a trademark of Bentley Systems. SharePoint is a trademark of Microsoft. InEight is a trademark of InEight Inc. CDE Toolkit is an independent product and is not affiliated with or endorsed by them.</p>
+  </div>
+</footer>
+<!--/site-footer-->
+<script src="/config.js"></script>
+<script>
+(function () {
+  var cfg = window.CDETK_CONFIG || {}, id = String(cfg.clientId || '').trim();
+  document.getElementById('appUrl').textContent = location.origin + '/app/';
+  if (!id) return;
+  document.getElementById('cid').textContent = id;
+  var b = document.getElementById('copyCid'); b.hidden = false;
+  b.onclick = function () {
+    (navigator.clipboard ? navigator.clipboard.writeText(id) : Promise.reject()).then(function () { b.textContent = 'Copied'; }, function () {
+      var r = document.createRange(); r.selectNodeContents(document.getElementById('cid')); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = 'Press Ctrl+C'; });
+    setTimeout(function () { b.textContent = 'Copy'; }, 1800);
+  };
+})();
+</script>
+</body>
+</html>
